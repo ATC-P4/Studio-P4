@@ -15,6 +15,7 @@ rec_thread = None  # global variable to hold the recording thread
 global last_time
 last_time = 0
 
+"""
 def handle_midi(msg, midi_track, TICKS_PER_BEAT, TEMPO):
     global last_time
     
@@ -40,7 +41,7 @@ def handle_midi(msg, midi_track, TICKS_PER_BEAT, TEMPO):
         fs.noteoff(msg.channel, msg.note)
     elif msg.type == "program_change":
         fs.program_change(msg.channel, msg.program)
-
+"""
 
 def record_to_midi(port_name, midi_track, ticks_per_beat, tempo, total_time):
     """
