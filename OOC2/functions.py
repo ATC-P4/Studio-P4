@@ -31,7 +31,7 @@ def port_discovery():
         print(f"[{i}] {name}")
 
     # Keep default behavior: first port
-    selected_port = input_ports[1]
+    selected_port = input_ports[0]
     print(f"Using input port: {selected_port}")
     found = port_selection(selected_port)
 
@@ -81,7 +81,7 @@ def on_midi(msg):
     elif msg.type == "program_change":
         s.s_t.fs.program_change(msg.channel, msg.program)
 
-    #print(f"Recorded: {msg.type} | Ticks: {round(ticks)}")
+    print(f"Recorded: {msg.type}")
 
 
 def keyboard_listener():

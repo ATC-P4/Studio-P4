@@ -12,7 +12,6 @@ Run:
     python mini_daw.py
 """
 
-import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget,
     QVBoxLayout, QHBoxLayout,
@@ -21,6 +20,11 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QRect, QTimer
 from PyQt6.QtGui import QColor, QPalette, QKeySequence, QShortcut, QPainter
+import keyboard, threading, time, sys, mido, fluidsynth
+import classes2 as classes
+import functions as f
+import states as s
+mido.set_backend("mido.backends.rtmidi")
 
 
 # ──────────────────────────────────────────────
@@ -481,6 +485,14 @@ class MiniDAW(QMainWindow):
         """Called when the Record button is toggled."""
         # TODO: start / stop audio recording
         # self._playback_timer.timeout.connect(self._tick_playhead)
+        if s.record_flag is True:
+            print("Stopping recording...")
+            s.record_flag = False
+        else:
+            print("Starting recording...")
+            s.record_flag = True
+            record_thread = threading.Thread(target=f.record, daemon=True)
+            record_thread.start()
         self.statusBar().showMessage("Recording toggled  (stub)")
 
     def _on_play_pause(self) -> None:
@@ -521,10 +533,39 @@ def main() -> None:
     app.setStyle("Fusion")
     _apply_dark_palette(app)
 
+    # Create a project and a track for testing
+    s.m_p = f.create_project("My First Project")
+    s.s_t = f.create_track("Piano Track", s.m_p)
+    s.s_t.length = 4
+    s.s_t.midi_file_name = "piano_track.mid"
+
+    #initiating the time tracking
+    record_start_time = time.time()
+    s.last_msg_time = record_start_time
+    s.midi_track = mido.MidiTrack()
+    mid = mido.MidiFile(ticks_per_beat=s.m_p.tpb)
+    mid.tracks.append(s.midi_track)
+
+    # Port discovery
+    port_thread = threading.Thread(target=f.port_discovery, daemon=True)
+    port_thread.start()
+
+    #starts the keyboard listener in a separate thread 
+    # listener_thread = threading.Thread(target=f.keyboard_listener, daemon=True)
+    # listener_thread.start()
+
+    # keyboard.wait('esc')  # Main thread waits for 'esc' to exit the program
+    # s.terminate_flag = True
+    # port_thread.join()
+    # listener_thread.join()
+    # print("Program terminated.")    
+
     window = MiniDAW()
     window.show()
-    window.setFocus()
+    window.setFocus()    
     sys.exit(app.exec())
+
+
 
 
 
