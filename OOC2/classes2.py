@@ -1,27 +1,41 @@
-import fluidsynth
+import fluidsynth as fs_cls
+
 #classes definition
 class Track:
-    def __init__(self, name, midi_file_name=None, sf2_file_name="basic_piano.SF2"):
+    def __init__(self, name:str, midi_file_name:str = None, sf2_file_name:str ="basic_piano.SF2"):
         self.name = name
-        self.length = 0 # number of measures
+        self.length = 0 # number of bars
         self.midi_file_name = midi_file_name
         self.sf2_file_name = sf2_file_name
-        self.fs = fluidsynth.Synth()
+        self.fs: fs_cls.Synth = fs_cls.Synth()
+
+        self.sfid = -1
 
         # auto-run on object creation
         self.initialize_synth()
 
     #initialize the synthesizer with the default soundfont, can be called again to change the soundfont on the fly
-    def initialize_synth(self):
-        self.fs.start(driver="wasapi")  # or dsound
-        sfid = self.fs.sfload(self.sf2_file_name)
-        self.fs.program_select(0, sfid, 0, 0)
+    def initialize_synth(self) -> None:
+
+        # TODO (Audio driver selection): let it choose some default value and see what happens for now
+        # dev = self.fs.audio_driver
+        # print(f"audio driver: {dev}")
+        # self.fs.start(driver=dev)
+        # Supported on Mac: coreaudio, file, portaudio
+        # Windows: wasapi, dsound
+
+        self.sfid = self.fs.sfload(self.sf2_file_name)
+        # Channel may be wrong initially, but this doesn't matter
+        self.fs.program_select(0, self.sfid, 0, 0)
 
     #update the soundfont used by the track, call after changing the sf2_file_name attribute to apply the change
-    def update_soundfont(self, sf2_file_name):
+    def update_soundfont(self, channel: int, sf2_file_name: str =None) -> None:
         self.sf2_file_name = sf2_file_name
-        sfid = self.fs.sfload(self.sf2_file_name)
-        self.fs.program_select(0, sfid, 0, 0)
+
+        if sf2_file_name:
+            self.sfid = self.fs.sfload(self.sf2_file_name)
+
+        self.fs.program_select(channel, self.sfid, 0, 0)
 
 class Project:
     def __init__(self, pname, bpm=120, tpb=480,t_s=(4,4)):
@@ -32,6 +46,6 @@ class Project:
         self.tracks = [] #list of tracks
 
     def add_track(self, track_name):
-        track = Track(track_name)
+        track = Track(track_name)#, sf2_file_name="arachno_soundfont_v1.0.sf2")
         self.tracks.append(track)
         return track

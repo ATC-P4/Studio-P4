@@ -2,8 +2,6 @@ import time
 import mido
 import classes2 as classes
 import states as s 
-import keyboard
-import threading
 
 def create_project(pname):
     project = classes.Project(pname=pname)
@@ -42,8 +40,7 @@ def port_selection(selected_port):
     """
     inport = None
     try:
-        inport = mido.open_input(selected_port, autoreset=True)
-        inport.callback = on_midi
+        inport = mido.open_input(selected_port, autoreset=True, callback=on_midi)
 
         while not s.terminate_flag:
             time.sleep(0.1)  # Keep the thread alive
@@ -73,6 +70,10 @@ def on_midi(msg):
         s.midi_track.append(msg.copy(time=round_ticks))
         print(f"Recorded: {msg.type} | Ticks: {round(ticks)}")
 
+    # Force track_channel = message_channel
+    ch = msg.channel
+    s.s_t.update_soundfont(ch)
+
     # Optional live monitoring through fluidsynth
     if msg.type == "note_on":
         s.s_t.fs.noteon(msg.channel, msg.note, msg.velocity)
@@ -80,39 +81,6 @@ def on_midi(msg):
         s.s_t.fs.noteoff(msg.channel, msg.note)
     elif msg.type == "program_change":
         s.s_t.fs.program_change(msg.channel, msg.program)
-
-    print(f"Recorded: {msg.type}")
-
-
-def keyboard_listener():
-    """
-    listen to the keyboard for shortcuts
-        - 'e' to start/stop playback
-        - 'r' to start/stop recording
-    """
-    def click_e(event):
-        player()
-
-    def click_r(event):
-        if s.record_flag is True:
-            print("Stopping recording...")
-            s.record_flag = False
-        else:
-            print("Starting recording...")
-            s.record_flag = True
-            record_thread = threading.Thread(target=record, daemon=True)
-            record_thread.start()
-
-
-
-    keyboard.on_press_key('e', click_e)
-    keyboard.on_press_key('r', click_r)
-
-    print("Keyboard listener running in background. Press 'esc' to stop listener.")
-    while not s.terminate_flag:
-        time.sleep(0.5)  # Keep the thread alive
-
-    pass
 
 def record():
     """
