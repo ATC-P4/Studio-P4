@@ -15,7 +15,12 @@ def create_track(name, project):
     s.s_t = track
     return track
 
+
 def port_discovery():
+    """
+    Discover available MIDI input ports and select one for recording.
+    If no ports are found, print a message and return.
+    """
     input_ports = mido.get_input_names()
     if not input_ports:
         print("No MIDI input devices found.")
@@ -28,7 +33,7 @@ def port_discovery():
     # Keep default behavior: first port
     selected_port = input_ports[1]
     print(f"Using input port: {selected_port}")
-    port_selection(selected_port)
+    found = port_selection(selected_port)
 
 def port_selection(selected_port):
     inport = None

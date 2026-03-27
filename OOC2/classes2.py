@@ -11,16 +11,17 @@ class Track:
         # auto-run on object creation
         self.initialize_synth()
 
+    #initialize the synthesizer with the default soundfont, can be called again to change the soundfont on the fly
     def initialize_synth(self):
         self.fs.start(driver="wasapi")  # or dsound
         sfid = self.fs.sfload(self.sf2_file_name)
         self.fs.program_select(0, sfid, 0, 0)
 
+    #update the soundfont used by the track, call after changing the sf2_file_name attribute to apply the change
     def update_soundfont(self, sf2_file_name):
         self.sf2_file_name = sf2_file_name
         sfid = self.fs.sfload(self.sf2_file_name)
         self.fs.program_select(0, sfid, 0, 0)
-
 
 class Project:
     def __init__(self, pname, bpm=120, tpb=480,t_s=(4,4)):
