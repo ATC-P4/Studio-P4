@@ -36,6 +36,10 @@ def port_discovery():
     found = port_selection(selected_port)
 
 def port_selection(selected_port):
+    """
+    Attempt to open the selected MIDI input port and set up a callback for incoming messages.
+    If the port cannot be opened, print an error message and return False.
+    """
     inport = None
     try:
         inport = mido.open_input(selected_port, autoreset=True)
@@ -54,6 +58,10 @@ def port_selection(selected_port):
 
 
 def on_midi(msg):
+    """
+    Function to handle incoming MIDI messages during recording. It calculates the time delta since the last message,
+    converts it to ticks, and appends the message to the MIDI track with the appropriate timing. It also provides live monitoring
+    """
     
     if s.record_flag:
         now = time.time()
@@ -77,6 +85,11 @@ def on_midi(msg):
 
 
 def keyboard_listener():
+    """
+    listen to the keyboard for shortcuts
+        - 'e' to start/stop playback
+        - 'r' to start/stop recording
+    """
     def click_e(event):
         player()
 
@@ -102,7 +115,10 @@ def keyboard_listener():
     pass
 
 def record():
-    # Timing setup
+    """
+    Main recording loop that runs in a separate thread. It calculates the target number of ticks based on the track length,
+     BPM, and time signature. It continuously checks if the recording duration has been reached and handles MIDI message
+    """
     bpm = s.m_p.bpm
     ts_num, ts_den = s.m_p.time_signature
     total_time = s.s_t.length * ts_num * (60.0 / bpm) * (4.0 / ts_den)
@@ -128,7 +144,7 @@ def record():
         time.sleep(0.1)  # Sleep briefly to reduce CPU usage
     
     
-    
+    #check for completion and pad the MIDI track if necessary, also check for unclosed notes and close them if needed before saving the file
     if completed:
         if s.recorded_ticks < target_ticks:
             print("Padding MIDI track to reach target length...")
@@ -157,7 +173,10 @@ def record():
         print("Recording stopped before completion, file not saved.")
 
 def player():
+    """
+    playback the MIDI file associated with the current track using fluidsynth for live monitoring. 
+    It reads the MIDI file and sends messages to the synthesizer in real-time.
+    """
     mid = mido.MidiFile(s.s_t.midi_file_name)
-
     for msg in mid.play():
         on_midi(msg)  # This will trigger the on_midi callback for live monitoring
