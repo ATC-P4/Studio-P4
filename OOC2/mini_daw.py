@@ -18,8 +18,11 @@ from PyQt6.QtWidgets import (
     QPushButton, QLabel, QSpinBox,
     QFrame, QSizePolicy,
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QRect, QTimer
-from PyQt6.QtGui import QColor, QPalette, QKeySequence, QShortcut, QPainter
+
+# QAccessible, QAccessibleEvent
+
+from PyQt6.QtCore import Qt, pyqtSignal, QRect, QTimer, QEvent
+from PyQt6.QtGui import QColor, QPalette, QKeySequence, QShortcut, QPainter, QAccessibilityHints
 import keyboard, threading, time, sys, mido, fluidsynth
 import classes2 as classes
 import functions as f
@@ -202,8 +205,9 @@ class TransportBar(QWidget):
         self._record_btn.setAccessibleDescription("Démarre ou arrête l'enregistrement en appuyant sur R")
         
         # Set BPM
-        self._bpm_widget.setAccessibleName("BPM")
+        self._bpm_widget.setAccessibleName(f"BPM: {self.bpm}")
         self._bpm_widget.setAccessibleDescription("Ajuster le BPM en appuyant sur B, entrer le nouveau BPM puis appuyer sur retour")
+        self._bpm_widget._spinbox.__getstate__()
 
         # Play/pause
         self._play_btn.setAccessibleName("Play")
@@ -421,6 +425,7 @@ class MiniDAW(QMainWindow):
         self.setMinimumSize(800, 300)
         self._build_ui()
         self._connect_signals()
+        self.player = threading.Thread(target=f.player, daemon=True)
         # self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
 
     def _build_ui(self) -> None:
@@ -470,8 +475,6 @@ class MiniDAW(QMainWindow):
         QShortcut(QKeySequence("m"), self).activated.connect(self._track._mute_btn.click)
         QShortcut(QKeySequence("s"), self).activated.connect(self._track._solo_btn.click)
 
-
-
     def _connect_signals(self) -> None:
         self._transport.record_clicked.connect(self._on_record)
         self._transport.play_pause_clicked.connect(self._on_play_pause)
@@ -501,16 +504,22 @@ class MiniDAW(QMainWindow):
         """Called when Play/Pause is toggled."""
 
         # TODO: start / stop audio playback
-        if self._playback_timer.isActive():
-            self._playback_timer.stop()
+        if not s.is_playing:
+            s.is_playing = True
+            self.player.start()
+            self.player = threading.Thread(target=f.player, daemon=True)
+            # print(f"[play_pause if] isPlaying: {s.is_playing}")
+
         else:
-            self._playback_timer.start()
+            # print(f"[play_pause else] isPlaying: {s.is_playing}")
+            ()
 
         self.statusBar().showMessage("Play/Pause toggled  (stub)")
 
     def _on_bpm_changed(self, bpm: int) -> None:
         """Called whenever the BPM spinbox value changes."""
         # TODO: notify audio engine of new tempo
+        self._transport._bpm_widget.setAccessibleName(f"BPM: {bpm}")
         self.statusBar().showMessage(f"BPM changed → {bpm}  (stub)")
 
     def _on_mute(self, muted: bool) -> None:
@@ -541,7 +550,7 @@ def main() -> None:
     s.s_t.length = 4
     s.s_t.midi_file_name = "piano_track.mid"
 
-    #initiating the time tracking
+    # initiating the time tracking
     s.midi_track = mido.MidiTrack()
     mid = mido.MidiFile(ticks_per_beat=s.m_p.tpb)
     mid.tracks.append(s.midi_track)
@@ -554,6 +563,35 @@ def main() -> None:
     window.show()
     window.setFocus()    
     sys.exit(app.exec())
+
+    # Fluidsynth debugging
+    # import fluidsynth as fs_cls
+
+    # ch = 0
+    # soundfont = "arachno_soundfont_v1.0.sf2"
+    # fs: fs_cls.Synth = fs_cls.Synth()
+    # fs.start(driver="coreaudio")
+    # sfid: int = fs.sfload(soundfont)
+    # fs.program_select(ch, sfid, 0, 0)
+
+    # counter = 0
+    # note = 80
+    # velocity = 100
+    # totlen = 50000000
+
+    # while(counter < 3):
+    #     notelen = 0
+    #     fs.noteon(ch, note, velocity)
+    #     while(notelen < totlen):
+    #         notelen += 1
+        
+    #     fs.noteoff(ch, note)
+
+        # notelen = 0
+        # while(notelen < totlen):
+        #     notelen += 1
+
+        # counter += 1
 
 
 

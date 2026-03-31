@@ -10,3 +10,4 @@ recorded_ticks = 0 #counter for the number of ticks recorded, used to determine 
 #flags
 terminate_flag = False #flag to signal threads to stop
 record_flag = False #flag to control recording state
+is_playing = False # Flag to control playback of recorded MIDI file

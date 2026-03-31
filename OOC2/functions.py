@@ -68,19 +68,10 @@ def on_midi(msg):
         round_ticks = round(ticks)
         s.recorded_ticks += round_ticks
         s.midi_track.append(msg.copy(time=round_ticks))
-        print(f"Recorded: {msg.type} | Ticks: {round(ticks)}")
+        # print(f"Recorded: {msg.type} | Ticks: {round(ticks)}")
 
-    # Force track_channel = message_channel
-    ch = msg.channel
-    s.s_t.update_soundfont(ch)
-
-    # Optional live monitoring through fluidsynth
-    if msg.type == "note_on":
-        s.s_t.fs.noteon(msg.channel, msg.note, msg.velocity)
-    elif msg.type == "note_off":
-        s.s_t.fs.noteoff(msg.channel, msg.note)
-    elif msg.type == "program_change":
-        s.s_t.fs.program_change(msg.channel, msg.program)
+    # print(f"{msg.channel}, {msg.note}, {msg.velocity}")
+    s.s_t.play_note(msg)
 
 def record():
     """
@@ -102,14 +93,17 @@ def record():
     temp = time.time()
     record_start_time = temp
     s.last_msg_time = temp
-    completed= False
+    completed = False
     while s.record_flag:
         elapsed = time.time() - record_start_time
-        if elapsed >= total_time:
-            print("Reached track duration.")
-            completed= True
-            s.record_flag = False
+        # if elapsed >= total_time:
+        #     print("Reached track duration.")
+        #     completed= True
+        #     s.record_flag = False
         time.sleep(0.1)  # Sleep briefly to reduce CPU usage
+
+    if not s.record_flag:
+        completed = True
     
     
     #check for completion and pad the MIDI track if necessary, also check for unclosed notes and close them if needed before saving the file
@@ -118,17 +112,18 @@ def record():
             print("Padding MIDI track to reach target length...")
             pad_ticks = max(0, target_ticks - s.recorded_ticks)
             s.midi_track.append(mido.MetaMessage("end_of_track", time=pad_ticks))
-        elif s.recorded_ticks > target_ticks:
-            print("Warning: Recorded MIDI exceeds target length. Consider adjusting track length or tempo.")
-        print("checking for unclosed notes...")
+        # elif s.recorded_ticks > target_ticks:
+        #     print("Warning: Recorded MIDI exceeds target length. Consider adjusting track length or tempo.")
+        # print("checking for unclosed notes...")
 
         # Ensure all notes are properly closed
+        # Assume that every note is from the same channel
         active_notes = {}
         for msg in s.midi_track:
             if msg.type == "note_on" and msg.velocity > 0:
-                active_notes[(msg.channel, msg.note)] = msg
+                active_notes[msg.note] = msg
             elif (msg.type == "note_off") or (msg.type == "note_on" and msg.velocity == 0):
-                active_notes.pop((msg.channel, msg.note), None)
+                active_notes.pop(msg.note, None)
         if active_notes:
             print("Warning: Found unclosed notes.")
             for (channel, note), msg in active_notes.items():
@@ -145,6 +140,11 @@ def player():
     playback the MIDI file associated with the current track using fluidsynth for live monitoring. 
     It reads the MIDI file and sends messages to the synthesizer in real-time.
     """
+    # print(f"[player start] isPlaying: {s.is_playing}")
     mid = mido.MidiFile(s.s_t.midi_file_name)
     for msg in mid.play():
         on_midi(msg)  # This will trigger the on_midi callback for live monitoring
+
+    s.is_playing = False
+    # print(f"[player end] isPlaying: {s.is_playing}")
+
