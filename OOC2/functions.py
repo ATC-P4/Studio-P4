@@ -59,6 +59,9 @@ def on_midi(msg):
     Function to handle incoming MIDI messages during recording. It calculates the time delta since the last message,
     converts it to ticks, and appends the message to the MIDI track with the appropriate timing. It also provides live monitoring
     """
+    #notifies the interface that a message has just arrived
+    if s.midi_callback is not None:
+        s.midi_callback(msg)
     
     if s.record_flag:
         now = time.time()

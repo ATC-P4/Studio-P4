@@ -1,8 +1,9 @@
+import os
 import fluidsynth as fs_cls
+import platform
 
-#classes definition
 class Track:
-    def __init__(self, name:str, midi_file_name:str = None, sf2_file_name:str ="basic_piano.SF2"):
+    def __init__(self, name:str, midi_file_name:str = "", sf2_file_name:str ="basic_piano.SF2"):
         self.name = name
         self.length = 0 # number of bars
         self.midi_file_name = midi_file_name
@@ -32,7 +33,7 @@ class Track:
         self.fs.setting('synth.gain', 1.0)
 
     #update the soundfont used by the track, call after changing the sf2_file_name attribute to apply the change
-    def update_soundfont(self, channel: int, sf2_file_name: str=None) -> None:
+    def update_soundfont(self, channel: int, sf2_file_name: str="") -> None:
         self.sf2_file_name = sf2_file_name
 
         if sf2_file_name:
@@ -48,6 +49,7 @@ class Track:
             self.fs.noteoff(self.channel, msg.note)
         elif msg.type == "program_change":
             self.fs.program_change(self.channel, msg.program)
+
 
 class Project:
     def __init__(self, pname, bpm=120, tpb=480,t_s=(4,4)):

@@ -2,3 +2,13 @@
 .DS_Store
 recorded.mid
 
+# Python - Fichiers de compilation (ce qui a causé ton erreur)
+__pycache__/
+*.pyc
+
+# Système (Fichiers cachés de macOS)
+.DS_Store
+
+# Fichiers volumineux (Optionnel : si tu ne veux pas envoyer tes musiques)
+*.mid
+*.mp3
