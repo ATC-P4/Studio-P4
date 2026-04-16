@@ -98,7 +98,7 @@ def record():
     s.last_msg_time = temp
     completed = False
     while s.record_flag:
-        elapsed = time.time() - record_start_time
+        # elapsed = time.time() - record_start_time
         # if elapsed >= total_time:
         #     print("Reached track duration.")
         #     completed= True
@@ -138,16 +138,16 @@ def record():
     else:
         print("Recording stopped before completion, file not saved.")
 
-def player():
+def player(callback):
     """
     playback the MIDI file associated with the current track using fluidsynth for live monitoring. 
     It reads the MIDI file and sends messages to the synthesizer in real-time.
     """
-    # print(f"[player start] isPlaying: {s.is_playing}")
+
     mid = mido.MidiFile(s.s_t.midi_file_name)
     for msg in mid.play():
         on_midi(msg)  # This will trigger the on_midi callback for live monitoring
 
-    s.is_playing = False
-    # print(f"[player end] isPlaying: {s.is_playing}")
+    # Indicates that we're done playing to the caller
+    callback()
 

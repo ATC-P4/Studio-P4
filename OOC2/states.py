@@ -10,6 +10,7 @@ recorded_ticks = 0 #counter for the number of ticks recorded, used to determine 
 #flags
 terminate_flag = False #flag to signal threads to stop
 record_flag = False #flag to control recording state
+metronome_on = False
 
 is_playing = False # Flag to control playback of recorded MIDI file
 midi_callback = None #variable to hold the MIDI callback function, allowing dynamic assignment and control over MIDI message handling

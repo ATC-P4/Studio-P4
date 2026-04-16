@@ -33,13 +33,17 @@ class Track:
         self.fs.setting('synth.gain', 1.0)
 
     #update the soundfont used by the track, call after changing the sf2_file_name attribute to apply the change
-    def update_soundfont(self, channel: int, sf2_file_name: str="") -> None:
+    def update_soundfont(self, sf2_file_name: str, channel: int=-1, ) -> None:
         self.sf2_file_name = sf2_file_name
 
         if sf2_file_name:
             self.sfid = self.fs.sfload(self.sf2_file_name)
+            if self.sfid != -1:
+                self.fs.program_select(0, self.sfid, 0, 0)
 
-        self.fs.program_select(channel, self.sfid, 0, 0)
+        if channel != -1:
+            self.channel = channel
+            self.fs.program_select(channel, self.sfid, 0, 0)
 
     def play_note(self, msg):
         # Optional live monitoring through fluidsynth
