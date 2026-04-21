@@ -3,10 +3,11 @@ import fluidsynth as fs_cls
 import platform
 
 class Track:
-    def __init__(self, name:str, midi_file_name:str = "", sf2_file_name:str ="basic_piano.SF2"):
+    def __init__(self, name:str, midi_file_name:str | None = "default.mid", sf2_file_name:str ="basic_piano.SF2"):
         self.name = name
         self.length = 0 # number of bars
         self.midi_file_name = midi_file_name
+        
         self.sf2_file_name = sf2_file_name
         self.fs: fs_cls.Synth = fs_cls.Synth()
         self.channel = 0
@@ -15,6 +16,9 @@ class Track:
 
         # auto-run on object creation
         self.initialize_synth()
+
+    def track_name(self) -> (str | None):
+        return self.midi_file_name
 
     #initialize the synthesizer with the default soundfont, can be called again to change the soundfont on the fly
     def initialize_synth(self) -> None:
