@@ -13,4 +13,9 @@ __pycache__/
 *.mid
 *.mp3
 
+# Voice model
+fr_FR-siwis-medium.onnx
+fr_FR-siwis-medium.onnx.json
+
+# Daniel
 atc/
