@@ -1,60 +1,30 @@
+# System imports
+from collections.abc import Iterable
 import os
-import queue
+from queue import Queue
 import sys
 import threading
 import time
 
+# Installed imports
 import numpy as np
+from piper import PiperVoice, SynthesisConfig, AudioChunk
+import pyaudio as pa
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QApplication, QLabel, QMainWindow, QPushButton, QVBoxLayout, QWidget
 )
 import sounddevice as sd
-import soundfile as sf
 
+# Our imports
 import functions as f
 import states as s
 
-# Test
-from piper import PiperVoice
-import wave
-import io
-
-
-# ---------------------------------------------------------------------------
-# EXCEPTION CATCHING
-# ---------------------------------------------------------------------------
-
-import signal
-import faulthandler
-
-# Dumps a Python traceback even on hard crashes (SIGSEGV etc.)
-faulthandler.enable()
-
-def signal_handler(sig, frame):
-    print(f"[SIGNAL] Received signal {signal.Signals(sig).name}")
-    import traceback
-    traceback.print_stack(frame)
-
-signal.signal(signal.SIGTERM, signal_handler)
-signal.signal(signal.SIGSEGV, signal_handler)  # May not work on Windows
-
-# import sys
-# sys.stderr = open("crash.log", "w", buffering=1)  # line-buffered
-# sys.stdout = open("out.log", "w", buffering=1)
-
-def global_thread_exception_handler(args):
-    print(f"[CRASH] Thread exception: {args.exc_type.__name__}: {args.exc_value}")
-    import traceback
-    traceback.print_tb(args.exc_traceback)
-
-threading.excepthook = global_thread_exception_handler
-
-# ---------------------------------------------------------------------------
 
 
 class AccessibleStudio(QMainWindow):
+    
     # Secure communication app (Signal)
     midi_signal = Signal(object)
 
@@ -62,9 +32,21 @@ class AccessibleStudio(QMainWindow):
         
         super().__init__()
 
-        self._speech_queue = queue.Queue()
+        # Speech model
+        # _speech_queue is a Queue[Iterable[AudioChunk]]
+        self._speech_queue = Queue()
         voice_path = "fr_FR-siwis-medium.onnx" # os.path.join(self.base_dir, "fr_FR-siwis-medium.onnx")
         self._voice = PiperVoice.load(voice_path)
+        self._voice_config = SynthesisConfig(
+            volume=0.5,           # half as loud
+            length_scale=1.2,     # 50% slower
+            noise_scale=0.667,    # amount of audio variation
+            noise_w_scale=0.8,    # amount of speaking variation
+            normalize_audio=True  # automatically normalize volume
+        )
+
+        # Initialise speech thread
+        threading.Thread(target=self._speech_worker, daemon=True).start()
 
         # Current "state" members (TODO: cleanup)
         self.rec_thread = False
@@ -91,23 +73,33 @@ class AccessibleStudio(QMainWindow):
     # SPEECH THREAD
     # ---------------------------------------------------------------------------
 
-    # TODO: initialise speech thread
     def _speech_worker(self) -> None:
         """Single persistent thread that owns the audio engine exclusively."""
+
+        # Instantiate audio player (used with speech model output)
+        player = pa.PyAudio()
+        stream = player.open(
+            format=pa.paInt16,
+            channels=1,
+            rate=self._voice.config.sample_rate,
+            output=True
+        )
+
         while True:
-            text = self._speech_queue.get()
-            if text is None:  # Poison pill to shut down cleanly
+            # Get next sentence to speak
+            to_speak = self._speech_queue.get()
+
+            # Poison pill shutdown
+            if to_speak is None:
+                stream.stop_stream()
+                stream.close()
                 return
-            try:
-                buf = io.BytesIO()
-                with wave.open(buf, 'wb') as wav:
-                    self._voice.synthesize(text, wav)
-                buf.seek(0)
-                data, samplerate = sf.read(buf)
-                sd.play(data, samplerate)
-                sd.wait()
-            except Exception as e:
-                print(f"[speech] Error: {e}")
+
+            # Speak sentence
+            for chunk in to_speak:
+                stream.write(chunk.audio_int16_bytes)
+
+
 
     # ---------------------------------------------------------------------------
     # BACKEND INITIALIZATION
@@ -183,9 +175,14 @@ class AccessibleStudio(QMainWindow):
         """
         Queues text for speech.
         """
-        # TODO
-        return
 
+        def _add_sentence():
+            print("Adding to speech queue")
+            snt = self._voice.synthesize(text)
+            self._speech_queue.put(snt)
+
+        # Do this in another thread since queue might block/speech synthesis might delay soemthing else
+        threading.Thread(target=_add_sentence, daemon=True).start()
         
 
     # ---------------------------------------------------------------------------
@@ -272,8 +269,6 @@ class AccessibleStudio(QMainWindow):
         for i in range(1, 5):
             
             self.label_status.setText(f"Décompte : {i}")
-            # We use synchronized audio here to prevent voice tracks from overlapping
-            # self.speak(f"{i}")
             self.play_tick(accent=(i == 1))
 
             # We wait for the rest of the beat
@@ -324,7 +319,6 @@ class AccessibleStudio(QMainWindow):
 
             s.is_playing = True
             self.label_status.setText("▶ LECTURE...")
-            # self.speak("Lecture de la piste.")
             # We start the player in a separate thread so we can stop it later if necessary
             threading.Thread(target=lambda: f.player(stop_playing), daemon=True).start()
 
@@ -338,7 +332,7 @@ class AccessibleStudio(QMainWindow):
             return
 
         s.m_p.bpm += 4
-        message = f"BPM {s.m_p.bpm}"
+        message = f"B P M {s.m_p.bpm}"
         self.label_status.setText(message)
         self.speak(message)
         print(f"[DEBUG] {message}")
@@ -351,13 +345,13 @@ class AccessibleStudio(QMainWindow):
         s.m_p.bpm -= 4
         # Safety measures to avoid a negative or zero BPM
         
-        message = f"BPM {s.m_p.bpm}"
+        message = f"B P M {s.m_p.bpm}"
         self.label_status.setText(message)
         self.speak(message)
         print(f"[DEBUG] {message}")
 
     def speak_info(self):
-        self.speak(f"BPM actuel: {s.m_p.bpm}")
+        self.speak(f"B P M actuel: {s.m_p.bpm}")
 
     # ---------------------------------------------------------------------------
     # MIDI
@@ -417,6 +411,7 @@ class AccessibleStudio(QMainWindow):
         """
         print("Fermeture de l'application...")
         # TODO: terminate speech thread
+        self._speech_queue.put(None)
         # -----------------------------
         s.terminate_flag = True
         self.port_thread.join(timeout=1)
