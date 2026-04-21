@@ -12,3 +12,5 @@ __pycache__/
 # Fichiers volumineux (Optionnel : si tu ne veux pas envoyer tes musiques)
 *.mid
 *.mp3
+
+atc/
