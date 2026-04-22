@@ -1,9 +1,7 @@
-import os
 import fluidsynth as fs_cls
-import platform
 
 class Track:
-    def __init__(self, name:str, midi_file_name:str | None = "default.mid", sf2_file_name:str ="basic_piano.SF2"):
+    def __init__(self, name:str, midi_file_name:str | None = None, sf2_file_name:str ="basic_piano.SF2"):
         self.name = name
         self.length = 0 # number of bars
         self.midi_file_name = midi_file_name
@@ -19,7 +17,7 @@ class Track:
 
 
     def to_string(self) -> str:
-        return f"Track:[name={self.name}, length={self.length}, midi_file_name={self.midi_file_name}, sf={self.sf2_file_name}, fs={self.fs}, channel={self.channel}, sfid={self.sfid}]"
+        return f"Track:[name='{self.name}', length={self.length}, midi_file_name={self.midi_file_name}, sf={self.sf2_file_name}, fs={self.fs.__str__()}, channel={self.channel}, sfid={self.sfid}]"
 
     def track_name(self) -> (str | None):
         return self.midi_file_name
@@ -77,4 +75,4 @@ class Project:
         return track
 
     def to_string(self) -> str:
-        return f"Project:[pname={self.pname}, bpm={self.bpm}, tpb={self.tpb}, time_signature={self.time_signature}, tracks={self.tracks}]"
+        return f"Project:[pname='{self.pname}', bpm={self.bpm}, tpb={self.tpb}, time_signature={self.time_signature}, tracks={self.tracks.__str__()}]"

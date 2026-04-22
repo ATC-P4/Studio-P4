@@ -89,7 +89,7 @@ def record(state: ApplicationState):
     if state.selected_track is None or state.main_project is None:
         return
 
-    bpm = state.selected_track.bpm
+    bpm = state.main_project.bpm
     ts_num, ts_den = state.main_project.time_signature
     total_time = state.selected_track.length * ts_num * (60.0 / bpm) * (4.0 / ts_den)
     target_ticks = round(mido.second2tick(total_time, state.main_project.tpb, mido.bpm2tempo(state.main_project.bpm)))
@@ -109,41 +109,44 @@ def record(state: ApplicationState):
         # elapsed = time.time() - record_start_time
         # if elapsed >= total_time:
         #     print("Reached track duration.")
-        #     completed= True
-        #     s.record_flag = False
+        #     completed = True
+        #     state.record_flag = False
         time.sleep(0.1)  # Sleep briefly to reduce CPU usage
 
     if not state.record_flag:
         completed = True
     
-    
-    #check for completion and pad the MIDI track if necessary, also check for unclosed notes and close them if needed before saving the file
+    # Check for completion and pad the MIDI track if necessary, also check for unclosed notes and close them if needed before saving the file
     if completed:
         if state.recorded_ticks < target_ticks:
             print("Padding MIDI track to reach target length...")
             pad_ticks = max(0, target_ticks - state.recorded_ticks)
             state.midi_track.append(mido.MetaMessage("end_of_track", time=pad_ticks))
+
         # elif s.recorded_ticks > target_ticks:
         #     print("Warning: Recorded MIDI exceeds target length. Consider adjusting track length or tempo.")
         # print("checking for unclosed notes...")
 
         # Ensure all notes are properly closed
         # Assume that every note is from the same channel
+
         active_notes = {}
         for msg in state.midi_track:
             if msg.type == "note_on" and msg.velocity > 0:
                 active_notes[msg.note] = msg
             elif (msg.type == "note_off") or (msg.type == "note_on" and msg.velocity == 0):
                 active_notes.pop(msg.note, None)
+
         if active_notes:
             print("Warning: Found unclosed notes.")
             for (channel, note), msg in active_notes.items():
                 print(f" - Channel {channel}, Note {note} started at tick {msg.time} was not closed.")
                 state.midi_track.append(mido.Message("note_off", channel=channel, note=note, velocity=0, time=0))
+
+        # Save midi file
         if state.selected_track.midi_file_name:
             mid.save(state.selected_track.midi_file_name)
-            if (state.selected_track != None):
-                print(f"Successfully saved to {state.selected_track.midi_file_name}")
+            print(f"Successfully saved to {state.selected_track.midi_file_name}")
         
     else:
         print("Recording stopped before completion, file not saved.")
@@ -154,12 +157,14 @@ def player(callback,state: ApplicationState):
     It reads the MIDI file and sends messages to the synthesizer in real-time.
     """
 
+    # Check the selected track and filename are not None
     if state.selected_track is None:
         return
-    if state.selected_track.midi_file_name is None:
+    filename = state.selected_track.midi_file_name
+    if filename is None:
         return
     
-    mid = mido.MidiFile(state.selected_track.midi_file_name)
+    mid = mido.MidiFile(filename)
     for msg in mid.play():
         on_midi(msg, state)  # This will trigger the on_midi callback for live monitoring
 

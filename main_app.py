@@ -7,6 +7,7 @@ import sys
 import threading
 import time
 from typing import Any
+import re
 
 # Installed imports
 from mido import MidiFile, MidiTrack, Message
@@ -47,26 +48,25 @@ class UpdatableBlockingQueue(object):
 
 
 
-
 class ApplicationState():
 
-    def __init__(self, main_project=None, selected_track=None, midi_track=None, midi_callback=None, bpm=120) -> None:
+    def __init__(self, main_project, selected_track, midi_track, midi_callback=None, bpm=120) -> None:
 
         # List of global variables that define the state of the program, used for communication between threads and functions
 
         # Objects and functions 
         # Main project object, holds the project settings and tracks
-        self.main_project: Project | None = None
+        self.main_project: Project = main_project
         # Selected track object, holds the track settings and MIDI data
-        self.selected_track: Track | None = None
+        self.selected_track: Track = selected_track
         # MIDI track object from mido, used to store recorded MIDI messages
-        self.midi_track: MidiTrack | None = None 
+        self.midi_track: MidiTrack = midi_track
         # Holds the MIDI callback function, allowing dynamic assignment and control over MIDI message handling
-        self.midi_callback: Callable[[Message], None] | None = None
+        self.midi_callback: Callable[[Message], None] | None = midi_callback
 
         # Counters
         # Timestamp of the last received MIDI message, used to calculate time deltas for recording
-        self.last_msg_time: float | None = None 
+        self.last_msg_time: float | None = None
         # Counts the number of recorded ticks, used to determine when to stop recording based on track length and tempo
         self.recorded_ticks: int = 0
         # Current BPM
@@ -99,7 +99,7 @@ class ApplicationState():
 
         mt = "midi_track: "
         if self.midi_track is not None:
-            mt += self.midi_track.name
+            mt += self.midi_track.__str__()
         else:
             mt += "None"
 
@@ -130,6 +130,12 @@ class ApplicationState():
                 )"""
 
 
+# Quick clickable QLabel (thanks StackOverflow)
+class _QLabel(QLabel):
+    clicked=Signal()
+
+    def mousePressEvent(self, ev):
+        self.clicked.emit()
 
 
 class SpeechType(Enum):
@@ -145,10 +151,10 @@ class SpeechType(Enum):
 from main_app import SpeechType as st
 
 class AccessibleStudio(QMainWindow):
+
     
     # Secure communication app (Signal)
     midi_signal: Signal = Signal(object)
-    _request_save_dialog: Signal = Signal()
 
     def __init__(self) -> None:
         
@@ -186,13 +192,12 @@ class AccessibleStudio(QMainWindow):
         # TODO
         proj: Project = Project(pname="Projet P4")
         track: Track = proj.add_track("Piste piano")
-        track.midi_file_name = os.path.join(os.path.abspath(__file__), "piano_track.mid")
         track.update_soundfont("basic_piano.SF2")
 
         # Init current state
         self._state = ApplicationState(main_project=proj, midi_track=MidiTrack(),
                                         selected_track=track, midi_callback=self.midi_signal.emit)
-        
+    
         # initiating the time tracking (?)
         # mid = MidiFile(ticks_per_beat=self._state.main_project.tpb)
         # mid.tracks.append(self._state.midi_track)
@@ -201,10 +206,14 @@ class AccessibleStudio(QMainWindow):
         threading.Thread(target=lambda: f.port_discovery(self._state), daemon=True).start()
 
         self._init_ui()
-        self._init_shortcuts()
 
-        self._save_event = threading.Event()
-        self._request_save_dialog.connect(self._run_save_dialog)
+        QShortcut(QKeySequence("R"), self, self.action_record)
+        QShortcut(QKeySequence("Space"), self, self.action_play)
+        QShortcut(QKeySequence("Up"), self, self.bpm_up)
+        QShortcut(QKeySequence("Down"), self, self.bpm_down)
+        QShortcut(QKeySequence("B"), self, self.bpm_info)
+        QShortcut(QKeySequence("M"), self, self.metronome_toggle)
+        QShortcut(QKeySequence("I"), self, self.speak_info)
 
         self.speak(st.WELCOME, "Bienvenue dans le prototype 1 de Logiciel Studio.")
 
@@ -280,14 +289,19 @@ class AccessibleStudio(QMainWindow):
         self.label_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # --- Metronome status label ---
-        self.label_metronome = QLabel()
+        self.label_metronome = _QLabel()
         self.label_metronome.setObjectName("MetronomeStatus")
         self.label_metronome.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._update_metronome_label()  # set initial text and style
         # ------------------------------
 
         self.btn_rec = QPushButton("🔴 RECORD (R)")
+        self.btn_rec.setAccessibleIdentifier("Enregistrement")
+        self.btn_rec.setAccessibleDescription("Bouton pour démarrer ou arrêter un enregistrement.")
+
         self.btn_play = QPushButton("▶ PLAY (ESPACE)")
+        self.btn_play.setAccessibleIdentifier("Play")
+        self.btn_play.setAccessibleDescription("Bouton pour démarrer le playback du track enregistré.")
 
         layout = QVBoxLayout()
         layout.addWidget(self.label_status)
@@ -301,15 +315,8 @@ class AccessibleStudio(QMainWindow):
         self.btn_rec.clicked.connect(self.action_record)
         self.btn_play.clicked.connect(self.action_play)
 
+        self.label_metronome.clicked.connect(self.metronome_toggle)
 
-    def _init_shortcuts(self):
-        QShortcut(QKeySequence("R"), self, self.action_record)
-        QShortcut(QKeySequence("Space"), self, self.action_play)
-        QShortcut(QKeySequence("Up"), self, self.bpm_up)
-        QShortcut(QKeySequence("Down"), self, self.bpm_down)
-        QShortcut(QKeySequence("B"), self, self.bpm_info)
-        QShortcut(QKeySequence("M"), self, self.metronome_toggle)
-        QShortcut(QKeySequence("I"), self, self.speak_info)
 
     # ---------------------------------------------------------------------------
     # SPEECH
@@ -383,6 +390,10 @@ class AccessibleStudio(QMainWindow):
             if self.rec_thread:
                 return
             else:
+                if self._state.selected_track.midi_file_name is None:
+                    name = self.save_track_dialog()
+                    self._state.selected_track.midi_file_name = name
+
                 self.rec_thread = True 
                 threading.Thread(target=self.recording_sequence, daemon=True).start()
                 if self._state.metronome_on:
@@ -405,24 +416,13 @@ class AccessibleStudio(QMainWindow):
 
         f.record(self._state)
 
-        # Open save dialog
-        self._save_event.clear()
-        self._request_save_dialog.emit()   # safely wakes up the main thread
-        self._save_event.wait()            # background thread blocks until dialog closes
-
         self.label_status.setText("Prêt")
         time.sleep(0.2)
-        self.speak(st.TRACK_SAVE, "Piste sauvegardée.")
 
-    # This slot is called on the GUI thread by recording_sequence
-    def _run_save_dialog(self):
-        path = self.save_track_dialog()
-        if path:
-            self._state.selected_track.midi_file_name = path
-            print(f"Sauvegardé dans '{path}'.")
-        else:
-            print("[DEBUG] Sauvegarde annulée.")
-        self._save_event.set()
+        if self._state.selected_track.midi_file_name is not None:
+            path = self._state.selected_track.midi_file_name.split("/")
+            name = path[len(path)-1]
+            self.speak(st.TRACK_SAVE, f"Piste sauvegardée dans le fichier {name}.")
 
 
 
@@ -430,7 +430,7 @@ class AccessibleStudio(QMainWindow):
     # SAVE DIALOG
     # ---------------------------------------------------------------------------
 
-    def save_track_dialog(self) -> str | None:
+    def save_track_dialog(self) -> str:
         """
         Opens a simple Save As dialog for the user to choose the MIDI file
         name and location.
@@ -439,9 +439,10 @@ class AccessibleStudio(QMainWindow):
         The .mid extension is appended automatically if omitted.
         """
 
-        fn = "default.mid"
+        self.speak(st.TRACK_SAVE, "Veuillez choisir un nom pour le fichier dans lequel sera sauvegardé le track MIDI.")
 
-        print(self._state.to_string())
+        DEFAULT = "track.mid"
+        fn = DEFAULT
 
         if self._state.selected_track.midi_file_name is not None:
             fn = self._state.selected_track.midi_file_name
@@ -456,11 +457,16 @@ class AccessibleStudio(QMainWindow):
         )
 
         if not file_path:
-            return None
+            self.speak(st.TRACK_SAVE, f"Nom choisi: {DEFAULT}")
+            return DEFAULT
 
         # Ensure the .mid extension is present
         if not file_path.lower().endswith(".mid"):
             file_path += ".mid"
+
+        fp = file_path.split("/")
+        name = fp[len(fp)-1]
+        self.speak(st.TRACK_SAVE, f"Nom choisi: {name}")
 
         return file_path
 
