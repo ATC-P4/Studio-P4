@@ -1,17 +1,17 @@
 # System imports
-from collections.abc import Callable, Iterable
+from collections.abc import Callable #, Iterable
 from enum import Enum
 import os
-from queue import Queue
+# from queue import Queue
 import sys
 import threading
 import time
 from typing import Any
 
 # Installed imports
-from mido import MidiTrack, Message
+from mido import MidiFile, MidiTrack, Message
 import numpy as np
-from piper import PiperVoice, SynthesisConfig, AudioChunk
+from piper import PiperVoice, SynthesisConfig #, AudioChunk
 import pyaudio as pa
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QKeySequence, QShortcut
@@ -70,7 +70,7 @@ class ApplicationState():
         # Counts the number of recorded ticks, used to determine when to stop recording based on track length and tempo
         self.recorded_ticks: int = 0
         # Current BPM
-        self.bpm = bpm
+        self.bpm: int = bpm
 
         # Flags
         # Signals that we're closing the app
@@ -81,6 +81,54 @@ class ApplicationState():
         self.metronome_on: bool = False
         # Whether we're currently playing back a track
         self.is_playing: bool = False
+
+
+    def to_string(self) -> str:
+
+        project = "main_project: "
+        if self.main_project is not None:
+            project += self.main_project.to_string()
+        else:
+            project += "None"
+
+        st = "selected_track: "
+        if self.selected_track is not None:
+            st += self.selected_track.to_string()
+        else:
+            st += "None"
+
+        mt = "midi_track: "
+        if self.midi_track is not None:
+            mt += self.midi_track.name
+        else:
+            mt += "None"
+
+        mc = "midi_callback: "
+        if self.midi_callback is not None:
+            mc += self.midi_callback.__str__()
+        else:
+            mc += "None"
+
+        lmt = "last_msg_time: "
+        if self.last_msg_time is not None:
+            lmt += f"{self.last_msg_time}"
+        else:
+            lmt += "None"
+
+        return f"""ApplicationState(
+                {project},
+                {st},
+                {mt},
+                {mc},
+                {lmt},
+                recorded_ticks: {self.recorded_ticks}
+                bpm: {self.bpm}
+                terminate_flag: {self.terminate_flag},
+                record_flag: {self.record_flag},
+                metronome_on: {self.metronome_on},
+                is_playing: {self.is_playing}
+                )"""
+
 
 
 
@@ -136,17 +184,19 @@ class AccessibleStudio(QMainWindow):
         # BACKEND INITIALIZATION
         # ---------------------------------------------------------------------------
         # TODO
-        proj = Project(pname="Projet P4")
-        track = proj.add_track("Piste piano")
-        curr_path = os.path.abspath(__file__)
-        track.midi_file_name = os.path.join(curr_path, "piano_track.mid")
-        sf_path = os.path.join(curr_path, "basic_piano.SF2")
-        track.update_soundfont(sf_path)
+        proj: Project = Project(pname="Projet P4")
+        track: Track = proj.add_track("Piste piano")
+        track.midi_file_name = os.path.join(os.path.abspath(__file__), "piano_track.mid")
+        track.update_soundfont("basic_piano.SF2")
 
         # Init current state
-        self._state = ApplicationState(main_project=proj, 
-                                        midi_track= track, midi_callback=self.midi_signal.emit)
+        self._state = ApplicationState(main_project=proj, midi_track=MidiTrack(),
+                                        selected_track=track, midi_callback=self.midi_signal.emit)
         
+        # initiating the time tracking (?)
+        # mid = MidiFile(ticks_per_beat=self._state.main_project.tpb)
+        # mid.tracks.append(self._state.midi_track)
+
         # Start port discovery thread
         threading.Thread(target=lambda: f.port_discovery(self._state), daemon=True).start()
 
@@ -269,7 +319,6 @@ class AccessibleStudio(QMainWindow):
         """Queues text for speech."""
 
         def _add_sentence():
-            print("Adding to speech queue")
             snt = self._voice.synthesize(text)
             self._speech_queue.put(type, snt)
 
@@ -314,8 +363,6 @@ class AccessibleStudio(QMainWindow):
         bpm = self._state.bpm
         beat_duration = 60.0 / bpm
 
-        print(f"[play_metronome] {self._state.metronome_on} {self.rec_thread}")
-
         while(self.rec_thread):
             for i in range(1, 5):
                 if self._state.metronome_on:
@@ -348,8 +395,6 @@ class AccessibleStudio(QMainWindow):
         bpm = self._state.bpm
         beat_duration = 60.0 / bpm
 
-        print(f"[DEBUG] Lancement du décompte à {bpm} BPM")
-
         for i in range(1, 5):
             self.label_status.setText(f"Décompte : {i}")
             self.play_tick(accent=(i == 1))
@@ -357,7 +402,6 @@ class AccessibleStudio(QMainWindow):
 
         self._state.record_flag = True
         self.label_status.setText("🔴 ENREGISTREMENT...")
-        print("[DEBUG] Go Record!")
 
         f.record(self._state)
 
@@ -375,6 +419,7 @@ class AccessibleStudio(QMainWindow):
         path = self.save_track_dialog()
         if path:
             self._state.selected_track.midi_file_name = path
+            print(f"Sauvegardé dans '{path}'.")
         else:
             print("[DEBUG] Sauvegarde annulée.")
         self._save_event.set()
@@ -395,6 +440,9 @@ class AccessibleStudio(QMainWindow):
         """
 
         fn = "default.mid"
+
+        print(self._state.to_string())
+
         if self._state.selected_track.midi_file_name is not None:
             fn = self._state.selected_track.midi_file_name
 
@@ -496,11 +544,9 @@ class AccessibleStudio(QMainWindow):
             return
 
         if msg.control == 119 and msg.value > 0:
-            print("[MIDI] Bouton RECORD pressé")
             self.action_record()
 
         elif msg.control == 118 and msg.value > 0:
-            print("[MIDI] Bouton PLAY pressé")
             self.action_play()
 
         elif msg.control == 77:

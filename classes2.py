@@ -17,6 +17,10 @@ class Track:
         # auto-run on object creation
         self.initialize_synth()
 
+
+    def to_string(self) -> str:
+        return f"Track:[name={self.name}, length={self.length}, midi_file_name={self.midi_file_name}, sf={self.sf2_file_name}, fs={self.fs}, channel={self.channel}, sfid={self.sfid}]"
+
     def track_name(self) -> (str | None):
         return self.midi_file_name
 
@@ -71,3 +75,6 @@ class Project:
         track = Track(track_name)#, sf2_file_name="arachno_soundfont_v1.0.sf2")
         self.tracks.append(track)
         return track
+
+    def to_string(self) -> str:
+        return f"Project:[pname={self.pname}, bpm={self.bpm}, tpb={self.tpb}, time_signature={self.time_signature}, tracks={self.tracks}]"
