@@ -33,18 +33,18 @@ stream = player.open(
 print("Creating TTS audio chunks...")
 audio = voice.synthesize(text="Bonjour, je suis le studio P4.", syn_config=syn_config)
 
-print("Streaming audio chunks...")
-for chunk in audio:
-    stream.write(chunk.audio_int16_bytes)
+# print("Streaming audio chunks...")
+# for chunk in audio:
+#     stream.write(chunk.audio_int16_bytes)
 
-# Reloading more TTS
-print("Creating next TTS audio chunks...")
-audio = voice.synthesize(text="Bonjour, je suis à l'innovation park et il fait beau.", syn_config=syn_config)
+# # Reloading more TTS
+# print("Creating next TTS audio chunks...")
+# audio = voice.synthesize(text="Bonjour, je suis à l'innovation park et il fait beau.", syn_config=syn_config)
 
-# Reading them
-print("Streaming next chunks...")
-for chunk in audio:
-    stream.write(chunk.audio_int16_bytes)
+# # Reading them
+# print("Streaming next chunks...")
+# for chunk in audio:
+#     stream.write(chunk.audio_int16_bytes)
 
 print("Stopping and closing sream...")
 stream.stop_stream()

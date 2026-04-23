@@ -1,7 +1,9 @@
 import fluidsynth as fs_cls
+import mido as md
+import time
 
 class Track:
-    def __init__(self, name:str, midi_file_name:str | None = None, sf2_file_name:str ="basic_piano.SF2"):
+    def __init__(self, name:str, bpm:int, tpb: int, midi_file_name:str | None = None, sf2_file_name:str ="basic_piano.SF2"):
         self.name = name
         self.length = 0 # number of bars
         self.midi_file_name = midi_file_name
@@ -15,7 +17,14 @@ class Track:
         # auto-run on object creation
         self.initialize_synth()
 
+        self.recorded_ticks = 0
+        self.last_msg_time = None
+        self.record_flag = False
+        self.midi_track = md.MidiTrack()
+        self.bpm = bpm
+        self.tpb = tpb
 
+    # TODO: new attributes
     def to_string(self) -> str:
         return f"Track:[name='{self.name}', length={self.length}, midi_file_name={self.midi_file_name}, sf={self.sf2_file_name}, fs={self.fs.__str__()}, channel={self.channel}, sfid={self.sfid}]"
 
@@ -52,6 +61,23 @@ class Track:
             self.fs.program_select(channel, self.sfid, 0, 0)
 
     def play_note(self, msg):
+
+        if self.record_flag:
+
+            print(f"[play_note] recording: {msg}")
+
+
+            now = time.time()
+            delta_seconds = 0
+            if self.last_msg_time is not None:
+                delta_seconds = now - self.last_msg_time
+            self.last_msg_time = now
+
+            ticks = md.second2tick(delta_seconds, self.tpb, md.bpm2tempo(self.bpm))
+            round_ticks = round(ticks)
+            self.recorded_ticks += round_ticks
+            self.midi_track.append(msg.copy(time=round_ticks))
+
         # Optional live monitoring through fluidsynth
         if msg.type == "note_on":
             self.fs.noteon(self.channel, msg.note, msg.velocity)
@@ -70,7 +96,7 @@ class Project:
         self.tracks = [] #list of tracks
 
     def add_track(self, track_name):
-        track = Track(track_name)#, sf2_file_name="arachno_soundfont_v1.0.sf2")
+        track = Track(track_name, self.bpm, self.tpb)#, sf2_file_name="arachno_soundfont_v1.0.sf2")
         self.tracks.append(track)
         return track
 

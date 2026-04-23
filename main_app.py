@@ -50,7 +50,7 @@ class UpdatableBlockingQueue(object):
 
 class ApplicationState():
 
-    def __init__(self, main_project, selected_track, midi_track, midi_callback=None, bpm=120) -> None:
+    def __init__(self, main_project, selected_track, midi_callback=None, bpm=120) -> None:
 
         # List of global variables that define the state of the program, used for communication between threads and functions
 
@@ -60,15 +60,15 @@ class ApplicationState():
         # Selected track object, holds the track settings and MIDI data
         self.selected_track: Track = selected_track
         # MIDI track object from mido, used to store recorded MIDI messages
-        self.midi_track: MidiTrack = midi_track
+        # self.midi_track: MidiTrack = midi_track
         # Holds the MIDI callback function, allowing dynamic assignment and control over MIDI message handling
         self.midi_callback: Callable[[Message], None] | None = midi_callback
 
         # Counters
         # Timestamp of the last received MIDI message, used to calculate time deltas for recording
-        self.last_msg_time: float | None = None
+        # self.last_msg_time: float | None = None
         # Counts the number of recorded ticks, used to determine when to stop recording based on track length and tempo
-        self.recorded_ticks: int = 0
+        # self.recorded_ticks: int = 0
         # Current BPM
         self.bpm: int = bpm
 
@@ -82,7 +82,7 @@ class ApplicationState():
         # Whether we're currently playing back a track
         self.is_playing: bool = False
 
-
+    # TODO: class attributes have changed
     def to_string(self) -> str:
 
         project = "main_project: "
@@ -98,8 +98,8 @@ class ApplicationState():
             st += "None"
 
         mt = "midi_track: "
-        if self.midi_track is not None:
-            mt += self.midi_track.__str__()
+        if self.selected_track.midi_track is not None:
+            mt += self.selected_track.midi_track.__str__()
         else:
             mt += "None"
 
@@ -110,8 +110,8 @@ class ApplicationState():
             mc += "None"
 
         lmt = "last_msg_time: "
-        if self.last_msg_time is not None:
-            lmt += f"{self.last_msg_time}"
+        if self.selected_track.last_msg_time is not None:
+            lmt += f"{self.selected_track.last_msg_time}"
         else:
             lmt += "None"
 
@@ -121,7 +121,7 @@ class ApplicationState():
                 {mt},
                 {mc},
                 {lmt},
-                recorded_ticks: {self.recorded_ticks}
+                recorded_ticks: {self.selected_track.recorded_ticks}
                 bpm: {self.bpm}
                 terminate_flag: {self.terminate_flag},
                 record_flag: {self.record_flag},
@@ -195,7 +195,7 @@ class AccessibleStudio(QMainWindow):
         track.update_soundfont("basic_piano.SF2")
 
         # Init current state
-        self._state = ApplicationState(main_project=proj, midi_track=MidiTrack(),
+        self._state = ApplicationState(main_project=proj,
                                         selected_track=track, midi_callback=self.midi_signal.emit)
     
         # initiating the time tracking (?)
@@ -298,6 +298,7 @@ class AccessibleStudio(QMainWindow):
         self.btn_rec = QPushButton("🔴 RECORD (R)")
         self.btn_rec.setAccessibleIdentifier("Enregistrement")
         self.btn_rec.setAccessibleDescription("Bouton pour démarrer ou arrêter un enregistrement.")
+        self.btn_rec.setAccessibleName
 
         self.btn_play = QPushButton("▶ PLAY (ESPACE)")
         self.btn_play.setAccessibleIdentifier("Play")
@@ -507,7 +508,7 @@ class AccessibleStudio(QMainWindow):
     # ---------------------------------------------------------------------------
 
     def bpm_up(self):
-        if self._state.bpm >= 400:
+        if self._state.bpm >= 320:
             return
         self._state.bpm += 4
         message = f"B P M {self._state.bpm}"
@@ -515,7 +516,7 @@ class AccessibleStudio(QMainWindow):
         self.speak(st.BPM_MOD, message)
 
     def bpm_down(self):
-        if self._state.bpm <= 10:
+        if self._state.bpm <= 8:
             return
         self._state.bpm -= 4
         message = f"B P M {self._state.bpm}"
