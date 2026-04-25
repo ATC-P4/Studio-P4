@@ -1,17 +1,3 @@
-"""ui/main_window.py (Main Frontend)
-Goal: Assemble the GUI and handle programmatic focus (MIDI navigation).
-
-Class MainWindow(QMainWindow)
-
-__init__(): Build the main layout. Add the Record/Play buttons. Instantiate multiple TrackWidgets.
-
-Custom Qt Signals: Define global UI signals (e.g., record_requested).
-
-handle_midi_navigation(command_string): TODO: Use focusNextChild() / focusPreviousChild() based on "NAV_UP" or "NAV_DOWN".
-
-update_ui(state_dto): TODO: Iterate through the TrackWidgets and pass them their respective dictionary data. Update global Record/Play button colors based on engine state."""
-#100% vibe coded
-
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QCheckBox, QApplication
 from PySide6.QtCore import Signal, Qt
 from ui.track_widget import TrackWidget
@@ -25,8 +11,6 @@ class MainWindow(QMainWindow):
     track_armed = Signal(int)
     instrument_changed = Signal(int, str)
     add_track_requested = Signal()
-    midi_learn_requested = Signal(str, object) # action_to_map, success_callback
-    midi_reset_requested = Signal()
     backend_state_changed = Signal(dict)
 
     def __init__(self):
@@ -65,21 +49,6 @@ class MainWindow(QMainWindow):
         
         self.track_widgets = {} # Dictionary tracking {track_id: TrackWidget_Instance}
 
-        # --- Midi mapping buttons ---
-        #create a learn midi button
-        self.learn_midi_btn = QPushButton("Learn MIDI Mapping")
-        # Create a reset button
-        self.reset_map_btn = QPushButton("Reset MIDI Mapping")
-
-        midi_control_layout = QHBoxLayout()
-        midi_control_layout.addWidget(self.learn_midi_btn)
-        midi_control_layout.addWidget(self.reset_map_btn)
-        self.main_layout.addLayout(midi_control_layout)
-        
-        # Wire the button directly to the API method
-        self.learn_midi_btn.clicked.connect(lambda: self.midi_learn_requested.emit("BPM_KNOB", lambda action: print(f"Successfully mapped {action}")))
-        self.reset_map_btn.clicked.connect(self.midi_reset_requested.emit)
-        
         # Add the button to your layout (e.g., self.layout.addWidget(self.reset_map_btn))
 
         # Wire top bar clicks to our MainWindow signals

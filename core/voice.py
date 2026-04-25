@@ -2,6 +2,8 @@ import pyaudio as pa
 import threading
 from enum import Enum
 from piper import SynthesisConfig
+from core.utils import EventBus
+
 
 class VoiceType(Enum):
     BPM_INFO = 1
@@ -97,3 +99,46 @@ class VoiceService:
         self._is_running = False
         self._voice_queue.put(VoiceType.STOP, None)
     
+
+
+class VoicePresenter:
+    """Translates backend events into voice synthesizer commands."""
+    
+    def __init__(self, voice_service: VoiceService, event_bus: EventBus):
+        self.voice = voice_service
+        
+        # 1. Wire up the event subscriptions
+        event_bus.subscribe("TRACK_ARMED", self.announce_armed_track)
+        event_bus.subscribe("PROJECT_SAVED", self.announce_saved)
+        event_bus.subscribe("METRONOME_TOGGLED", self.announce_metronome)
+        event_bus.subscribe("BPM_CHANGED", self.announce_bpm)
+        event_bus.subscribe("RECORDING_STOPPED", self.announce_recording_stopped)
+        event_bus.subscribe("TRACK_MUTED", self.announce_track_muted)
+        event_bus.subscribe("STATUS_REQUESTED", self.announce_current_state)
+        event_bus.subscribe("GENERIC_ANNOUNCEMENT", lambda message: self.voice.speak(VoiceType.METR_INFO, message))
+
+    # 2. Define the exact text and voice types for each event
+    def announce_armed_track(self, track_name: str) -> None:
+        self.voice.speak(VoiceType.METR_INFO, f"{track_name} armé")
+
+    def announce_saved(self) -> None:
+        self.voice.speak(VoiceType.METR_INFO, "Projet sauvegardé")
+        
+    def announce_metronome(self, is_on: bool) -> None:
+        msg = "Metronome On" if is_on else "Metronome Off"
+        self.voice.speak(VoiceType.METR_TOGGLE, msg)
+
+    def announce_bpm(self, bpm: int) -> None:
+        self.voice.speak(VoiceType.BPM_MOD, f"B P M {bpm}")
+        
+    def announce_recording_stopped(self) -> None:
+        self.voice.speak(VoiceType.REC_STOP, "Enregistrement arrêté.")
+
+    def announce_track_muted(self, track_name: str, is_muted: bool) -> None:
+        status = "muté" if is_muted else "démuté"
+        self.voice.speak(VoiceType.METR_INFO, f"{track_name} {status}")
+    
+    def announce_current_state(self, metronome_status: str, bpm: int) -> None:
+        """announce current BPM and metronome status on demand"""
+        self.voice.speak(VoiceType.METR_INFO, f"Métronome actuellement {metronome_status}.")
+        self.voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}")

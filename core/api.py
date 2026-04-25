@@ -1,47 +1,47 @@
 import os
 
-from core.voice import VoiceType
-from core.utils import get_resource_path
+from enum import Enum, auto
+from typing import Callable, TYPE_CHECKING
+
+# enable class type checking
+if TYPE_CHECKING:
+    from core.engine import MasterClockEngine
+    from core.models import Project
+    from core.utils import EventBus
+    
 
 class LooperAPI:
-    def __init__(self, engine, project, audio_io, voice_service, ui_callback):
+    def __init__(self, engine : 'MasterClockEngine', project : 'Project', available_instruments, ui_callback, event_bus : 'EventBus'):
         """
         Stores the backend instances so the API can route commands to them.
         the ui_callback is a function that will be called after every state change to update the UI.
         """
         self._engine = engine
-        self._project = project
-        self._audio_io = audio_io
-        self._voice = voice_service  
+        self.project = project
         self._ui_callback = ui_callback
-        self._available_instruments = self.get_available_instruments()
+        self._available_instruments = available_instruments
         self._engine.on_state_change_cb = self._ui_callback # Link the engine's state change callback to the API's ui_callback
-        # Track what the joystick is currently controlling
-        self.nav_mode = "TRACK" # Can be "TRACK" or "INSTRUMENT" 
-         # Keeps track if the position of the armed track is at an edge(first or last track) to trigger extra function
-        self.at_edge = {"TOP_EDGE": False, "BOTTOM_EDGE": False} # can contain TOP_EDGE: true/false and BOTTOM_EDGE: true/false to indicate if the currently armed track is at an edge of the track list. 
-        # to trigger specific actions when the user goes twice over the edge (eg. if the user tries to go "down" while the last track is armed, first we put BOTTOM_EDGE = True, and if the user does it again, we can interpret that as a desire to add a new track and arm it, instead of just doing nothing)
-   
+        self.events = event_bus
+
     # Main toggle functions 
-    def toggle_record(self):
-        """
-        Initiates the recording sequence (which includes the count-in).
+    def toggle_record(self) -> None:
+        """ 
+        Toggle between the states Recording and Stopped, starting or stopping the recording. 
         """
         now = self._engine.current_state
         if now in ["RECORDING", "COUNT_IN"]:
             self._engine.set_state("STOPPED") # Cancel recording or count-in
 
             # Trigger voice on record toggle
-            self._voice.speak(VoiceType.REC_STOP, "Enregistrement arrêté.")
+            self.events.emit("RECORDING_STOPPED")  
         else:
             # If STOPPED or PLAYING, start the record sequence
             self._engine.set_state("COUNT_IN")
-
         self._ui_callback()
 
-    def toggle_playback(self):
+    def toggle_playback(self) -> None:
         """
-        Starts or stops the main clock engine.
+        Toggle between the states Playing and Stopped, starting or stopping the playback.
         """
         if self._engine.current_state == "PLAYING":
             self._engine.set_state("STOPPED")
@@ -49,85 +49,107 @@ class LooperAPI:
             self._engine.set_state("PLAYING")
         self._ui_callback()
 
-    def toggle_metronome(self, state: bool):
+    def toggle_metronome(self) -> None:
         """
-       Turns the metronome track on or off.
+        Toggles the metronome on or off.
         """
-        self._engine.set_metronome_state(state)
+        current_state = self._engine.get_metronome_state()
+        self._engine.set_metronome_state(not current_state)
         self._ui_callback()
 
         # Trigger voice on metronome change
-        msg = "Metronome On" if state else "Metronome Off"
-        self._voice.speak(VoiceType.METR_TOGGLE, msg)
+        self.events.emit("METRONOME_TOGGLED", is_on=not current_state)
 
-    # Track manipulation functions
-    def mute_track(self, track_id: int, state: bool):
+    def mute_track(self, track_id: int, state: bool) -> None:
         """
-        Mutes or unmutes a specific track and prevents the "infinite drone" bug.
+        Mute a track using the specific track_id and specific state
+
+        Args:
+            track_id (int): Track identifier
+            state (bool): state to set track.is_muted
         """
-        track = self._project.tracks[track_id]
+        track = self.project.tracks[track_id]
         track.is_muted = state
         if state:
             track.flush_notes()  # Stop any currently playing notes immediately, handles the drone issue when muting.
         self._ui_callback()
 
-    def add_track(self, name: str):
+    def _toggle_armed_track_mute(self) -> None:
+        """
+        Toggle the mute state of the armed track.
+        """
+        armed_track = self.project.get_armed_track()
+        if not armed_track: return
+        
+        track_index = self.project.tracks.index(armed_track)
+        self.mute_track(track_index, not armed_track.is_muted)
+        
+        status = "muté" if armed_track.is_muted else "démuté"
+        self.events.emit("TRACK_MUTED", track_name=armed_track.name, is_muted=armed_track.is_muted)
+        print("Nav left - toggling mute on armed track")
+
+    def add_track(self, name: str) -> None:
         """
         Adds a new track to the project with the given name.
         """
-        self._project.add_track(name)
+        self.project.add_track(name)
         self._ui_callback()
 
-    def arm_track(self, track_id: int):
+    def arm_track(self, track_id: int) -> None:
         """
-        Selects which track receives live MIDI input from the keyboard. Only one track can be armed at a time.
-        """ 
-        for i, track in enumerate(self._project.tracks):
+        Arm a specific track based on a track identifier.
+
+        Args:
+            track_id (int): track identifier
+        """
+        for i, track in enumerate(self.project.tracks):
             if track.is_armed and i != track_id:
                 track.flush_notes()  # Stop any currently playing notes immediately, handles the drone issue when switching armed tracks.
             track.is_armed = (i == track_id)
-        print(f"[API] Track {track_id} is now exclusively armed.")
+        #print(f"[API] Track {track_id} is now exclusively armed.")
         self._ui_callback()
 
-    def set_track_instrument(self, track_id: int, program_id: int):
+    def set_soundfont_instrument(self, track_id: int, program_id: int) -> None:
         """
-        Changes the MIDI instrument patch for a specific track.
+        -----WIP-----
+        Function to change the program_id used by fluidsynth to play the loded soundfont.
+        Depending on the sound font this action can change instrument.
+
+        Args:
+            track_id (int): Track identifier
+            program_id (int): Program identifier
         """
-        track = self._project.tracks[track_id]
+        track = self.project.tracks[track_id]
         track.set_instrument(program_id)
-        print(f"[API] Track {track_id} is now using instrument {program_id}.")
+        #print(f"[API] Track {track_id} is now using instrument {program_id}.")
         self._ui_callback()
 
-    def set_track_soundfont(self, track_id: int, sf2_path: str):
+    def set_track_soundfont(self, track_id: int, sf2_path: str) -> None:
         """
-        Changes the MIDI soundfont for a specific track.
+        Function to set a specific sound font, defined with a path, to a specific track using an identifier.
+
+        Args:
+            track_id (int): Track identifier
+            sf2_path (str): SoundFont path
         """
-        track = self._project.tracks[track_id]
+        track = self.project.tracks[track_id]
         track.set_soundfont(sf2_path)
         self._ui_callback()
 
-    def get_available_instruments(self):
-        """Scans the sf2 directory and returns a list of filenames."""
-        # sf2_dir = "sf2"
-        sf2_dir = get_resource_path("sf2")
-        if not os.path.exists(sf2_dir):
-            return ["basic_piano.sf2"] # Fallback if folder is missing
-            
-        # Get all .sf2 files, excluding the metronome so it doesn't show in the UI list
-        files = [f for f in os.listdir(sf2_dir) if f.endswith('.sf2') and "Metronom" not in f]
-        return files
-
-    def get_state_dto(self):
+    def get_state_dto(self) -> dict:
         """
         Constructs a "dumb" dictionary representing the entire state of the application.
         The UI calls this whenever the ui_callback alerts it that a change happened.
+
+        Returns:
+            dict: dictionary containing the application state variables
         """
         return {
             "current_state": self._engine.current_state,
-            "bpm": self._project.bpm,
-            "time_signature": self._project.time_signature,
+            "bpm": self.project.bpm,
+            "time_signature": self.project.time_signature,
             "metronome_on": self._engine.metronome_on,
-            "available_instruments": self.get_available_instruments(),
+            "available_instruments": self._available_instruments,
             "tracks": [
                 {
                     "id": i,
@@ -136,188 +158,50 @@ class LooperAPI:
                     "is_armed": track.is_armed,
                     "program_id": track.program_id
                 }
-                for i, track in enumerate(self._project.tracks)
+                for i, track in enumerate(self.project.tracks)
             ]
         }
     
-    def save_project_to_disk(self, path: str|None = None):
+    def saveproject_to_disk(self, path: str|None = None) -> None:
         """
-        Saves the current project state to disk. The directory_path is where the MIDI files will be saved.
+        Saves the current project state to disk at the given path.
+
+        Args:
+            path (str | None, optional): Path string. Defaults to None.
         """
-        self._project.save_project(path)
+        self.project.save_project(path)
         # Optionally, you could trigger a UI update here to show a "Saved Successfully" message or similar.
         # self._ui_callback()
 
-    def speak_info(self):
-        """Announces current status."""
+    def speak_info(self) -> None:
+        """
+        Announces current status, specifically the BPM and metronome state, using the voice service.
+        """
         metronome_status = "activé" if self._engine.metronome_on else "désactivé"
-        self._voice.speak(VoiceType.METR_INFO, f"Métronome actuellement {metronome_status}.")
-        self._voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {self._project.bpm}")
+        bpm = self.project.bpm
+        self.events.emit("STATUS_REQUESTED", metronome_status=metronome_status, bpm=bpm)
 
-    # Add inside LooperAPI class in core/api.py:
 
-    def handle_midi_action(self, action: str):
-        """Central dispatcher for all mapped MIDI commands."""
-        if action is not None and action != "VOLUME_ROLLER":  # Avoid spamming the logs with volume roller changes
-            print(f"Received MIDI action: {action} at state {self.nav_mode}")
+    def adjust_bpm(self, delta: int) -> None:
+        """
+        Function to adjust the bpm by a specific delta ammount and update the variables correlated to the bpm.
+        The change will be annpounced.
 
-        if action == "TOGGLE_RECORD":
-            self.toggle_record()
-
-        elif action == "TOGGLE_PLAY" :
-            self.toggle_playback()
-
-        elif action == "TOGGLE_METRONOME":
-            self.toggle_metronome(not self._engine.metronome_on)
-
-        elif action == "BPM_UP":
-            self.adjust_bpm(4)
-
-        elif action == "BPM_DOWN":
-            self.adjust_bpm(-4)
-
-        elif action == "VOLUME_ROLLER":
-            # announce the change
-            # self._voice.speak(VoiceType.METR_INFO, f"Volume changé")
-            # we could also trigger a UI update here if we had a visual indicator for gain, but for now we'll just rely on the voice feedback
-            # self._ui_callback()
-            pass
-
-            # --- JOYSTICK STATE MACHINE ---
-        elif action == "NAV_RIGHT" and self.nav_mode == "TRACK":
-            self.nav_mode = "INSTRUMENT"
-            print("[API] Joystick Mode: INSTRUMENT CYCLE")
-            # announce the change
-            self._voice.speak(VoiceType.METR_INFO, "Mode instrument")
-            
-        elif action == "NAV_LEFT" and self.nav_mode == "INSTRUMENT":
-            self.nav_mode = "TRACK"
-            print("[API] Joystick Mode: TRACK CYCLE")
-            # announce the change
-            self._voice.speak(VoiceType.METR_INFO, "Mode piste")
-
-        
-        elif action == "NAV_LEFT" and self.nav_mode == "TRACK":
-            # toggle mute on the armed track
-            #print(f"[API] NAV_LEFT received in TRACK mode - toggling mute on armed track")
-            armed_track = self._project.get_armed_track()
-            if armed_track:
-                track_index = self._project.tracks.index(armed_track)
-                self.mute_track(track_index, not armed_track.is_muted)
-                # announce the change
-                status = "muté" if armed_track.is_muted else "démuté"
-                self._voice.speak(VoiceType.METR_INFO, f"{armed_track.name} {status}")
-                # ui update will be triggered by mute_track method
-            print("Nav left - toggling mute on armed track")
-
-        elif action == "NAV_UP":
-            if self.nav_mode == "TRACK":    
-                self.cycle_armed_track(direction=1)
-            elif self.nav_mode == "INSTRUMENT":
-                self.cycle_instrument(direction=1)
-            print("Nav up") 
-        elif action == "NAV_DOWN":
-            if self.nav_mode == "TRACK":    
-                self.cycle_armed_track(direction=-1)
-            elif self.nav_mode == "INSTRUMENT":
-                self.cycle_instrument(direction=-1)
-            print("Nav down")
-        # Add any other dynamic or hardcoded actions here
-
-    def adjust_bpm(self, delta: int):
-        new_bpm = self._project.bpm + delta
+        Args:
+            delta (int): Ammount to change the bpm, can be positive or negative.
+        """
+        new_bpm = self.project.bpm + delta
         if 10 <= new_bpm <= 400:
-            self._project.bpm = new_bpm
-            self._engine.beat_duration = 60.0 / new_bpm
+            self.project.bpm = new_bpm
+            self.project.beat_duration = 60.0 / new_bpm
             
             # If you added the voice service:
-            self._voice.speak(VoiceType.BPM_MOD, f"B P M {new_bpm}")
+            self.events.emit("BPM_CHANGED", bpm=new_bpm)
             self._ui_callback()
+    
+    def change_volume(self, value: int) -> None:
+        armed_track = self.project.get_armed_track()
+        if armed_track:
+            # kwargs.get("value") holds the 0-127 midi value
+            armed_track.set_volume(value)
 
-    def reset_midi_mapping(self):
-        """Restores the MIDI mapping to the hardcoded factory defaults."""
-        
-        # Overwrite current mapping with a fresh copy of the defaults
-        self._project.midi_mapping = self._project.DEFAULT_MIDI_MAPPING.copy()
-        
-        # Optional: Announce the reset via the voice service
-        self._voice.speak(VoiceType.WELCOME, "Mapping reset to defaults.")
-        self._ui_callback()
-        print("[API] MIDI mapping has been reset to factory defaults.")
-
-    def cycle_armed_track(self, direction: int = 1):
-        """Cycles the armed status to the next track in the project."""
-        tracks = self._project.tracks
-        if not tracks:
-            return
-
-        current_armed_idx = 0
-        for i, track in enumerate(tracks):
-            if track.is_armed:
-                current_armed_idx = i
-                break
-
-        # Calculate the next index 
-        next_idx = (current_armed_idx - direction) 
-
-        # --- Logic at the edges of the track list to trigger extra functions ---
-        if next_idx < 0:
-            next_idx = 0
-            if self.at_edge.get("TOP_EDGE"):
-                # User tried to go up while the first track is armed, interpret as a desire to save the project
-                self.save_project_to_disk()
-                self._voice.speak(VoiceType.METR_INFO, "Projet sauvegardé")
-                self.at_edge["TOP_EDGE"] = False  # reset the edge state after saving
-            else:
-                #ask for confirmation to save the project if the user tries to go up while the first track is armed, by saying "you are at the first track, press again to save the project"
-                self._voice.speak(VoiceType.METR_INFO, "Appuyez à nouveau ver l'haut pour sauvegarder le projet")
-                self.at_edge["TOP_EDGE"] = True
-                self.at_edge["BOTTOM_EDGE"] = False  # reset the opposite edge state just in case
-            
-        elif next_idx >= len(tracks):
-            next_idx = len(tracks) - 1
-            if self.at_edge.get("BOTTOM_EDGE"):
-                # User tried to go down while the last track is armed, interpret as a desire to add a new track at the bottom and arm it
-                self.add_track(f"Track {len(tracks)+1}")
-                next_idx = len(tracks) - 1  # Arm the newly added track
-                self._voice.speak(VoiceType.METR_INFO, f"Nouvelle piste ajoutée et armée: Track {len(tracks)}")
-                self.at_edge["BOTTOM_EDGE"] = False  # reset the edge state after adding a track
-            else:
-                #ask for confirmation to add a new track if the user tries to go down while the last track is armed, by saying "you are at the last track, press again to add a new track"
-                self._voice.speak(VoiceType.METR_INFO, f"Appuyez ver le bas à nouveau pour en ajouter une nouvelle")
-                self.at_edge["BOTTOM_EDGE"] = True
-                self.at_edge["TOP_EDGE"] = False  # reset the opposite edge state just in case
-        else:
-            # reset edge states if we're safely in the middle of the track list
-            self.at_edge["TOP_EDGE"] = False
-            self.at_edge["BOTTOM_EDGE"] = False
-            self._voice.speak(VoiceType.METR_INFO, f"{tracks[next_idx].name} armé")
-        
-        self.arm_track(next_idx)
-        self._ui_callback()
-
-    def cycle_instrument(self, direction: int):
-        """Cycles the instrument of the currently armed track."""
-        armed_track = self._project.get_armed_track()
-        if not armed_track: return
-        
-        instruments = self._available_instruments
-        if not instruments: return
-
-        # Extract just the filename to find its index in the available list
-        current_filename = os.path.basename(armed_track.sf2_path)
-        
-        try:
-            current_idx = instruments.index(current_filename)
-        except ValueError:
-            current_idx = 0
-            
-        next_idx = (current_idx + direction) % len(instruments)
-        next_instrument = instruments[next_idx]
-        
-        # Set the new soundfont
-        armed_track.set_soundfont(next_instrument)
-        
-        # Force the View to update the dropdown visually
-        if self._ui_callback:
-            self._ui_callback()

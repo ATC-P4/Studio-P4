@@ -1,5 +1,7 @@
 import os
 from os import path
+import threading
+import threading
 import time
 
 import fluidsynth
@@ -18,7 +20,7 @@ class Track:
         self.program_id = 0  
         self.midi_events = []  
         self.active_notes = set()  
-        
+        self.event_lock = threading.Lock()
         self.synth = synth
         self.channel = channel
         self.sf2_path = get_resource_path(sf2_path)
@@ -60,7 +62,12 @@ class Track:
             self.active_notes.clear() 
 
     def add_midi_event(self, msg, timestamp):
-        self.midi_events.append((msg, timestamp))
+        with self.event_lock:
+            self.midi_events.append((msg, timestamp))
+            
+    def clear_events(self):
+        with self.event_lock:
+            self.midi_events.clear()
 
     def export_to_midi(self, filepath: str, bpm: int, master_loop_beats: int, ticks_per_beat: int = 480):
         print(f"Exporting track '{self.name}' to MIDI file: {filepath}")
@@ -199,7 +206,7 @@ class Project:
             if track.is_armed: return track 
         return None
     
-    def save_project(self, path: str):
+    def save_project(self, path: str|None = None):
         timestamp = time.strftime("%Y%m%d-%H%M%S")
         if path is None:
                 path = f"project_{timestamp}"
