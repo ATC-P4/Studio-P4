@@ -1,4 +1,15 @@
-.venv/
-.DS_Store
-recorded.mid
+# .gitignore file 
 
+# ignore .sf2 files
+*.sf2
+
+#include only the basic_piano.sf2 file
+!basic_piano.sf2
+
+# ignore venv
+venv/
+
+# ignore temporary files from vscode
+.vscode/
+# ignore __pycache__ directories
+__pycache__/
