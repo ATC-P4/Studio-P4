@@ -72,6 +72,7 @@ class LooperAPI:
         track.is_muted = state
         if state:
             track.flush_notes()  # Stop any currently playing notes immediately, handles the drone issue when muting.
+        self.events.emit("TRACK_MUTED", track_name=track.name, is_muted=track.is_muted)
         self._ui_callback()
 
     def _toggle_armed_track_mute(self) -> None:
@@ -83,9 +84,6 @@ class LooperAPI:
         
         track_index = self.project.tracks.index(armed_track)
         self.mute_track(track_index, not armed_track.is_muted)
-        
-        status = "muté" if armed_track.is_muted else "démuté"
-        self.events.emit("TRACK_MUTED", track_name=armed_track.name, is_muted=armed_track.is_muted)
         print("Nav left - toggling mute on armed track")
 
     def add_track(self, name: str) -> None:
@@ -107,6 +105,7 @@ class LooperAPI:
                 track.flush_notes()  # Stop any currently playing notes immediately, handles the drone issue when switching armed tracks.
             track.is_armed = (i == track_id)
         #print(f"[API] Track {track_id} is now exclusively armed.")
+        self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{self.project.tracks[track_id].name} armé")
         self._ui_callback()
 
     def set_soundfont_instrument(self, track_id: int, program_id: int) -> None:

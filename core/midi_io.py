@@ -13,6 +13,24 @@ if TYPE_CHECKING:
     from core.api import LooperAPI
 
 class MidiIO:
+
+    DEFAULT_MIDI_MAPPING = {
+        119: "TOGGLE_RECORD",
+        118: "TOGGLE_PLAY",
+        117: "TOGGLE_METRONOME",
+        77: "BPM_KNOB",
+        116: "BPM_UP",
+        115: "BPM_DOWN",
+        2: "NAV_DOWN",
+        3: "NAV_UP",
+        12: "NAV_LEFT",
+        13: "NAV_RIGHT",
+        1: "VOLUME_ROLLER"
+
+        # Add any other defaults here!
+        # knobs 70-77
+    }
+    
     """
     Manages the MIDI input port, routes commands to the API, 
     and routes live musical notes to the Synthesizer.
@@ -57,7 +75,7 @@ class MidiIO:
         """
         
         if msg.type == 'control_change':
-            action = self.project.midi_mapping.get(msg.control)
+            action = self.DEFAULT_MIDI_MAPPING.get(msg.control)
             #print(f"Checking MIDI CC {msg.control} for mapped action: {action}")
             if action:
                 self.handle_command(action, msg)
@@ -163,7 +181,7 @@ class MidiInputRouter:
     This class is responsible for routing incoming MIDI commands from the AudioIO to the appropriate API methods.
     It acts as a central dispatcher, translating raw MIDI input into high-level actions that the LooperAPI can execute.
     """
-    def __init__(self, api: LooperAPI):
+    def __init__(self, api):
         self.api = api
         self.project = api.project
         self.events = api.events
@@ -314,7 +332,6 @@ class MidiInputRouter:
             int: The index of the track to be armed.
         """
         self._pending_edge = None # Instantly clear any pending double-taps
-        self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{tracks[target_idx].name} armé")
         
         return target_idx
 

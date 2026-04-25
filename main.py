@@ -1,53 +1,51 @@
 import sys
 from PySide6.QtWidgets import QApplication
-
-# Import Backend
-from core.models import Project
-from core.engine import MasterClockEngine
-from core.midi_io import MidiIO
-from core.api import LooperAPI, MidiInputRouter
-
-# Import Frontend (We will build this next)
-from core.voice import VoicePresenter, VoiceService, VoiceType, VoiceService
-from core.utils import EventBus, get_resource_path, get_available_instruments
-from ui.main_window import MainWindow
-
-# Import the voice model and config from your TTS implementation
 from piper import PiperVoice
 
-def main():
-    # 1. Initialize the OS GUI Application
+# Core & Models
+from core.models import Project
+from core.engine import MasterClockEngine
+from core.api import LooperAPI
+from core.midi_io import MidiIO, MidiInputRouter
+
+# Infrastructure & Utilities
+from core.voice import VoicePresenter, VoiceService, VoiceType
+from core.utils import EventBus, get_resource_path, get_available_instruments
+
+# UI View
+from ui.main_window import MainWindow
+
+
+def main() -> None:
+    # ==========================================
+    # PHASE 1: Initialize Application Foundation
+    # ==========================================
     app = QApplication(sys.argv)
-
-    # 2. Instantiate the Backend (Model & Engine)
-    print("Initializing Core...")
-    project = Project("My Live Session", bpm=120)
-    project.add_track("Master") # Add a default track so the UI isn't empty
+    print("Initializing Application...")
+    event_bus = EventBus()
     
-    engine = MasterClockEngine(project)
-
-    # 3. Instantiate the View (UI)
-    # We create the window BEFORE the API, so we can pass its update function as the callback
-    print("Initializing UI...")
-    window = MainWindow()
-
-    event_bus = EventBus() # Create a shared event bus for voice announcements
-
-    available_instruments = get_available_instruments()
-    # 4. Instantiate the Hardware Listener
-    # We use a lambda to inject the api and window references into the handler later
-    midi_io = MidiIO(
-        project=project, 
-        engine=engine
-    )
-
+    # ==========================================
+    # PHASE 2: Start Audio & Voice Infrastructure
+    # ==========================================
     voice_path = get_resource_path("fr_FR-siwis-medium.onnx")
     voice_service = VoiceService(PiperVoice.load(voice_path))
     voice_presenter = VoicePresenter(voice_service, event_bus)
-  
+    
+    available_instruments = get_available_instruments()
 
-    # 5. Instantiate the Facade API
-    # We pass the window's `update_from_dto` method as the lifeline.
+    # ==========================================
+    # PHASE 3: Instantiate Core Business Logic
+    # ==========================================
+    project = Project("My Live Session", bpm=120)
+    project.add_track("Master") 
+    
+    engine = MasterClockEngine(project)
+
+    # ==========================================
+    # PHASE 4: Instantiate Views & Controllers
+    # ==========================================
+    window = MainWindow()
+
     api = LooperAPI(
         engine=engine, 
         project=project, 
@@ -56,12 +54,18 @@ def main():
         event_bus=event_bus,
     )
 
-    # wire the midi commands to the api
-    midi_io.on_command_cb = MidiInputRouter(api).handle_midi_action 
+    # ==========================================
+    # PHASE 5: Hardware & Input Routing
+    # ==========================================
+    midi_io = MidiIO(project=project, engine=engine)
+    midi_router = MidiInputRouter(api)
+    
+    # Depending on your final api.py, use handle_midi_action or route_command
+    midi_io.on_command_cb = midi_router.handle_midi_action 
 
-
-    # 6. Wire the UI Signals OUT to the API (The "Qt" way)
-    # When the user clicks a button on the screen, it triggers an API method
+    # ==========================================
+    # PHASE 6: Wire the UI Signals to the Backend
+    # ==========================================
     window.record_requested.connect(api.toggle_record)
     window.play_requested.connect(api.toggle_playback)
     window.metronome_toggled.connect(api.toggle_metronome)
@@ -70,23 +74,23 @@ def main():
     window.instrument_changed.connect(api.set_track_soundfont)
     window.add_track_requested.connect(lambda: api.add_track(f"Track {len(project.tracks)+1}"))
 
-    # 7. Start the Hardware & Show the Window
-    #midi_io.start('MPK mini Plus 0')
-    midi_io.start('LoopBe Internal MIDI 0') # auto-detect the controller
-    window.show()
-
-    # 8. Force the first UI update to draw the initial state
-    window.update_ui(api.get_state_dto())
-
-    # 9. Graceful Shutdown Protocol
+    # ==========================================
+    # PHASE 7: Shutdown Protocol
+    # ==========================================
     app.aboutToQuit.connect(midi_io.stop)
     app.aboutToQuit.connect(lambda: engine.set_state("STOPPED"))
+    app.aboutToQuit.connect(voice_service.shutdown) # CRITICAL FIX: Close PyAudio
 
-    # 10. Handover control to the Qt Event Loop (Blocks here until window is closed)
+    # ==========================================
+    # PHASE 8: Launch
+    # ==========================================
+    midi_io.start('LoopBe Internal MIDI 0') 
+    window.show()
+    window.update_ui(api.get_state_dto())
+
     print("Application Ready.")
-
-    # Trigger a welcome message on launch
     voice_service.speak(VoiceType.WELCOME, "Bienvenue dans le studio P4. Prêt à faire de la musique ?")
+    
     sys.exit(app.exec())
 
 if __name__ == "__main__":
