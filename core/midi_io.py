@@ -73,7 +73,7 @@ class MidiIO:
         Args:
             msg (mido.Message): The incoming MIDI message.
         """
-        
+        #print(f"[MidiIO] Received MIDI message: {msg}")
         if msg.type == 'control_change':
             action = self.DEFAULT_MIDI_MAPPING.get(msg.control)
             #print(f"Checking MIDI CC {msg.control} for mapped action: {action}")
@@ -200,14 +200,14 @@ class MidiInputRouter:
         # The Navigation Matrix
         self._nav_matrix = {
             NavMode.TRACK: {
-                "NAV_UP": lambda: self.cycle_armed_track(-1),
-                "NAV_DOWN": lambda: self.cycle_armed_track(1),
+                "NAV_UP": lambda: self.cycle_armed_track(1),
+                "NAV_DOWN": lambda: self.cycle_armed_track(-1),
                 "NAV_LEFT": self.api._toggle_armed_track_mute,
                 "NAV_RIGHT": self._set_nav_mode(NavMode.INSTRUMENT, "Mode instrument"),
             },
             NavMode.INSTRUMENT: {
-                "NAV_UP": lambda: self.cycle_instrument(-1),
-                "NAV_DOWN": lambda: self.cycle_instrument(1),
+                "NAV_UP": lambda: self.cycle_instrument(1),
+                "NAV_DOWN": lambda: self.cycle_instrument(-1),
                 "NAV_LEFT": self._set_nav_mode(NavMode.TRACK, "Mode piste"),
                 "NAV_RIGHT": lambda: None, # Do nothing, or add future feature
             }
@@ -279,7 +279,8 @@ class MidiInputRouter:
         final_idx = self._edge_handlers[boundary_state](tracks, target_idx)
         
         # 3. Apply the change
-        self.api.arm_track(final_idx)
+        if current_idx != final_idx:
+            self.api.arm_track(final_idx)
 
     
     def _handle_top_edge(self, tracks: list, target_idx: int) -> int:

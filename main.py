@@ -84,7 +84,8 @@ def main() -> None:
     # ==========================================
     # PHASE 8: Launch
     # ==========================================
-    midi_io.start('LoopBe Internal MIDI 0') 
+    midi_io.start("MPK mini Plus 0")  # Start MIDI I/O before showing the UI to ensure responsiveness
+    #midi_io.start('LoopBe Internal MIDI 0') 
     window.show()
     window.update_ui(api.get_state_dto())
 

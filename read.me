@@ -63,3 +63,18 @@ docs in a website version can be found in site/index.html
 sound font to download:
 - [Free Soundfont Downloads - Music Production - Zanderjaz](https://www.zanderjaz.com/downloads/soundfonts/)
 - [All soundfonts | Download free soundfonts](https://www.polyphone.io/en/soundfonts)
+
+## Pyinstaller and exe generation
+Pyinstaller is one of the libraries in the requirements, so it should be already installed.
+To crete a exe file run this code:
+```bash
+/venv/Scripts/python -m PyInstaller --clean --onefile `    
+>>      --hidden-import mido.backends.rtmidi `
+>>      --collect-all PySide6 `
+>>      --collect-all piper `
+>>      --collect-all piper_phonemize `
+>>      --add-data "sf2;sf2" `
+>>      --add-data "fr_FR-siwis-medium.onnx;." `
+>>      --add-data "fr_FR-siwis-medium.onnx.json;." `
+>>      main.py
+```
