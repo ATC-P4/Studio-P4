@@ -48,7 +48,8 @@ def main() -> None:
             found_port = port
             print(f"[STARTUP] Found MIDI port for startup menu: {found_port}")
             break
-        else:
+    else:
+        for port in mido.get_input_names():
             # search for loopbe port as a fallback
             if "LoopBe" in port:
                 found_port = port
