@@ -27,13 +27,7 @@ class MasterClockEngine:
         threading.Thread(target=self._dispatcher_loop, daemon=True).start() 
 
     def set_state(self, new_state: str) -> None:
-        """
-        Sets the state of the engine.
-
-
-        Args:
-            new_state (str): The new state to set. Options are "STOPPED", "COUNT_IN", "RECORDING", "PLAYING".
-        """
+        """Sets the state of the engine."""
         armed_track = self.project.get_armed_track()
         is_master = (self.project.master_track is None or self.project.master_track == armed_track)
 
@@ -50,12 +44,15 @@ class MasterClockEngine:
             with self.queue_lock:
                 self.audio_queue.clear()
                 
-        elif new_state in ["COUNT_IN", "RECORDING"]:
-            if armed_track:
-                armed_track.clear_events() # Use the new thread-safe method (see Step 4)
-                print(f"[ENGINE] Track '{armed_track.name}' wiped upon entering {new_state}.")
+        elif new_state in ["COUNT_IN", "RECORDING", "PLAYING"]:
+            # Wipe armed track if starting a new recording
+            if new_state in ["COUNT_IN", "RECORDING"]:
+                if armed_track and self.current_state != "RECORDING":
+                    armed_track.clear_events() 
+                    print(f"[ENGINE] Track '{armed_track.name}' wiped upon entering {new_state}.")
             
-            if self.current_state in ["STOPPED", "COUNT_IN"] or (new_state == "RECORDING" and is_master):
+            # CRITICAL FIX: If we are starting from STOPPED, we must reset the timeline
+            if self.current_state == "STOPPED":
                 self._pending_clock_reset = True
 
         # 3. Apply State
@@ -125,9 +122,7 @@ class MasterClockEngine:
 
    
     def _clock_loop(self):
-        """
-        This is the heart of the engine, running in a dedicated thread. It continuously checks the current state and schedules audio events accordingly.
-        """
+        """This is the heart of the engine, running in a dedicated thread."""
         LOOKAHEAD_SEC = 0.05 
         while self._engine_alive:
             if self.current_state == "STOPPED":
@@ -141,24 +136,31 @@ class MasterClockEngine:
             elapsed = now - self.start_time
             target_time = elapsed + LOOKAHEAD_SEC
             
-            if self.current_state == "COUNT_IN":
-                count_in_duration = self.project.time_signature_numerator * self.project.beat_duration
+            # CRITICAL FIX: Only process if target_time has advanced past last_processed_time.
+            # This allows our 100ms pre-roll buffer to tick down smoothly without breaking the math.
+            if target_time > self.last_processed_time:
                 
-                if target_time >= count_in_duration:
-                    self._transition_to_recording(count_in_duration, elapsed, LOOKAHEAD_SEC, now)
-                else:
+                if self.current_state == "COUNT_IN":
+                    count_in_duration = self.project.time_signature_numerator * self.project.beat_duration
+                    
+                    if target_time >= count_in_duration:
+                        self._transition_to_recording(count_in_duration, elapsed, LOOKAHEAD_SEC, now)
+                    else:
+                        self._process_playback(self.last_processed_time, target_time, elapsed)
+                        self.last_processed_time = target_time
+                
+                elif self.current_state in ["PLAYING", "RECORDING"]:
                     self._process_playback(self.last_processed_time, target_time, elapsed)
                     self.last_processed_time = target_time
-            
-            elif self.current_state in ["PLAYING", "RECORDING"]:
-                self._process_playback(self.last_processed_time, target_time, elapsed)
-                self.last_processed_time = target_time
                 
             time.sleep(LOOKAHEAD_SEC / 2.0)
     
     def _reset_clock(self):
-        """Safely resets the engine time variables to zero."""
-        self.start_time = time.perf_counter()
+        """Safely resets the engine time variables to zero with a pre-roll buffer."""
+        # CRITICAL FIX: Add a 100ms (0.1s) buffer. 
+        # By setting the start_time slightly in the future, we give the clock loop 
+        # time to calculate the 0.0 notes and push them to the dispatcher BEFORE they are due.
+        self.start_time = time.perf_counter() + 0.1
         self.last_processed_time = 0.0
         with self.queue_lock:
             self.audio_queue.clear()

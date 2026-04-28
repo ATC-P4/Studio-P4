@@ -1,4 +1,9 @@
 import os
+import json
+import time
+import mido
+from core.utils import MidiExporter
+from core.project_io import ProjectIO
 
 from enum import Enum, auto
 from typing import Callable, TYPE_CHECKING
@@ -161,17 +166,7 @@ class LooperAPI:
             ]
         }
     
-    def saveproject_to_disk(self, path: str|None = None) -> None:
-        """
-        Saves the current project state to disk at the given path.
-
-        Args:
-            path (str | None, optional): Path string. Defaults to None.
-        """
-        self.project.save_project(path)
-        # Optionally, you could trigger a UI update here to show a "Saved Successfully" message or similar.
-        # self._ui_callback()
-
+   
     def speak_info(self) -> None:
         """
         Announces current status, specifically the BPM and metronome state, using the voice service.
@@ -203,4 +198,32 @@ class LooperAPI:
         if armed_track:
             # kwargs.get("value") holds the 0-127 midi value
             armed_track.set_volume(value)
+    
+    def saveproject_to_disk(self, folder_name: str | None = None) -> None:
+        """Delegates saving to the IO service and notifies the user."""
+        try:
+            ProjectIO.save(self.project, folder_name)
+            self.events.emit("GENERIC_ANNOUNCEMENT", message="Projet sauvegardé")
+        except Exception as e:
+            print(f"Save failed: {e}")
+            self.events.emit("GENERIC_ANNOUNCEMENT", message="Erreur de sauvegarde")
 
+    def load_project_from_disk(self, folder_path: str) -> None:
+        """Safely stops the engine, loads new data, and redraws the UI."""
+        # 1. Stop the engine completely to release locks on MIDI events
+        self._engine.set_state("STOPPED")
+        
+        try:
+            # 2. Rebuild the project in place
+            ProjectIO.load_into_project(self.project, folder_path)
+            
+            # 3. Update the engine's beat calculations
+            self.project.beat_duration = 60.0 / self.project.bpm
+            
+            # 4. Force UI Redraw
+            self._ui_callback()
+            self.events.emit("GENERIC_ANNOUNCEMENT", message=f"Projet {self.project.name} chargé")
+            
+        except Exception as e:
+            print(f"Failed to load project: {e}")
+            self.events.emit("GENERIC_ANNOUNCEMENT", message="Erreur de chargement")

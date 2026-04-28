@@ -1,6 +1,10 @@
 import sys
+import faulthandler
+faulthandler.enable() # Catches C++ Segfaults!
+
 from PySide6.QtWidgets import QApplication
 from piper import PiperVoice
+
 
 # Core & Models
 from core.models import Project
@@ -11,6 +15,8 @@ from core.midi_io import MidiIO, MidiInputRouter
 # Infrastructure & Utilities
 from core.voice import VoicePresenter, VoiceService, VoiceType
 from core.utils import EventBus, get_resource_path, get_available_instruments
+from core.project_io import ProjectIO
+from core.startup_menu import StartupMenu  # <-- NEW IMPORT
 
 # UI View
 from ui.main_window import MainWindow
@@ -18,28 +24,46 @@ from ui.main_window import MainWindow
 
 def main() -> None:
     # ==========================================
-    # PHASE 1: Initialize Application Foundation
+    # PHASE 1: Application Foundation & Voice
     # ==========================================
     app = QApplication(sys.argv)
     print("Initializing Application...")
     event_bus = EventBus()
     
-    # ==========================================
-    # PHASE 2: Start Audio & Voice Infrastructure
-    # ==========================================
+    # We MUST boot Voice first so the Startup Menu can speak
     voice_path = get_resource_path("fr_FR-siwis-medium.onnx")
     voice_service = VoiceService(PiperVoice.load(voice_path))
     voice_presenter = VoicePresenter(voice_service, event_bus)
+
+    # ==========================================
+    # PHASE 2: Headless Hardware Startup Menu
+    # ==========================================
+    # We use the same port the main app uses. 
+    #midi_port_name = 'LoopBe Internal MIDI 0' # Change to 'MPK mini Plus 0' for hardware
+    midi_port_name ="MPK mini Plus 0"
+    startup_menu = StartupMenu(voice_service)
     
-    available_instruments = get_available_instruments()
+    # This completely blocks Python until NAV_RIGHT is pressed
+    selected_folder_path = startup_menu.run(port_name=midi_port_name)
 
     # ==========================================
     # PHASE 3: Instantiate Core Business Logic
     # ==========================================
     project = Project("My Live Session", bpm=120)
-    project.add_track("Master") 
     
+    if selected_folder_path is None:
+        print("Creating new project...")
+        project.add_track("Master") 
+    else:
+        print(f"Loading project from {selected_folder_path}...")
+        try:
+            ProjectIO.load_into_project(project, selected_folder_path)
+        except Exception as e:
+            print(f"CRITICAL: Failed to load project. {e}")
+            sys.exit(1)
+
     engine = MasterClockEngine(project)
+    available_instruments = get_available_instruments()
 
     # ==========================================
     # PHASE 4: Instantiate Views & Controllers
@@ -59,12 +83,10 @@ def main() -> None:
     # ==========================================
     midi_io = MidiIO(project=project, engine=engine)
     midi_router = MidiInputRouter(api)
-    
-    # Depending on your final api.py, use handle_midi_action or route_command
     midi_io.on_command_cb = midi_router.handle_midi_action 
 
     # ==========================================
-    # PHASE 6: Wire the UI Signals to the Backend
+    # PHASE 6: Wire the UI Signals
     # ==========================================
     window.record_requested.connect(api.toggle_record)
     window.play_requested.connect(api.toggle_playback)
@@ -75,22 +97,21 @@ def main() -> None:
     window.add_track_requested.connect(lambda: api.add_track(f"Track {len(project.tracks)+1}"))
 
     # ==========================================
-    # PHASE 7: Shutdown Protocol
+    # PHASE 7: Graceful Shutdown
     # ==========================================
     app.aboutToQuit.connect(midi_io.stop)
     app.aboutToQuit.connect(lambda: engine.set_state("STOPPED"))
-    app.aboutToQuit.connect(voice_service.shutdown) # CRITICAL FIX: Close PyAudio
+    app.aboutToQuit.connect(voice_service.shutdown) 
 
     # ==========================================
-    # PHASE 8: Launch
+    # PHASE 8: Launch Main App
     # ==========================================
-    midi_io.start("MPK mini Plus 0")  # Start MIDI I/O before showing the UI to ensure responsiveness
-    #midi_io.start('LoopBe Internal MIDI 0') 
+    midi_io.start(midi_port_name) 
     window.show()
     window.update_ui(api.get_state_dto())
 
     print("Application Ready.")
-    voice_service.speak(VoiceType.WELCOME, "Bienvenue dans le studio P4. Prêt à faire de la musique ?")
+    voice_service.speak(VoiceType.WELCOME, "Bienvenue dans le studio.")
     
     sys.exit(app.exec())
 

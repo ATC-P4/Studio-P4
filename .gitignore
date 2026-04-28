@@ -18,5 +18,9 @@ __pycache__/
 dist/
 build/
 
+
 # the mid files
 *.mid
+
+#the save files
+/Saves/
