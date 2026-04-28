@@ -51,9 +51,13 @@ class MasterClockEngine:
                     armed_track.clear_events() 
                     print(f"[ENGINE] Track '{armed_track.name}' wiped upon entering {new_state}.")
             
-            # CRITICAL FIX: If we are starting from STOPPED, we must reset the timeline
-            if self.current_state == "STOPPED":
+            if self.current_state == "STOPPED" or (self.current_state == "PLAYING" and new_state == "COUNT_IN"):
                 self._pending_clock_reset = True
+                
+                # If we are interrupting playback to start a count-in, we must kill ringing notes
+                if self.current_state == "PLAYING":
+                    for track in self.project.tracks:
+                        track.flush_notes()
 
         # 3. Apply State
         self.current_state = new_state
@@ -177,7 +181,7 @@ class MasterClockEngine:
                     self.last_processed_time = target_time
                 
             time.sleep(LOOKAHEAD_SEC / 2.0)
-            
+
     def _reset_clock(self):
         """Safely resets the engine time variables to zero with a pre-roll buffer."""
         # CRITICAL FIX: Add a 100ms (0.1s) buffer. 
