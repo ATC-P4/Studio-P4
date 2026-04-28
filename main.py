@@ -48,6 +48,12 @@ def main() -> None:
             found_port = port
             print(f"[STARTUP] Found MIDI port for startup menu: {found_port}")
             break
+        else:
+            # search for loopbe port as a fallback
+            if "LoopBe" in port:
+                found_port = port
+                print(f"[STARTUP] Found LoopBe MIDI port for startup menu: {found_port}")
+                break
     
     midi_port_name = found_port if found_port else "MPK mini Plus 0"
     startup_menu = StartupMenu(voice_service)
