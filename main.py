@@ -4,6 +4,7 @@ faulthandler.enable() # Catches C++ Segfaults!
 
 from PySide6.QtWidgets import QApplication
 from piper import PiperVoice
+import mido
 
 
 # Core & Models
@@ -40,7 +41,15 @@ def main() -> None:
     # ==========================================
     # We use the same port the main app uses. 
     #midi_port_name = 'LoopBe Internal MIDI 0' # Change to 'MPK mini Plus 0' for hardware
-    midi_port_name ="MPK mini Plus 0"
+    # find a port name that contains "MPK mini" (case-insensitive) but doesn't contain MIDIIN
+    found_port = None
+    for port in mido.get_input_names():
+        if "MPK mini" in port and "MIDIIN" not in port:
+            found_port = port
+            print(f"[STARTUP] Found MIDI port for startup menu: {found_port}")
+            break
+    
+    midi_port_name = found_port if found_port else "MPK mini Plus 0"
     startup_menu = StartupMenu(voice_service)
     
     # This completely blocks Python until NAV_RIGHT is pressed

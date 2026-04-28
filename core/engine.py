@@ -136,8 +136,7 @@ class MasterClockEngine:
             elapsed = now - self.start_time
             target_time = elapsed + LOOKAHEAD_SEC
             
-            # CRITICAL FIX: Only process if target_time has advanced past last_processed_time.
-            # This allows our 100ms pre-roll buffer to tick down smoothly without breaking the math.
+            # Only process if target_time has advanced past last_processed_time.
             if target_time > self.last_processed_time:
                 
                 if self.current_state == "COUNT_IN":
@@ -150,11 +149,35 @@ class MasterClockEngine:
                         self.last_processed_time = target_time
                 
                 elif self.current_state in ["PLAYING", "RECORDING"]:
+                    
+                    # --- NEW: AUTO-STOP DUBBING FOR NON-MASTER TRACKS ---
+                    armed_track = self.project.get_armed_track()
+                    is_master = (self.project.master_track is None or self.project.master_track == armed_track)
+                    
+                    if self.current_state == "RECORDING" and not is_master and self.project.master_loop_beats > 0:
+                        loop_duration_sec = self.project.master_loop_beats * self.project.beat_duration
+                        
+                        # If our lookahead window crosses the end of the loop boundary...
+                        if target_time >= loop_duration_sec:
+                            # 1. Process exactly up to the end of the loop
+                            self._process_playback(self.last_processed_time, loop_duration_sec, elapsed)
+                            
+                            # 2. Seamlessly flip to PLAYING state (This triggers UI redraw and sanitizes hanging notes)
+                            self.set_state("PLAYING")
+                            
+                            # 3. Process the remainder of the lookahead window as standard playback
+                            self._process_playback(loop_duration_sec, target_time, elapsed)
+                            self.last_processed_time = target_time
+                            
+                            time.sleep(LOOKAHEAD_SEC / 2.0)
+                            continue # Skip the normal processing block
+                            
+                    # Normal processing (if no boundary was crossed)
                     self._process_playback(self.last_processed_time, target_time, elapsed)
                     self.last_processed_time = target_time
                 
             time.sleep(LOOKAHEAD_SEC / 2.0)
-    
+            
     def _reset_clock(self):
         """Safely resets the engine time variables to zero with a pre-roll buffer."""
         # CRITICAL FIX: Add a 100ms (0.1s) buffer. 

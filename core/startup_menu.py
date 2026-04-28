@@ -142,6 +142,7 @@ class StartupMenu(QDialog):
             inport = mido.open_input(port_name, callback=self._midi_callback)
         except Exception as e:
             print(f"[STARTUP WARNING] Could not open MIDI port. Use mouse/keyboard. Error: {e}")
+            print("Available MIDI ports:", mido.get_input_names())
 
         # Block Python execution here and show the Window
         self.exec()
