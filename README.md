@@ -50,14 +50,14 @@ docs in a website version can be found in site/index.html
  add the possibility to remove tracks
 - Think about a function to learn the controls binding (at the moment we have so many commands that is better to hard code them)
 - better understand how fluidsynth and the sf2 work (multiple instruments in one sf2 file and potentially effects with sf2 encoding (metadata))
-- the recording doesn't stop, so it continues until you click it again, the problem is that the playback loops over and you restart the loop and add extra recorded notes (not good)
 - group toghether similar sf2 and add one more navigation mode (aka groups), and then enable the option to enter a group (ex. guitars) and loop over the guitars sf2 files
 - BPM logic is not connected neither to the playback nor to the save_event_midi, so if we change bpm the recorded notes don't change bpm.
-- save more metadata (think about what we need) (ex. track volumes, loop lengths, ...)
-- have a menu window where you can reload a project, delete old projects, send a project, ...
-- add more volume controls, for now the volume wheel maps to the single track volume
 - handle edge case and add the necessary try-catch, error messages, ...
 - map get_info to a button (combination of bottons) and make the function more useful.
+- Add support to connect the keyboard also once the app is already running
+- Create a audio version of the user manual
+- ask to our challenger if he needs a delete track button
+- change the naming of the saved projects (if a project is reopend and saved again it should add like a version 2.0)
 
 
 sound font to download:
