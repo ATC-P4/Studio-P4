@@ -31,8 +31,8 @@ def get_available_instruments() -> list[str]:
             #TODO: implement an Import sf2 error
             return ["basic_piano.sf2"] # Fallback if folder is missing
             
-        # Get all .sf2 files, excluding the metronome so it doesn't show in the UI list
-        files = [f for f in os.listdir(sf2_dir) if f.endswith('.sf2') and "Metronom" not in f]
+        # Get all .sf2 and .SF2 files, excluding the metronome so it doesn't show in the UI list
+        files = [f for f in os.listdir(sf2_dir) if f.endswith(('.sf2', '.SF2')) and "Metronom" not in f]
         return files
 
 class MidiExporter:
