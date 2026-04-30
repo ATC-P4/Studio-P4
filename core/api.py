@@ -153,14 +153,16 @@ class LooperAPI:
             "bpm": self.project.bpm,
             "time_signature": self.project.time_signature,
             "metronome_on": self._engine.metronome_on,
-            "available_instruments": self._available_instruments,
+            "available_instruments": self._available_instruments, # Now a dictionary!
+            "is_quitting": getattr(self, "is_quitting", False),
             "tracks": [
                 {
                     "id": i,
                     "name": track.name,
                     "is_muted": track.is_muted,
                     "is_armed": track.is_armed,
-                    "program_id": track.program_id
+                    "program_id": track.program_id,
+                    "sf2_path": track.sf2_path # <-- NEW: Add the path here
                 }
                 for i, track in enumerate(self.project.tracks)
             ]

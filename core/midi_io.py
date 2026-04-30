@@ -168,6 +168,7 @@ class NavMode(Enum):
     Enumeration for joystick navigation modes. Determines whether the joystick is currently controlling track selection or instrument selection.
     """
     TRACK = auto()
+    GROUP = auto() 
     INSTRUMENT = auto()
 
 class BoundaryState(Enum):
@@ -203,13 +204,19 @@ class MidiInputRouter:
                 "NAV_UP": lambda: self.cycle_armed_track(1),
                 "NAV_DOWN": lambda: self.cycle_armed_track(-1),
                 "NAV_LEFT": self.api._toggle_armed_track_mute,
+                "NAV_RIGHT": self._set_nav_mode(NavMode.GROUP, "Mode groupe"),
+            },
+            NavMode.GROUP: {
+                "NAV_UP": lambda: self.cycle_group(1),
+                "NAV_DOWN": lambda: self.cycle_group(-1),
+                "NAV_LEFT": self._set_nav_mode(NavMode.TRACK, "Mode piste"),
                 "NAV_RIGHT": self._set_nav_mode(NavMode.INSTRUMENT, "Mode instrument"),
             },
             NavMode.INSTRUMENT: {
                 "NAV_UP": lambda: self.cycle_instrument(1),
                 "NAV_DOWN": lambda: self.cycle_instrument(-1),
-                "NAV_LEFT": self._set_nav_mode(NavMode.TRACK, "Mode piste"),
-                "NAV_RIGHT": lambda: None, # Do nothing, or add future feature
+                "NAV_LEFT": self._set_nav_mode(NavMode.GROUP, "Mode groupe"),
+                "NAV_RIGHT": lambda: None, 
             }
         }
         # Track the last edge state for the double-tap actions on the joystick (save project and add track)
@@ -250,6 +257,24 @@ class MidiInputRouter:
             self.nav_mode = mode
             print(f"[API] Joystick Mode: {mode.name} CYCLE")
             self.events.emit("GENERIC_ANNOUNCEMENT", message=voice_announcement)
+            if mode.name == "TRACK":
+                armed_track = self.project.get_armed_track()
+                if armed_track:
+                    self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{armed_track.name}")
+            if mode.name == "INSTRUMENT":
+                armed_track = self.project.get_armed_track()
+                if armed_track:
+                    current_instrument_name = os.path.basename(armed_track.sf2_path).replace(".sf2", "").replace("_", " ")
+                    self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{current_instrument_name}")
+            if mode.name == "GROUP":
+                armed_track = self.project.get_armed_track()
+                if armed_track:
+                    current_sf2 = armed_track.sf2_path
+                    instruments_dict = self.api._available_instruments
+                    for group_name, sf2_list in instruments_dict.items():
+                        if current_sf2 in sf2_list:
+                            self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{group_name}")
+                            break
         return transition
     
 
@@ -336,6 +361,40 @@ class MidiInputRouter:
         
         return target_idx
 
+    def _get_current_group_and_list(self, armed_track):
+        """Helper to figure out which group the current track is using."""
+        instruments_dict = self.api._available_instruments
+        current_sf2 = armed_track.sf2_path
+        
+        for group_name, sf2_list in instruments_dict.items():
+            if current_sf2 in sf2_list:
+                return group_name, sf2_list
+        # Fallback if somehow not found
+        first_group = list(instruments_dict.keys())[0]
+        return first_group, instruments_dict[first_group]
+
+    def cycle_group(self, direction: int) -> None:
+        """Cycles the folder category and auto-loads the first instrument in that folder."""
+        armed_track = self.project.get_armed_track()
+        if not armed_track: return
+
+        instruments_dict = self.api._available_instruments
+        groups = list(instruments_dict.keys())
+        if not groups: return
+
+        current_group, _ = self._get_current_group_and_list(armed_track)
+        
+        current_idx = groups.index(current_group)
+        next_idx = (current_idx - direction) % len(groups)
+        next_group = groups[next_idx]
+        
+        # Auto-load the first instrument of the new group
+        next_instrument = instruments_dict[next_group][0]
+        armed_track.set_soundfont(next_instrument)
+        
+        self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{next_group}")
+        if self.api._ui_callback: self.api._ui_callback()
+
     def cycle_instrument(self, direction: int) -> None:
         """
         Cycles the instrument of the currently armed track.
@@ -346,27 +405,25 @@ class MidiInputRouter:
         """
         armed_track = self.project.get_armed_track()
         if not armed_track: return
-        
-        instruments = self.api._available_instruments
-        if not instruments: return
 
-        # Extract just the filename to find its index in the available list
-        current_filename = os.path.basename(armed_track.sf2_path)
-        
+        _, current_group_list = self._get_current_group_and_list(armed_track)
+        current_sf2 = armed_track.sf2_path
+
         try:
-            current_idx = instruments.index(current_filename)
+            current_idx = current_group_list.index(current_sf2)
         except ValueError:
             current_idx = 0
-            
-        next_idx = (current_idx + direction) % len(instruments)
-        next_instrument = instruments[next_idx]
-        
-        # Set the new soundfont
+
+        next_idx = (current_idx - direction) % len(current_group_list)
+        next_instrument = current_group_list[next_idx]
+
         armed_track.set_soundfont(next_instrument)
         
-        # Force the View to update the dropdown visually
-        if self.api._ui_callback:
-            self.api._ui_callback()
+        # Clean up the name for the voice (e.g., "basic_piano.sf2" -> "basic piano")
+        clean_name = os.path.basename(next_instrument).replace(".sf2", "").replace("_", " ")
+        #self.events.emit("GENERIC_ANNOUNCEMENT", message=f"Instrument: {clean_name}")
+        
+        if self.api._ui_callback: self.api._ui_callback()
 
     def handle_midi_action(self, action: str, value: int|None=None) -> None:
         """

@@ -46,6 +46,20 @@ mkdocs serve
 ## Documentation
 docs in a website version can be found in site/index.html
 
+## EXE file generation
+After creating avenv as shown before run the following line inside the folder where the main.py file and the venv folder are located:
+```bash
+./venv/Scripts/python -m PyInstaller --clean --onefile `           
+>>      --hidden-import mido.backends.rtmidi ` 
+>>      --collect-all PySide6 `                
+>>      --collect-all piper `
+>>      --collect-all piper_phonemize `
+>>      --add-data "sf2;sf2" `
+>>      --add-data "fr_FR-siwis-medium.onnx;." `
+>>      --add-data "fr_FR-siwis-medium.onnx.json;." `
+>>      main.py
+```
+
 ## TODOS
  add the possibility to remove tracks
 - Think about a function to learn the controls binding (at the moment we have so many commands that is better to hard code them)
@@ -58,6 +72,9 @@ docs in a website version can be found in site/index.html
 - Create a audio version of the user manual
 - ask to our challenger if he needs a delete track button
 - change the naming of the saved projects (if a project is reopend and saved again it should add like a version 2.0)
+- test the compatibility with jaws, in case detach the listening function of our voiceover and send the messages through jaws.
+- create a video for the presentation of 28 mai
+- Check the documentation
 
 
 sound font to download:

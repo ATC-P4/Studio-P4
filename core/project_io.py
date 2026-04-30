@@ -43,7 +43,34 @@ class ProjectIO:
                 "sf2_filename": os.path.basename(track.sf2_path),
                 "is_master": project.master_track == track
             })
+# 2. Build and Save Metadata JSON
+        metadata = {
+            "name": project.name,
+            "bpm": project.bpm,
+            "time_signature": project.time_signature,
+            "master_loop_beats": project.master_loop_beats,
+            "tracks": []
+        }
 
+        # Determine the root sf2 directory
+        sf2_dir = os.path.abspath("./sf2")
+
+        for track in project.tracks:
+            # FIX 5: Save the relative path so the folder name isn't lost
+            try:
+                rel_sf2 = os.path.relpath(track.sf2_path, sf2_dir)
+            except ValueError:
+                rel_sf2 = os.path.basename(track.sf2_path)
+
+            metadata["tracks"].append({
+                "name": track.name,
+                "is_muted": track.is_muted,
+                "volume": track.volume,
+                "program_id": track.program_id,
+                # Replace backslashes with forward slashes for safe JSON formatting
+                "sf2_filename": rel_sf2.replace("\\", "/"), 
+                "is_master": project.master_track == track
+            })
         json_path = os.path.join(project_folder, "project.json")
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(metadata, f, indent=4)

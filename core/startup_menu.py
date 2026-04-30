@@ -33,10 +33,10 @@ class StartupMenu(QDialog):
 
         self._setup_ui()
 
-        # Wire up MIDI signals
-        self.selection_changed.connect(self._update_ui_selection)
-        self.project_confirmed.connect(self.accept) # Route directly to our overridden accept()
-
+        # Wire up MIDI signals with EXPLICIT QueuedConnections
+        self.selection_changed.connect(self._update_ui_selection, Qt.QueuedConnection)
+        self.project_confirmed.connect(self.accept, Qt.QueuedConnection)
+        
     def _get_saved_projects(self) -> list:
         base_dir = os.path.abspath("./Saves")
         os.makedirs(base_dir, exist_ok=True)

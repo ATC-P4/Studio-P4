@@ -19,21 +19,32 @@ def get_resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
-def get_available_instruments() -> list[str]:
-        """
-        Scans the sf2 directory and returns a list of filenames.
 
-        Returns:
-            list[str]: List of file names with a .sf2 format
-        """
-        sf2_dir = get_resource_path("sf2")
-        if not os.path.exists(sf2_dir):
-            #TODO: implement an Import sf2 error
-            return ["basic_piano.sf2"] # Fallback if folder is missing
+def get_available_instruments() -> dict:
+    """Scans the sf2 directory and returns a dictionary grouped by folder."""
+    base_dir = os.path.abspath("./sf2")
+    instruments = {}
+    
+    if not os.path.exists(base_dir):
+        return instruments
+
+    for item in os.listdir(base_dir):
+        # FIX 3: Normalize the parent path
+        item_path = os.path.normpath(os.path.join(base_dir, item))
+        
+        if os.path.isdir(item_path):
+            # FIX 4: Normalize every file path in the subfolders
+            sf2_files = [os.path.normpath(os.path.join(item_path, f)) 
+                         for f in os.listdir(item_path) if f.endswith('.sf2')]
+            if sf2_files:
+                instruments[item] = sf2_files
+                
+        elif item.endswith('.sf2'):
+            if "Général" not in instruments:
+                instruments["Général"] = []
+            instruments["Général"].append(item_path)
             
-        # Get all .sf2 and .SF2 files, excluding the metronome so it doesn't show in the UI list
-        files = [f for f in os.listdir(sf2_dir) if f.endswith(('.sf2', '.SF2')) and "Metronom" not in f]
-        return files
+    return instruments
 
 class MidiExporter:
     """Handles the conversion of internal Track data into standard .mid files on disk."""

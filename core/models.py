@@ -18,7 +18,7 @@ class Track:
         
         self.synth = synth
         self.channel = channel
-        self.sf2_path = get_resource_path(sf2_path)
+        self.sf2_path = os.path.normpath(get_resource_path(sf2_path))
         self.sf_id = 0
         self.volume = 100 
 
@@ -43,14 +43,14 @@ class Track:
         self.program_id = program_id
         self._update_synth_program()
 
-    def set_soundfont(self, sf2_filename: str) -> None:
-        """
-        Loads a new soundfont for this track.
-
-        Args:
-            sf2_filename (str): Filename of the new soundfont to load from the sf2 resources folder.
-        """
-        self.sf2_path = get_resource_path(f"sf2/{sf2_filename}")
+    def set_soundfont(self, sf2_filename_or_path: str) -> None:
+        """Loads a new soundfont, safely handling both relative filenames and absolute paths."""
+        # FIX 2: Check if the string is already an absolute path from the router
+        if os.path.isabs(sf2_filename_or_path):
+            self.sf2_path = os.path.normpath(sf2_filename_or_path)
+        else:
+            self.sf2_path = os.path.normpath(get_resource_path(f"sf2/{sf2_filename_or_path}"))
+            
         self._update_synth_program()
 
     def play_note_on(self, note: int, velocity: int) -> None:
