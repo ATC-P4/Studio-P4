@@ -5,6 +5,7 @@ import fluidsynth
 import mido
 from core.utils import get_resource_path
 from core.utils import MidiExporter
+import platform
 
 class Track:
     def __init__(self, name: str, synth: fluidsynth.Synth, channel: int, sf2_path: str = "sf2/basic_piano.sf2"):
@@ -151,7 +152,25 @@ class Project:
         self.master_synth.setting("audio.periods", 8)
         self.master_synth.setting("audio.period-size", 512)
         self.master_synth.setting("synth.sample-rate", 44100.0)
-        self.master_synth.start(driver="wasapi") 
+        
+        # Driver depending on the machine type
+        current_os = platform.system()
+        
+        if current_os == "Darwin": # MacOS
+            self.master_synth.setting("audio.coreaudio.device", "default")
+            self.master_synth.start(driver="coreaudio")
+            #print("[AUDIO] MacOS Mode (coreaudio) activated.")
+            
+        elif current_os == "Windows":
+            self.master_synth.start(driver="wasapi") 
+            #print("[AUDIO] Windows mode (wasapi) activated.")
+            
+        else:  # Linux
+            self.master_synth.start(driver="pulseaudio") # or "alsa"
+            print(f"[AUDIO] System {current_os} detected. Generic mode activated.")
+        self.master_synth.setting("midi.driver", "none")
+        self.master_synth.setting("midi.autoconnect", 0)
+
         self.master_synth.setting("midi.driver", "none")
         self.master_synth.setting("midi.autoconnect", 0)
 
