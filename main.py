@@ -100,7 +100,7 @@ def main() -> None:
     midi_io = MidiIO(project=project, engine=engine)
     midi_router = MidiInputRouter(api)
     midi_io.on_command_cb = midi_router.handle_midi_action 
-
+    midi_io.start_auto_connection() # Keyboard connection
     # ==========================================
     # PHASE 6: Wire the UI Signals
     # ==========================================
@@ -122,7 +122,6 @@ def main() -> None:
     # ==========================================
     # PHASE 8: Launch Main App
     # ==========================================
-    midi_io.start(midi_port_name) 
     window.show()
     window.update_ui(api.get_state_dto())
 

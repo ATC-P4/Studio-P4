@@ -4,6 +4,7 @@ import os
 import mido
 import time
 from typing import Callable, TYPE_CHECKING
+import threading
 
 # enable class type checking
 if TYPE_CHECKING:
@@ -42,6 +43,9 @@ class MidiIO:
         self.inport = None
         self.joystick = JoystickMapper()
 
+        self._is_monitoring = False
+        self._target_hints = ["MPK mini", "LoopBe", "IAC"]
+
     def start(self, port_name: str|None=None) -> None:
         """
         start the mido thread to read incoming midi messages from port_name and execute on_midi_callback on them.
@@ -56,14 +60,43 @@ class MidiIO:
             print(f"CRITICAL MidiIO Error: Could not open MIDI port. {e}")
             print("Available ports are:", mido.get_input_names())
 
+    def start_auto_connection(self):
+        """Start the periodic verification thread (hot-plugging)."""
+        if not self._is_monitoring:
+            self._is_monitoring = True
+            threading.Thread(target=self._monitor_loop, daemon=True).start()
+            print("[MidiIO] Starting automatic keyboard search...")
+
+    def _monitor_loop(self):
+        """A background thread that checks the ports every 2 seconds."""
+        while self._is_monitoring:
+            available_ports = mido.get_input_names()
+            
+            # 1. Handling a disconnection (if the cable is pulled out)
+            if self.inport and self.inport.name not in available_ports:
+                print(f"[MidiIO] Clavier déconnecté : {self.inport.name}")
+                self.inport.close()
+                self.inport = None
+                
+            # 2. Manage the connection (if a keyboard is connected)
+            if not self.inport:
+                for port in available_ports:
+                    for hint in self._target_hints:
+                        if hint in port and "MIDIIN" not in port:
+                            self.start(port)
+                            break 
+                    if self.inport:
+                        break 
+                        
+            time.sleep(2)
+
     def stop(self) -> None:
-        """
-        Closes the midi connection.
-        """
+        """Properly close the connection when the app is closed."""
+        self._is_monitoring = False
         if self.inport:
             self.inport.close()
             print("MidiIO Disconnected.")
-
+            
     def on_midi_callback(self, msg) -> None:
         """
         Callback function for handling incoming MIDI messages. 
