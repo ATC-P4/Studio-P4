@@ -67,12 +67,12 @@ After creating avenv as shown before run the following line inside the folder wh
 - BPM logic is not connected neither to the playback nor to the save_event_midi, so if we change bpm the recorded notes don't change bpm.
 - handle edge case and add the necessary try-catch, error messages, ...
 - map get_info to a button (combination of bottons) and make the function more useful.
-- Add support to connect the keyboard also once the app is already running
+- Add support to connect the keyboard also once the app is already running ✅
 - change the naming of the saved projects (if a project is reopend and saved again it should add like a version 2.0)
 - test the compatibility with jaws, in case detach the listening function of our voiceover and send the messages through jaws.
 - create a video for the presentation of 28 mai
 - Write user documentation in Word (.docx) format
-- Update audio input and output when I/O with application running
+- Update audio input and output when I/O with application running (In progress-->Romain)
 - BUG: Deadlock when creating new project
 - BUG: Deadlock when opening existing projects (not always)
 - Make app work with JAWS
