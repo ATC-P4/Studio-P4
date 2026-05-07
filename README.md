@@ -64,17 +64,23 @@ After creating avenv as shown before run the following line inside the folder wh
  add the possibility to remove tracks
 - Think about a function to learn the controls binding (at the moment we have so many commands that is better to hard code them)
 - better understand how fluidsynth and the sf2 work (multiple instruments in one sf2 file and potentially effects with sf2 encoding (metadata))
-- group toghether similar sf2 and add one more navigation mode (aka groups), and then enable the option to enter a group (ex. guitars) and loop over the guitars sf2 files
 - BPM logic is not connected neither to the playback nor to the save_event_midi, so if we change bpm the recorded notes don't change bpm.
 - handle edge case and add the necessary try-catch, error messages, ...
 - map get_info to a button (combination of bottons) and make the function more useful.
 - Add support to connect the keyboard also once the app is already running
-- Create a audio version of the user manual
-- ask to our challenger if he needs a delete track button
 - change the naming of the saved projects (if a project is reopend and saved again it should add like a version 2.0)
 - test the compatibility with jaws, in case detach the listening function of our voiceover and send the messages through jaws.
 - create a video for the presentation of 28 mai
-- Check the documentation
+- Write user documentation in Word (.docx) format
+- Update audio input and output when I/O with application running
+- BUG: Deadlock when creating new project
+- BUG: Deadlock when opening existing projects (not always)
+- Make app work with JAWS
+- Add ability to custom-name projects
+- When saving a project:
+    - It shouldn’t save to a new file (it should save to the currently opened project)
+    - BUG: Saving currently corrupts save files
+
 
 
 sound font to download:
