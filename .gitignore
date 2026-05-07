@@ -7,20 +7,27 @@
 !basic_piano.sf2
 
 # ignore venv
-venv/
+venv
 
 # ignore temporary files from vscode
-.vscode/
+.vscode
+
 # ignore __pycache__ directories
-__pycache__/
+__pycache__
 
 #exe files build
-dist/
-build/
+dist
+build
 
 
 # the mid files
 *.mid
 
 #the save files
-/Saves/
+Saves
+
+# MacOS
+.DS_Store
+
+# Daniel
+test.py
