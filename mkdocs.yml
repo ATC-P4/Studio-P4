@@ -1,0 +1,31 @@
+site_name: Python Live Looper Docs
+theme:
+  name: material
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["."] # Tells the parser to look in your root folder for 'core' and 'ui'
+
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+  - User Guide:
+      - fist draft: user_guide.md
+      - Creating a Project: creating_project.md
+      - Managing Tracks: managing_tracks.md
+      - Using the Metronome: metronome.md
+      - Exporting MIDI: exporting_midi.md
+  - Overview of the project:
+      - Architecture: architecture.md
+      - Data Flow: data_flow.md
+  - API Reference:
+      - Core API: api.md
+      - Audio IO: midi_io.md
+      - Engine: engine.md
+      - Models: models.md
+      - UI Components: ui.md
+      - Utils: utils.md
+      

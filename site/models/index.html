@@ -1,0 +1,2486 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../engine/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Models - Python Live Looper Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#data-models-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Python Live Looper Docs" class="md-header__button md-logo" aria-label="Python Live Looper Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Python Live Looper Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Models
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Python Live Looper Docs" class="md-nav__button md-logo" aria-label="Python Live Looper Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Python Live Looper Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user_guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    fist draft
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../creating_project.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating a Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../managing_tracks.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Managing Tracks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metronome.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using the Metronome
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exporting_midi.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting MIDI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview of the project
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Overview of the project
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data_flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../midi_io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Audio IO
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../engine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engine
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architectural-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architectural Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architectural Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-the-project-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The Project (Root)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-the-track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The Track
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-the-metronome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The Metronome
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Project.add_track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_track
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Project.get_armed_track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_armed_track
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Project.save_project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_project
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Project.set_gain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_gain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Track
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.add_midi_event" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_midi_event
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.clear_events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear_events
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.flush_notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        flush_notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.play_note_off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        play_note_off
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.play_note_on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        play_note_on
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.set_instrument" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_instrument
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.set_soundfont" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_soundfont
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.set_volume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_volume
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Metronome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metronome
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Metronome.play_click" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        play_click
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ui.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UI Components
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utils
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architectural-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architectural Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architectural Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-the-project-root" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The Project (Root)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-the-track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The Track
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-the-metronome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The Metronome
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Project.add_track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_track
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Project.get_armed_track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_armed_track
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Project.save_project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        save_project
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Project.set_gain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_gain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Track
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.add_midi_event" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_midi_event
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.clear_events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear_events
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.flush_notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        flush_notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.play_note_off" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        play_note_off
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.play_note_on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        play_note_on
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.set_instrument" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_instrument
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.set_soundfont" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_soundfont
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Track.set_volume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_volume
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Metronome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metronome
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.models.Metronome.play_click" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        play_click
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="data-models-reference">Data Models Reference</h1>
+<p>The <code>models.py</code> module defines the core data structures of the live looper. Following the <strong>Model-View-Controller (MVC)</strong> and <strong>Single Responsibility Principle (SRP)</strong>, these classes are strictly designed to hold state in memory and apply soundfont configurations. </p>
+<p>They do <em>not</em> handle hardware routing, user interfaces, or file I/O (which are delegated to the <code>MidiIO</code>, <code>LooperAPI</code>, and <code>MidiExporter</code> respectively).</p>
+<h2 id="architectural-overview">Architectural Overview</h2>
+<p>The application state is organized in a hierarchical tree:</p>
+<h3 id="1-the-project-root">1. The <code>Project</code> (Root)</h3>
+<p>The <code>Project</code> acts as the master container for the entire session. 
+- It holds the global <code>fluidsynth.Synth</code> instance to ensure all tracks share the same audio driver and sample rate.
+- It manages global musical properties (BPM, Time Signature).
+- It acts as an automatic channel manager, maintaining a list of <code>available_channels</code> (skipping Channel 0 to prevent hardware feedback loops, and reserving Channel 9 for the metronome) and popping them off as new tracks are created.</p>
+<h3 id="2-the-track">2. The <code>Track</code></h3>
+<p>Each <code>Track</code> represents a single instrument timeline. It holds fundamental states like <code>is_armed</code>, <code>is_muted</code>, and its specific <code>sf2_path</code>.</p>
+<p><strong>Crucial Architecture Note: Thread Safety</strong>
+Because the live looper is highly asynchronous, the <code>Track.midi_events</code> list is accessed by three different threads simultaneously:
+1. <strong>The Main UI Thread:</strong> Clears the events when restarting a count-in.
+2. <strong>The MidiIO Thread:</strong> Appends new events while a user is actively recording.
+3. <strong>The Engine Clock Thread:</strong> Iterates over the events to calculate modulo playback times.</p>
+<p>To prevent <code>RuntimeError</code> crashes, every <code>Track</code> contains a <code>threading.Lock()</code> named <code>event_lock</code>. This lock is automatically acquired whenever notes are added, cleared, or looped.</p>
+<h3 id="3-the-metronome">3. The <code>Metronome</code></h3>
+<p>A simplified class that hardcodes itself to Channel 9 and specifically manages the "Tick" and "Tock" MIDI notes (76 and 77) based on whether a beat is a downbeat.</p>
+<hr />
+<h2 id="api-reference">API Reference</h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="core.models.Project"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>core\models.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Project</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bpm</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">120</span><span class="p">,</span> <span class="n">time_signature</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bpm</span> <span class="o">=</span> <span class="n">bpm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_signature</span> <span class="o">=</span> <span class="n">time_signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_signature_numerator</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_signature_denominator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tracks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Track</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beat_duration</span> <span class="o">=</span> <span class="mf">60.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpm</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_loop_beats</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_track</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Audio setup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span> <span class="o">=</span> <span class="n">fluidsynth</span><span class="o">.</span><span class="n">Synth</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gain</span> <span class="o">=</span> <span class="mf">0.4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">setting</span><span class="p">(</span><span class="s2">&quot;synth.gain&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gain</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">setting</span><span class="p">(</span><span class="s2">&quot;audio.periods&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">setting</span><span class="p">(</span><span class="s2">&quot;audio.period-size&quot;</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">setting</span><span class="p">(</span><span class="s2">&quot;synth.sample-rate&quot;</span><span class="p">,</span> <span class="mf">44100.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">driver</span><span class="o">=</span><span class="s2">&quot;wasapi&quot;</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">setting</span><span class="p">(</span><span class="s2">&quot;midi.driver&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">setting</span><span class="p">(</span><span class="s2">&quot;midi.autoconnect&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Ch 0 removed to prevent dupe listening. Ch 9 reserved for Metronome.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">available_channels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">cc</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">cc</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metronome</span> <span class="o">=</span> <span class="n">Metronome</span><span class="p">(</span><span class="n">synth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a new track to the project with the given name. Automatically assigns an available MIDI channel and initializes the synth for that track.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): The name of the new track to add.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_channels</span><span class="p">:</span> 
+            <span class="k">return</span>
+        <span class="n">assigned_channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_channels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">track</span> <span class="o">=</span> <span class="n">Track</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">synth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">assigned_channel</span><span class="p">)</span>
+        <span class="n">track</span><span class="o">.</span><span class="n">initialize_synth</span><span class="p">()</span>  
+        <span class="n">track</span><span class="o">.</span><span class="n">is_armed</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tracks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">tracks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_armed_track</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Track</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the currently armed track, or None if no track is armed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">track</span> <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracks</span> <span class="k">if</span> <span class="n">track</span><span class="o">.</span><span class="n">is_armed</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Saves the project MIDI tracks to the specific requested folder.&quot;&quot;&quot;</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">)</span>
+        <span class="n">folder_name</span> <span class="o">=</span> <span class="n">folder_name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;project_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">project_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span> <span class="s2">&quot;Saves&quot;</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">project_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracks</span><span class="p">:</span>
+            <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">track</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.mid&quot;</span><span class="p">)</span>
+            <span class="c1"># Delegate the heavy lifting to the new service!</span>
+            <span class="n">MidiExporter</span><span class="o">.</span><span class="n">export_track</span><span class="p">(</span><span class="n">track</span><span class="p">,</span> <span class="n">full_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">master_loop_beats</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gain</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the master gain for the project&#39;s synth. Value should be between 0.0 and 1.0. </span>
+<span class="sd">        Act as a master volume control for all tracks since they share the same synth engine.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            gain (float): The desired gain value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gain</span> <span class="o">=</span> <span class="n">gain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">setting</span><span class="p">(</span><span class="s2">&quot;synth.gain&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gain</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Project.add_track" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">add_track</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a new track to the project with the given name. Automatically assigns an available MIDI channel and initializes the synth for that track.
+Args:
+    name (str): The name of the new track to add.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds a new track to the project with the given name. Automatically assigns an available MIDI channel and initializes the synth for that track.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): The name of the new track to add.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_channels</span><span class="p">:</span> 
+        <span class="k">return</span>
+    <span class="n">assigned_channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_channels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">track</span> <span class="o">=</span> <span class="n">Track</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">synth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">assigned_channel</span><span class="p">)</span>
+    <span class="n">track</span><span class="o">.</span><span class="n">initialize_synth</span><span class="p">()</span>  
+    <span class="n">track</span><span class="o">.</span><span class="n">is_armed</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tracks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>  
+    <span class="bp">self</span><span class="o">.</span><span class="n">tracks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Project.get_armed_track" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_armed_track</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the currently armed track, or None if no track is armed.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_armed_track</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Track</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the currently armed track, or None if no track is armed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">track</span> <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracks</span> <span class="k">if</span> <span class="n">track</span><span class="o">.</span><span class="n">is_armed</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Project.save_project" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">save_project</span><span class="p">(</span><span class="n">folder_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Saves the project MIDI tracks to the specific requested folder.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves the project MIDI tracks to the specific requested folder.&quot;&quot;&quot;</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">)</span>
+    <span class="n">folder_name</span> <span class="o">=</span> <span class="n">folder_name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;project_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">project_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span> <span class="s2">&quot;Saves&quot;</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">project_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracks</span><span class="p">:</span>
+        <span class="n">full_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">track</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.mid&quot;</span><span class="p">)</span>
+        <span class="c1"># Delegate the heavy lifting to the new service!</span>
+        <span class="n">MidiExporter</span><span class="o">.</span><span class="n">export_track</span><span class="p">(</span><span class="n">track</span><span class="p">,</span> <span class="n">full_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bpm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">master_loop_beats</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Project.set_gain" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_gain</span><span class="p">(</span><span class="n">gain</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Sets the master gain for the project's synth. Value should be between 0.0 and 1.0. 
+Act as a master volume control for all tracks since they share the same synth engine.
+Args:
+    gain (float): The desired gain value.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gain</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the master gain for the project&#39;s synth. Value should be between 0.0 and 1.0. </span>
+<span class="sd">    Act as a master volume control for all tracks since they share the same synth engine.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        gain (float): The desired gain value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">gain</span> <span class="o">=</span> <span class="n">gain</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">master_synth</span><span class="o">.</span><span class="n">setting</span><span class="p">(</span><span class="s2">&quot;synth.gain&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gain</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="core.models.Track"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>core\models.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  9</span>
+<span class="normal"> 10</span>
+<span class="normal"> 11</span>
+<span class="normal"> 12</span>
+<span class="normal"> 13</span>
+<span class="normal"> 14</span>
+<span class="normal"> 15</span>
+<span class="normal"> 16</span>
+<span class="normal"> 17</span>
+<span class="normal"> 18</span>
+<span class="normal"> 19</span>
+<span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Track</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">synth</span><span class="p">:</span> <span class="n">fluidsynth</span><span class="o">.</span><span class="n">Synth</span><span class="p">,</span> <span class="n">channel</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sf2_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sf2/basic_piano.sf2&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_muted</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_armed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">program_id</span> <span class="o">=</span> <span class="mi">0</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">midi_events</span> <span class="o">=</span> <span class="p">[]</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">synth</span> <span class="o">=</span> <span class="n">synth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="n">channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sf2_path</span> <span class="o">=</span> <span class="n">get_resource_path</span><span class="p">(</span><span class="n">sf2_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sf_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="mi">100</span> 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_synth_program</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Consolidated helper to apply soundfont and program changes to the synth.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sf_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">sfload</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sf2_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">program_select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sf_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">program_id</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_synth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_synth_program</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_instrument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">program_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ----- NOT IMPLEMENTED YET -----</span>
+<span class="sd">        Sets the MIDI program (instrument) for this track.</span>
+<span class="sd">        Only applies if the soundfont has multiple instruments on different program numbers. </span>
+<span class="sd">        not the same as setting a different soundfont, which always changes the entire soundfont and is the default method.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            program_id (int): MIDI program number to select (0-127)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">program_id</span> <span class="o">=</span> <span class="n">program_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_synth_program</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_soundfont</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sf2_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads a new soundfont for this track.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sf2_filename (str): Filename of the new soundfont to load from the sf2 resources folder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sf2_path</span> <span class="o">=</span> <span class="n">get_resource_path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sf2/</span><span class="si">{</span><span class="n">sf2_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_synth_program</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">play_note_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">velocity</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plays a MIDI note on this track, respecting mute status and managing active notes to prevent &quot;stuck&quot; notes.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            note (int): MIDI note number to play.</span>
+<span class="sd">            velocity (int): MIDI velocity for the note on event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_muted</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">note</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteoff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">note</span><span class="p">,</span> <span class="n">velocity</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">play_note_off</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stops a MIDI note on this track, ensuring it is removed from the active notes set.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            note (int): MIDI note number to stop.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteoff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">flush_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Immediately stops all currently active notes on this track. Useful for handling edge cases when switching armed tracks.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">cc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span> 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_midi_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">mido</span><span class="o">.</span><span class="n">Message</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Thread-safe method to add a MIDI event to the track&#39;s event history.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            msg (mido.Message): The MIDI message to add (should be note_on or note_off).</span>
+<span class="sd">            timestamp (float): The timestamp in seconds when this event should occur relative to the start of the loop.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">midi_events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">msg</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Thread-safe method to clear all MIDI events from the track. Useful for resetting a track or when deleting it.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">midi_events</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">midi_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the volume for this track using MIDI CC 7. The synth&#39;s channel volume is updated immediately if the synth is initialized.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            midi_value (int): MIDI velocity value (0-127) representing the desired volume level.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">midi_value</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">cc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Track.add_midi_event" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">add_midi_event</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Thread-safe method to add a MIDI event to the track's event history.
+Args:
+    msg (mido.Message): The MIDI message to add (should be note_on or note_off).
+    timestamp (float): The timestamp in seconds when this event should occur relative to the start of the loop.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_midi_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">mido</span><span class="o">.</span><span class="n">Message</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Thread-safe method to add a MIDI event to the track&#39;s event history.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        msg (mido.Message): The MIDI message to add (should be note_on or note_off).</span>
+<span class="sd">        timestamp (float): The timestamp in seconds when this event should occur relative to the start of the loop.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_lock</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">midi_events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">msg</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Track.clear_events" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">clear_events</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Thread-safe method to clear all MIDI events from the track. Useful for resetting a track or when deleting it.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_events</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Thread-safe method to clear all MIDI events from the track. Useful for resetting a track or when deleting it.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_lock</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">midi_events</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Track.flush_notes" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">flush_notes</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Immediately stops all currently active notes on this track. Useful for handling edge cases when switching armed tracks.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">flush_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Immediately stops all currently active notes on this track. Useful for handling edge cases when switching armed tracks.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">cc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span> 
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Track.play_note_off" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">play_note_off</span><span class="p">(</span><span class="n">note</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Stops a MIDI note on this track, ensuring it is removed from the active notes set.
+Args:
+    note (int): MIDI note number to stop.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">play_note_off</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stops a MIDI note on this track, ensuring it is removed from the active notes set.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        note (int): MIDI note number to stop.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteoff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Track.play_note_on" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">play_note_on</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">velocity</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Plays a MIDI note on this track, respecting mute status and managing active notes to prevent "stuck" notes.
+Args:
+    note (int): MIDI note number to play.
+    velocity (int): MIDI velocity for the note on event.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">play_note_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">velocity</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plays a MIDI note on this track, respecting mute status and managing active notes to prevent &quot;stuck&quot; notes.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        note (int): MIDI note number to play.</span>
+<span class="sd">        velocity (int): MIDI velocity for the note on event.</span>
+<span class="sd">    &quot;&quot;&quot;</span>        
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_muted</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">note</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteoff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">note</span><span class="p">,</span> <span class="n">velocity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Track.set_instrument" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_instrument</span><span class="p">(</span><span class="n">program_id</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>----- NOT IMPLEMENTED YET -----
+Sets the MIDI program (instrument) for this track.
+Only applies if the soundfont has multiple instruments on different program numbers. 
+not the same as setting a different soundfont, which always changes the entire soundfont and is the default method.
+Args:
+    program_id (int): MIDI program number to select (0-127)</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_instrument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">program_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----- NOT IMPLEMENTED YET -----</span>
+<span class="sd">    Sets the MIDI program (instrument) for this track.</span>
+<span class="sd">    Only applies if the soundfont has multiple instruments on different program numbers. </span>
+<span class="sd">    not the same as setting a different soundfont, which always changes the entire soundfont and is the default method.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        program_id (int): MIDI program number to select (0-127)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">program_id</span> <span class="o">=</span> <span class="n">program_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_update_synth_program</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Track.set_soundfont" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_soundfont</span><span class="p">(</span><span class="n">sf2_filename</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Loads a new soundfont for this track.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>sf2_filename</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Filename of the new soundfont to load from the sf2 resources folder.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_soundfont</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sf2_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads a new soundfont for this track.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sf2_filename (str): Filename of the new soundfont to load from the sf2 resources folder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sf2_path</span> <span class="o">=</span> <span class="n">get_resource_path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sf2/</span><span class="si">{</span><span class="n">sf2_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_update_synth_program</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Track.set_volume" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_volume</span><span class="p">(</span><span class="n">midi_value</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Sets the volume for this track using MIDI CC 7. The synth's channel volume is updated immediately if the synth is initialized.
+Args:
+    midi_value (int): MIDI velocity value (0-127) representing the desired volume level.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">midi_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the volume for this track using MIDI CC 7. The synth&#39;s channel volume is updated immediately if the synth is initialized.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        midi_value (int): MIDI velocity value (0-127) representing the desired volume level.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">midi_value</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">cc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="core.models.Metronome"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>core\models.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Metronome</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">synth</span><span class="p">:</span> <span class="n">fluidsynth</span><span class="o">.</span><span class="n">Synth</span><span class="p">,</span> <span class="n">sf2_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sf2/Metronom.sf2&quot;</span><span class="p">,</span> <span class="n">bank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span> <span class="n">program</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">48</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synth</span> <span class="o">=</span> <span class="n">synth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="mi">9</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> 
+
+        <span class="n">absolute_sf2_path</span> <span class="o">=</span> <span class="n">get_resource_path</span><span class="p">(</span><span class="n">sf2_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sfid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">sfload</span><span class="p">(</span><span class="n">absolute_sf2_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">program_select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sfid</span><span class="p">,</span> <span class="n">bank</span><span class="p">,</span> <span class="n">program</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">play_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_downbeat</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plays a metronome click. Uses different MIDI notes for downbeats vs. regular beats, and ensures no notes get stuck.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            is_downbeat (bool): True if this click is a downbeat (first beat of the measure), False for regular beats.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">76</span><span class="p">,</span> <span class="mi">77</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">note</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteoff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_downbeat</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="mi">76</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">76</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">77</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="core.models.Metronome.play_click" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">play_click</span><span class="p">(</span><span class="n">is_downbeat</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Plays a metronome click. Uses different MIDI notes for downbeats vs. regular beats, and ensures no notes get stuck.
+Args:
+    is_downbeat (bool): True if this click is a downbeat (first beat of the measure), False for regular beats.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core\models.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">play_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_downbeat</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plays a metronome click. Uses different MIDI notes for downbeats vs. regular beats, and ensures no notes get stuck.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        is_downbeat (bool): True if this click is a downbeat (first beat of the measure), False for regular beats.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">76</span><span class="p">,</span> <span class="mi">77</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">note</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteoff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_downbeat</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="mi">76</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">76</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synth</span><span class="o">.</span><span class="n">noteon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active_notes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">77</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
