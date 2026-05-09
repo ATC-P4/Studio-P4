@@ -73,13 +73,10 @@ After creating avenv as shown before run the following line inside the folder wh
 - create a video for the presentation of 28 mai
 - Write user documentation in Word (.docx) format
 - Update audio input and output when I/O with application running (In progress-->Romain)
-- BUG: Deadlock when creating new project
-- BUG: Deadlock when opening existing projects (not always)
 - Make app work with JAWS
 - Add ability to custom-name projects
 - When saving a project:
     - It shouldn’t save to a new file (it should save to the currently opened project)
-    - BUG: Saving currently corrupts save files
 
 
 

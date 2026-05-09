@@ -16,19 +16,22 @@ class VirtualMidiController(QWidget):
         self.resize(500, 350)
         
         self.outport = None
+        # This will select the port
+        self.change_port()
+
         self.init_ui()
-        self.populate_midi_ports()
+        # self.populate_midi_ports()
 
     def init_ui(self):
         main_layout = QVBoxLayout(self)
 
         # --- 1. Port Selection ---
-        port_layout = QHBoxLayout()
-        port_layout.addWidget(QLabel("Output Port:"))
-        self.port_dropdown = QComboBox()
-        self.port_dropdown.currentIndexChanged.connect(self.change_port)
-        port_layout.addWidget(self.port_dropdown)
-        main_layout.addLayout(port_layout)
+        # port_layout = QHBoxLayout()
+        # port_layout.addWidget(QLabel("Output Port:"))
+        # self.port_dropdown = QComboBox()
+        # self.port_dropdown.currentIndexChanged.connect(self.change_port)
+        # port_layout.addWidget(self.port_dropdown)
+        # main_layout.addLayout(port_layout)
 
         # --- 2. Action Buttons (Transport & Joystick) ---
         grid = QGridLayout()
@@ -93,30 +96,32 @@ class VirtualMidiController(QWidget):
             
         main_layout.addLayout(piano_layout)
 
-    def populate_midi_ports(self):
-        """Finds available output ports and populates the dropdown."""
-        self.port_dropdown.blockSignals(True)
-        self.port_dropdown.clear()
-        self.port_dropdown.addItem("Select a port...")
+    # def populate_midi_ports(self):
+    #     """Finds available output ports and populates the dropdown."""
+    #     self.port_dropdown.blockSignals(True)
+    #     self.port_dropdown.clear()
+    #     self.port_dropdown.addItem("Select a port...")
         
-        ports = mido.get_output_names()
-        for port in ports:
-            self.port_dropdown.addItem(port)
+    #     ports = mido.get_output_names()
+    #     for port in ports:
+    #         self.port_dropdown.addItem(port)
             
-        self.port_dropdown.blockSignals(False)
+    #     self.port_dropdown.blockSignals(False)
 
     def change_port(self):
         """Handles switching the active MIDI output port."""
-        port_name = self.port_dropdown.currentText()
-        if port_name == "Select a port...":
-            return
+        # port_name = self.port_dropdown.currentText()
+        # if port_name == "Select a port...":
+        #     return
 
         if self.outport:
             self.outport.close()
 
         try:
-            self.outport = mido.open_output(port_name)
-            print(f"[TESTER] Connected to {port_name}")
+            # self.outport = mido.open_output(port_name)
+            self.outport = mido.open_output("MusicHelper", virtual=True)
+            print(f"[TESTER] Created MusicHelper")
+            # print(f"[TESTER] Connected to {port_name}")
         except Exception as e:
             print(f"[TESTER] Error opening port: {e}")
 
