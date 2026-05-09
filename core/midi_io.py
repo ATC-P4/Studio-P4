@@ -44,7 +44,7 @@ class MidiIO:
         self.joystick = JoystickMapper()
 
         self._is_monitoring = False
-        self._target_hints = ["MPK mini", "LoopBe", "IAC"]
+        self._target_hints = ["iPad", "MPK mini", "LoopBe", "IAC"] # TODO: this severely limits the input options to the app
 
     def start(self, port_name: str|None=None) -> None:
         """
@@ -106,7 +106,7 @@ class MidiIO:
         Args:
             msg (mido.Message): The incoming MIDI message.
         """
-        #print(f"[MidiIO] Received MIDI message: {msg}")
+        # print(f"[MidiIO] Received MIDI message: {msg}")
         if msg.type == 'control_change':
             action = self.DEFAULT_MIDI_MAPPING.get(msg.control)
             #print(f"Checking MIDI CC {msg.control} for mapped action: {action}")
