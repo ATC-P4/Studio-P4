@@ -6,6 +6,7 @@ class MainWindow(QMainWindow):
     # These signals perfectly match the connections we set up in main.py
     record_requested = Signal()
     play_requested = Signal()
+    save_requested = Signal()
     metronome_toggled = Signal(bool)
     track_muted = Signal(int, bool)
     track_armed = Signal(int)
@@ -34,12 +35,14 @@ class MainWindow(QMainWindow):
         self.metro_checkbox = QCheckBox("Metronome")
         self.status_label = QLabel("STOPPED | 120 BPM")
         self.add_track = QPushButton("➕ Add Track") 
+        self.save_btn = QPushButton("💾 Save")              # Save project
 
         control_layout.addWidget(self.record_btn)
         control_layout.addWidget(self.play_btn)
         control_layout.addWidget(self.metro_checkbox)
         control_layout.addWidget(self.status_label)
         control_layout.addWidget(self.add_track)
+        control_layout.addWidget(self.save_btn)
         
         self.main_layout.addLayout(control_layout)
 
@@ -56,6 +59,7 @@ class MainWindow(QMainWindow):
         self.play_btn.clicked.connect(self.play_requested.emit)
         self.metro_checkbox.toggled.connect(self.metronome_toggled.emit)
         self.add_track.clicked.connect(self.add_track_requested.emit)
+        self.save_btn.clicked.connect(self.save_requested.emit)
 
     def update_ui(self, dto: dict):
         """Consumes the 'dumb' dictionary from the core API and redraws the screen."""

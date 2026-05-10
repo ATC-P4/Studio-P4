@@ -60,8 +60,6 @@ def find_and_register_fluidsynth():
                     break
             else:
                 raise FileNotFoundError("FluidSynth not found. Try: sudo apt install libfluidsynth-dev")
-    
-
 find_and_register_fluidsynth()
 
 import faulthandler
@@ -171,6 +169,7 @@ def main() -> None:
     # ==========================================
     window.record_requested.connect(api.toggle_record)
     window.play_requested.connect(api.toggle_playback)
+    window.save_requested.connect(api.saveproject_to_disk)
     window.metronome_toggled.connect(api.toggle_metronome)
     window.track_muted.connect(api.mute_track)
     window.track_armed.connect(api.arm_track)
