@@ -80,10 +80,11 @@ from core.midi_io import MidiIO, MidiInputRouter
 from core.voice import VoicePresenter, VoiceService, VoiceType
 from core.utils import EventBus, get_resource_path, get_available_instruments
 from core.project_io import ProjectIO
-from core.startup_menu import StartupMenu  # <-- NEW IMPORT
+from core.startup_menu import StartupMenu 
 
 # UI View
 from ui.main_window import MainWindow
+import time
 
 
 def main() -> None:
@@ -114,7 +115,7 @@ def main() -> None:
     else:
         for port in mido.get_input_names():
             # search for loopbe port as a fallback
-            if "LoopBe" in port:
+            if "LoopBe" in port or "IAC" in port:
                 found_port = port
                 print(f"[STARTUP] Found LoopBe MIDI port for startup menu: {found_port}")
                 break
@@ -125,6 +126,7 @@ def main() -> None:
     # This completely blocks Python until NAV_RIGHT is pressed
     selected_folder_path = startup_menu.run(port_name=midi_port_name)
 
+    time.sleep(1.5)
     # ==========================================
     # PHASE 3: Instantiate Core Business Logic
     # ==========================================
