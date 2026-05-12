@@ -147,7 +147,7 @@ Looking for more instruments to add to your `sf2/` folder? Here are some great f
 
 ## Contributors 👥
 
-This project was built for the Assistive Technology Challenge by:
+This project was built for the EPFL Assistive Technology Challenge by:
 * **[Filippo Tognina](https://github.com/FTognina)**
 * **[Daniel Polka](https://github.com/DanThePol)**
 * **[Romain Frossard](https://github.com/frossardr)**
