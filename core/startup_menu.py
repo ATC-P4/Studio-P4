@@ -121,17 +121,24 @@ class StartupMenu(QDialog):
         self.selected_folder_path = self.projects[self.current_idx]
         self._aborted = False
         
-        # TODO: handle 'None' proj_name
-        proj_name = f"{self.projects[self.current_idx]}" if self.projects[self.current_idx] else "erreur"
-        self.voice.announce_loading_proj(proj_name)
+        proj_path = self.projects[self.current_idx]
+        if not proj_path:
+            pass # TODO
+        else:
+            proj_name = os.path.basename(proj_path)
+            clean_name = proj_name.replace("_", " ")        
+            self.voice.announce_loading_proj(clean_name)
         super().accept() # Call the parent QDialog close routine
 
     def _announce(self) -> None:
         if self.current_idx == 0:
             self.voice.announceb_new_proj()
         else:
-            folder_name = os.path.basename(self.projects[self.current_idx])
-            clean_name = folder_name.replace("_", " ")
+            proj_path = self.projects[self.current_idx]
+            if not proj_path:
+                return
+            proj_name = os.path.basename(proj_path)
+            clean_name = proj_name.replace("_", " ")
             self.voice.announce_selected_proj(clean_name)
 
     def run(self, port_name: str | None = None) -> str | None:

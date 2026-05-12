@@ -1,11 +1,11 @@
 import pyaudio as pa
 import threading
 from enum import Enum
-from piper import SynthesisConfig
 from core.utils import EventBus
 import time
-from typing import Any
-from piper import PiperVoice, PiperConfig
+from typing import TypeVar, Generic
+from piper import PiperVoice, AudioChunk
+from collections.abc import Iterable
 
 
 class VoiceType(Enum):
@@ -22,24 +22,33 @@ class VoiceType(Enum):
     TRACK_INFO = 10
     TRACK_NAME = 11
 
-
+K = TypeVar('K')
+V = TypeVar('V')
 # Your requested BlockingMap from Slack
-class BlockingMap(object):
+class BlockingMap(Generic[K, V], object):
     def __init__(self):
-        self.queue = {}
-        self.cv = threading.Condition()
+        self._queue: dict[K, V] = {}
+        self._cv = threading.Condition()
+        self._last_popped: None | tuple[K, V] = None
 
-    def put(self, key: Any, value: Any) -> None:
-        with self.cv:
-            self.queue[key] = value
-            self.cv.notify()
+    def put(self, key: K, value: V) -> None:
+        with self._cv:
+            self._queue[key] = value
+            self._cv.notify()
 
-    def pop(self) -> tuple[Any, Any]:
-        with self.cv:
-            while not self.queue:
-                self.cv.wait()
+    def pop(self) -> tuple[K, V]:
+        with self._cv:
+            while not self._queue:
+                self._cv.wait()
             # popitem() returns the most recently inserted key-value pair (LIFO)
-            return self.queue.popitem()
+            self._last_popped = self._queue.popitem()
+            return self._last_popped
+        
+    def get_last_popped(self) -> None | tuple[K, V]:
+        return self._last_popped
+    
+    def clear_last_popped(self) -> None:
+        self._last_popped = None
 
 class VoiceService:
 
@@ -55,8 +64,9 @@ class VoiceService:
         voice_config: Configuration for the voice synthesizer.
         """
         self._voice = voice_engine
-        self._voice_queue = BlockingMap()
+        self._voice_queue: BlockingMap[VoiceType, Iterable[AudioChunk] | None] = BlockingMap()
         self._is_running = True
+        self._interrupt = threading.Event()
         
         # Start the persistent audio worker
         threading.Thread(target=self._voice_worker, daemon=True).start()
@@ -64,6 +74,18 @@ class VoiceService:
     def _voice_worker(self):
         """Single persistent thread that owns the audio engine exclusively."""
         sample_rate = getattr(self._voice.config, 'sample_rate', 44100) 
+
+        def clear_interrupt() -> None:
+            self._voice_queue.clear_last_popped()
+            self._interrupt.clear()
+
+        def check_interrupt() -> bool:
+            interrupt = self._interrupt.is_set()
+            if interrupt:
+                clear_interrupt()
+            return interrupt
+        
+        CHUNK_SIZE = 256
 
         while self._is_running:
             # This uses your BlockingMap's pop function
@@ -85,17 +107,27 @@ class VoiceService:
                     )
                     
                     for chunk in audio:
-                        try:
-                            stream.write(chunk.audio_int16_bytes)
-                        except AttributeError:
-                            stream.write(chunk) 
+
+                        raw = chunk.audio_int16_bytes
+                        for i in range(0, len(raw), CHUNK_SIZE):
+                            if check_interrupt():
+                                break
+                            stream.write(raw[i:i + CHUNK_SIZE])
+
+                    # Clear interruption 
+                    clear_interrupt()
                             
                 except Exception as e:
                     # intercept the sudden disconnection
+                    clear_interrupt()
                     print(f"[Audio] Switching computer sound cards...")
                     time.sleep(0.5) # Give a moment to route the audio!
                     
                 finally:
+                    
+                    # Clear interrupt
+                    clear_interrupt()
+
                     if stream:
                         try:
                             stream.stop_stream()
@@ -117,6 +149,19 @@ class VoiceService:
 
         # We run the text-generation on a temp thread so the UI never freezes
         threading.Thread(target=_add_sentence, daemon=True).start()
+
+    def interrupt(self):
+        """Cuts off the currently playing audio immediately."""
+        self._interrupt.set()
+
+    def currently_playing(self) -> None | VoiceType:
+        """Returns the type of the currently playing (or most recently 
+            played) spoken sentence."""
+        v = self._voice_queue.get_last_popped()
+        if not v:
+            return None
+        ret, _ = v
+        return ret
 
     def shutdown(self):
         """Cleanly closes the audio stream."""
@@ -173,12 +218,18 @@ class VoicePresenter:
         self.voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}")
 
     def announce_loading_proj(self, name: str) -> None:
+        if self.voice.currently_playing():
+            self.voice.interrupt()
         self.voice.speak(VoiceType.PROJ_INFO, f"Chargement du projet {name}.")
 
     def announceb_new_proj(self) -> None:
+        if self.voice.currently_playing():
+            self.voice.interrupt()
         self.voice.speak(VoiceType.PROJ_INFO, "Nouveau Projet")
 
     def announce_selected_proj(self, name: str) -> None:
+        if self.voice.currently_playing():
+            self.voice.interrupt()
         self.voice.speak(VoiceType.PROJ_INFO, name)
 
     def announce_started(self) -> None:
