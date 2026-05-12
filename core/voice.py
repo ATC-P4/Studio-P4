@@ -1,7 +1,7 @@
 import pyaudio as pa
 import threading
 from enum import Enum
-from core.utils import EventBus
+from core.utils import EventBus, EventType
 import time
 from typing import TypeVar, Generic
 from piper import PiperVoice, AudioChunk
@@ -181,14 +181,14 @@ class VoicePresenter:
         self.voice = voice_service
         
         # 1. Wire up the event subscriptions
-        event_bus.subscribe("TRACK_ARMED", self.announce_armed_track)
-        event_bus.subscribe("PROJECT_SAVED", self.announce_saved)
-        event_bus.subscribe("METRONOME_TOGGLED", self.announce_metronome)
-        event_bus.subscribe("BPM_CHANGED", self.announce_bpm)
-        event_bus.subscribe("RECORDING_STOPPED", self.announce_recording_stopped)
-        event_bus.subscribe("TRACK_MUTED", self.announce_track_muted)
-        event_bus.subscribe("STATUS_REQUESTED", self.announce_current_state)
-        event_bus.subscribe("GENERIC_ANNOUNCEMENT", lambda message: self.voice.speak(VoiceType.GENERAL_INFO, message))
+        event_bus.subscribe(EventType.TRACK_SELECT, self.announce_armed_track)
+        event_bus.subscribe(EventType.PROJ_SAVED, self.announce_saved)
+        event_bus.subscribe(EventType.METR_TOGGLE, self.announce_metronome)
+        event_bus.subscribe(EventType.BPM_MOD, self.announce_bpm)
+        event_bus.subscribe(EventType.REC_STOP, self.announce_recording_stopped)
+        event_bus.subscribe(EventType.TRACK_MUTE, self.announce_track_muted)
+        event_bus.subscribe(EventType.STAT_REQ, self.announce_current_state)
+        event_bus.subscribe(EventType.GENERAL, lambda message: self.voice.speak(VoiceType.GENERAL_INFO, message))
 
     def shutdown(self) -> None:
         self.voice.shutdown()

@@ -2,6 +2,7 @@ import sys
 import os
 import mido
 from typing import Callable, Any, Dict, List,TYPE_CHECKING
+from enum import Enum
 
 
 if TYPE_CHECKING:
@@ -98,20 +99,33 @@ class MidiExporter:
         except Exception as e:
             print(f"[EXPORTER] ERROR writing MIDI to disk: {e}")
 
+
+class EventType(Enum):
+    TRACK_SELECT = 0,
+    PROJ_SAVED = 1,
+    METR_TOGGLE = 2,
+    BPM_MOD = 3,
+    REC_STOP = 4,
+    TRACK_MUTE = 5,
+    STAT_REQ = 6,
+    GENERAL = 7
+
+    
+
 class EventBus:
     """A lightweight publisher/subscriber router for decoupled backend communication."""
     
     def __init__(self):
         # Maps event string names to a list of callback functions
-        self._subscribers: Dict[str, List[Callable]] = {}
+        self._subscribers: Dict[EventType, List[Callable]] = {}
 
-    def subscribe(self, event_type: str, callback: Callable) -> None:
+    def subscribe(self, event_type: EventType, callback: Callable) -> None:
         """Adds a listener for a specific event."""
         if event_type not in self._subscribers:
             self._subscribers[event_type] = []
         self._subscribers[event_type].append(callback)
 
-    def emit(self, event_type: str, *args: Any, **kwargs: Any) -> None:
+    def emit(self, event_type: EventType, *args: Any, **kwargs: Any) -> None:
         """Triggers all callbacks listening to this event type."""
         if event_type in self._subscribers:
             for callback in self._subscribers[event_type]:

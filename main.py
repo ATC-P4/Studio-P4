@@ -1,66 +1,17 @@
-import os, sys, subprocess, platform
+import os, sys
 
 def find_and_register_fluidsynth():
     
-    system = platform.system()
+    # Windows version only
     print("Searching for fluidsynth library")
 
     if getattr(sys, 'frozen', False):
         print("PyInstaller build")
         # Running as PyInstaller bundle — DLL/dylib/so is extracted to _MEIPASS
         dll_dir = sys._MEIPASS
-        if system == "Windows":
-            os.environ["PATH"] += ";" + dll_dir
-        else:  # macOS and Linux both use colon-separated PATH
-            os.environ["PATH"] += ":" + dll_dir
+        os.environ["PATH"] += ";" + dll_dir
 
-    else:
-
-        print("Terminal launch from python script")
-
-        if system == "Windows":
-            # PowerShell equivalent of your Get-ChildItem command
-            result = subprocess.run(
-                [
-                    "powershell", "-Command",
-                    "Get-ChildItem -Path 'C:\\' -Recurse -Filter 'libfluidsynth*.dll'"
-                    " -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName"
-                ],
-                capture_output=True, text=True
-            )
-            paths = result.stdout.strip().splitlines()
-            if not paths:
-                raise FileNotFoundError("FluidSynth DLL not found. Is it installed?")
-            # Take the first result and get its containing folder
-            dll_dir = os.path.dirname(paths[0])
-            print(f"(Windows) path: {dll_dir}")
-            os.environ["PATH"] += ";" + dll_dir
-
-        elif system == "Darwin":  # macOS
-            # Homebrew puts it here on both Intel and Apple Silicon
-            for brew_path in ["/usr/local/lib", "/opt/homebrew/lib"]:
-                if os.path.exists(os.path.join(brew_path, "libfluidsynth.dylib")):
-                    os.environ["PATH"] += ":" + brew_path
-                    print(f"(MacOS) path: {brew_path}")
-                    break
-            else:
-                raise FileNotFoundError("FluidSynth not found. Try: brew install fluid-synth")
-
-        elif system == "Linux":
-            # ldconfig knows where all shared libraries are
-            result = subprocess.run(
-                ["ldconfig", "-p"],
-                capture_output=True, text=True
-            )
-            for line in result.stdout.splitlines():
-                if "libfluidsynth" in line and "=>" in line:
-                    lib_path = line.split("=>")[-1].strip()
-                    os.environ["PATH"] += ":" + os.path.dirname(lib_path)
-                    print(f"(Linux) path: {lib_path}")
-                    break
-            else:
-                raise FileNotFoundError("FluidSynth not found. Try: sudo apt install libfluidsynth-dev")
-# find_and_register_fluidsynth()
+find_and_register_fluidsynth()
 
 import faulthandler
 faulthandler.enable() # Catches C++ Segfaults!
