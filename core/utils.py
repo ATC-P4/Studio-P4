@@ -108,7 +108,9 @@ class EventType(Enum):
     REC_STOP = 4,
     TRACK_MUTE = 5,
     STAT_REQ = 6,
-    GENERAL = 7
+    GENERAL = 7,
+    ERR = 8,
+    PROJ_LOAD = 9
 
     
 

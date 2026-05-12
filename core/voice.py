@@ -21,6 +21,7 @@ class VoiceType(Enum):
     GENERAL_INFO = 9
     TRACK_INFO = 10
     TRACK_NAME = 11
+    ERROR = 12
 
 K = TypeVar('K')
 V = TypeVar('V')
@@ -148,7 +149,7 @@ class VoiceService:
         def _add_sentence():
             snt = self._voice.synthesize(text)
             self._voice_queue.put(voice_type, snt)
-
+            
         # We run the text-generation on a temp thread so the UI never freezes
         threading.Thread(target=_add_sentence, daemon=True).start()
 
@@ -181,14 +182,20 @@ class VoicePresenter:
         self.voice = voice_service
         
         # 1. Wire up the event subscriptions
-        event_bus.subscribe(EventType.TRACK_SELECT, self.announce_armed_track)
+        event_bus.subscribe(EventType.TRACK_SELECT, lambda name: self.announce_armed_track(name))
         event_bus.subscribe(EventType.PROJ_SAVED, self.announce_saved)
         event_bus.subscribe(EventType.METR_TOGGLE, self.announce_metronome)
         event_bus.subscribe(EventType.BPM_MOD, self.announce_bpm)
         event_bus.subscribe(EventType.REC_STOP, self.announce_recording_stopped)
         event_bus.subscribe(EventType.TRACK_MUTE, self.announce_track_muted)
         event_bus.subscribe(EventType.STAT_REQ, self.announce_current_state)
+        event_bus.subscribe(EventType.PROJ_LOAD, lambda name: self.announce_loading_proj(name))
+        # Only for errors
+        event_bus.subscribe(EventType.ERR, lambda error: self.voice.speak(VoiceType.ERROR, error))
+
+        # Shouldn't be used
         event_bus.subscribe(EventType.GENERAL, lambda message: self.voice.speak(VoiceType.GENERAL_INFO, message))
+
 
     def shutdown(self) -> None:
         self.voice.shutdown()
