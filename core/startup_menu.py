@@ -121,6 +121,10 @@ class StartupMenu(QDialog):
         self.current_idx = self.list_widget.currentRow()
         self.selected_folder_path = self.projects[self.current_idx]
         self._aborted = False
+
+        # Kill the MIDI callback IMMEDIATELY to prevent deadlocks during teardown
+        if hasattr(self, 'inport') and self.inport:
+            self.inport.callback = None 
         
         self.voice.speak(VoiceType.METR_INFO, "Chargement du projet.")
         super().accept() # Call the parent QDialog close routine
