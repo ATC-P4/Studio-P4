@@ -26,7 +26,8 @@ class MidiIO:
         3: "NAV_UP",
         12: "NAV_LEFT",
         13: "NAV_RIGHT",
-        1: "VOLUME_ROLLER"
+        1: "VOLUME_ROLLER",
+        114: "REFRESH_AUDIO",
 
         # Add any other defaults here!
         # knobs 70-77

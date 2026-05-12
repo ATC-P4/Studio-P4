@@ -157,12 +157,11 @@ class Project:
         current_os = platform.system()
         
         if current_os == "Darwin": # MacOS
-            self.master_synth.setting("audio.coreaudio.device", "default")
             self.master_synth.start(driver="coreaudio")
             #print("[AUDIO] MacOS Mode (coreaudio) activated.")
             
         elif current_os == "Windows":
-            self.master_synth.start(driver="wasapi") 
+            self.master_synth.start(driver="dsound") 
             #print("[AUDIO] Windows mode (wasapi) activated.")
             
         else:  # Linux

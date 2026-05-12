@@ -3,6 +3,7 @@ import threading
 from enum import Enum
 from piper import SynthesisConfig
 from core.utils import EventBus
+import time
 
 
 class VoiceType(Enum):
@@ -55,35 +56,51 @@ class VoiceService:
 
     def _voice_worker(self):
         """Single persistent thread that owns the audio engine exclusively."""
-        player = pa.PyAudio()
-        
-        # Fallback to 44100 if the engine config doesn't specify a rate
         sample_rate = getattr(self._voice.config, 'sample_rate', 44100) 
-
-        stream = player.open(
-            format=pa.paInt16,
-            channels=1,
-            rate=sample_rate,
-            output=True
-        )
 
         while self._is_running:
             # This uses your BlockingMap's pop function
             voicetype, audio = self._voice_queue.pop() 
             
             if voicetype == VoiceType.STOP:
-                stream.stop_stream()
-                stream.close()
-                player.terminate()
-                return
+                return # clean up after ourselves
 
             if audio:
-                for chunk in audio:
-                    # Accommodates your specific chunk architecture
-                    try:
-                        stream.write(chunk.audio_int16_bytes)
-                    except AttributeError:
-                        stream.write(chunk) # Fallback for raw byte strings
+                player = None
+                stream = None
+                try:
+                    player = pa.PyAudio()
+                    stream = player.open(
+                        format=pa.paInt16,
+                        channels=1,
+                        rate=sample_rate,
+                        output=True
+                    )
+                    
+                    for chunk in audio:
+                        try:
+                            stream.write(chunk.audio_int16_bytes)
+                        except AttributeError:
+                            stream.write(chunk) 
+                            
+                except Exception as e:
+                    # intercept the sudden disconnection
+                    print(f"[Audio] Switching computer sound cards...")
+                    time.sleep(0.5) # Give a moment to route the audio!
+                    
+                finally:
+                    if stream:
+                        try:
+                            stream.stop_stream()
+                        except: pass
+                        try:
+                            stream.close() # If it fails because the headset is no longer there, ignore it
+                        except: pass
+                        
+                    if player:
+                        try:
+                            player.terminate() # If the termination fails, we ignore it
+                        except: pass
 
     def speak(self, voice_type: VoiceType, text: str):
         """Synthesizes text in the background and queues it for voice."""
