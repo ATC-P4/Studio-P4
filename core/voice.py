@@ -76,10 +76,12 @@ class VoiceService:
         sample_rate = getattr(self._voice.config, 'sample_rate', 44100) 
 
         def clear_interrupt() -> None:
+            """Clears interrupt request"""
             self._voice_queue.clear_last_popped()
             self._interrupt.clear()
 
         def check_interrupt() -> bool:
+            """Checks if there's been an interruption request, if yes clear it and return true"""
             interrupt = self._interrupt.is_set()
             if interrupt:
                 clear_interrupt()
@@ -154,7 +156,7 @@ class VoiceService:
         """Cuts off the currently playing audio immediately."""
         self._interrupt.set()
 
-    def currently_playing(self) -> None | VoiceType:
+    def currently_speaking(self) -> None | VoiceType:
         """Returns the type of the currently playing (or most recently 
             played) spoken sentence."""
         v = self._voice_queue.get_last_popped()
@@ -218,17 +220,17 @@ class VoicePresenter:
         self.voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}")
 
     def announce_loading_proj(self, name: str) -> None:
-        if self.voice.currently_playing():
+        if self.voice.currently_speaking():
             self.voice.interrupt()
         self.voice.speak(VoiceType.PROJ_INFO, f"Chargement du projet {name}.")
 
     def announceb_new_proj(self) -> None:
-        if self.voice.currently_playing():
+        if self.voice.currently_speaking():
             self.voice.interrupt()
         self.voice.speak(VoiceType.PROJ_INFO, "Nouveau Projet")
 
     def announce_selected_proj(self, name: str) -> None:
-        if self.voice.currently_playing():
+        if self.voice.currently_speaking():
             self.voice.interrupt()
         self.voice.speak(VoiceType.PROJ_INFO, name)
 
