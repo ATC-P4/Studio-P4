@@ -4,17 +4,24 @@ from enum import Enum
 from piper import SynthesisConfig
 from core.utils import EventBus
 import time
+from typing import Any
+from piper import PiperVoice, PiperConfig
 
 
 class VoiceType(Enum):
+    STOP = 0
     BPM_INFO = 1
     BPM_MOD = 2
     REC_STOP = 3
     WELCOME = 4
     METR_TOGGLE = 5
-    TRACK_SAVE = 6
+    PROJ_SAVE = 6
     METR_INFO = 7
-    STOP = 0
+    PROJ_INFO = 8
+    GENERAL_INFO = 9
+    TRACK_INFO = 10
+    TRACK_NAME = 11
+
 
 # Your requested BlockingMap from Slack
 class BlockingMap(object):
@@ -22,12 +29,12 @@ class BlockingMap(object):
         self.queue = {}
         self.cv = threading.Condition()
 
-    def put(self, key, value):
+    def put(self, key: Any, value: Any) -> None:
         with self.cv:
             self.queue[key] = value
             self.cv.notify()
 
-    def pop(self):
+    def pop(self) -> tuple[Any, Any]:
         with self.cv:
             while not self.queue:
                 self.cv.wait()
@@ -35,19 +42,19 @@ class BlockingMap(object):
             return self.queue.popitem()
 
 class VoiceService:
-    def __init__(self, voice_engine, voice_config = SynthesisConfig(
-        volume=0.5,
-        length_scale=1.2,
-        noise_scale=0.667,
-        noise_w_scale=0.8,
-            normalize_audio=True
-        )):
+
+    _vol = 0.5
+    _lenscale = 1.2
+    _nsscale = 0.667
+    _nswscale = 0.8
+    _normaudio = True
+
+    def __init__(self, voice_engine: PiperVoice):
         """
         voice_engine: Your text-to-speech synthesizer instance.
         voice_config: Configuration for the voice synthesizer.
         """
         self._voice = voice_engine
-        self._voice_config = voice_config
         self._voice_queue = BlockingMap()
         self._is_running = True
         
@@ -113,15 +120,17 @@ class VoiceService:
 
     def shutdown(self):
         """Cleanly closes the audio stream."""
-        self._is_running = False
         self._voice_queue.put(VoiceType.STOP, None)
+        self._is_running = False
     
 
 
 class VoicePresenter:
     """Translates backend events into voice synthesizer commands."""
     
-    def __init__(self, voice_service: VoiceService, event_bus: EventBus):
+    def __init__(self, voice_path: str, event_bus: EventBus):
+
+        voice_service = VoiceService(PiperVoice.load(voice_path))
         self.voice = voice_service
         
         # 1. Wire up the event subscriptions
@@ -132,17 +141,20 @@ class VoicePresenter:
         event_bus.subscribe("RECORDING_STOPPED", self.announce_recording_stopped)
         event_bus.subscribe("TRACK_MUTED", self.announce_track_muted)
         event_bus.subscribe("STATUS_REQUESTED", self.announce_current_state)
-        event_bus.subscribe("GENERIC_ANNOUNCEMENT", lambda message: self.voice.speak(VoiceType.METR_INFO, message))
+        event_bus.subscribe("GENERIC_ANNOUNCEMENT", lambda message: self.voice.speak(VoiceType.GENERAL_INFO, message))
+
+    def shutdown(self) -> None:
+        self.voice.shutdown()
 
     # 2. Define the exact text and voice types for each event
     def announce_armed_track(self, track_name: str) -> None:
-        self.voice.speak(VoiceType.METR_INFO, f"{track_name} armé")
+        self.voice.speak(VoiceType.TRACK_NAME, f"{track_name} armé")
 
     def announce_saved(self) -> None:
-        self.voice.speak(VoiceType.METR_INFO, "Projet sauvegardé")
+        self.voice.speak(VoiceType.PROJ_SAVE, "Projet sauvegardé")
         
     def announce_metronome(self, is_on: bool) -> None:
-        msg = "Metronome On" if is_on else "Metronome Off"
+        msg = "Métronome On" if is_on else "Métronome Off"
         self.voice.speak(VoiceType.METR_TOGGLE, msg)
 
     def announce_bpm(self, bpm: int) -> None:
@@ -153,9 +165,24 @@ class VoicePresenter:
 
     def announce_track_muted(self, track_name: str, is_muted: bool) -> None:
         status = "muté" if is_muted else "démuté"
-        self.voice.speak(VoiceType.METR_INFO, f"{track_name} {status}")
+        self.voice.speak(VoiceType.TRACK_INFO, f"{track_name} {status}")
     
     def announce_current_state(self, metronome_status: str, bpm: int) -> None:
         """announce current BPM and metronome status on demand"""
         self.voice.speak(VoiceType.METR_INFO, f"Métronome actuellement {metronome_status}.")
         self.voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}")
+
+    def announce_loading_proj(self, name: str) -> None:
+        self.voice.speak(VoiceType.PROJ_INFO, f"Chargement du projet {name}.")
+
+    def announceb_new_proj(self) -> None:
+        self.voice.speak(VoiceType.PROJ_INFO, "Nouveau Projet")
+
+    def announce_selected_proj(self, name: str) -> None:
+        self.voice.speak(VoiceType.PROJ_INFO, name)
+
+    def announce_started(self) -> None:
+        self.voice.speak(VoiceType.WELCOME, "Menu de démarrage. Nouveau projet.")
+
+    def welcome(self) -> None:
+        self.voice.speak(VoiceType.WELCOME, "Bienvenue dans le studio.")

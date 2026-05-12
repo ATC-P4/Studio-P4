@@ -6,10 +6,8 @@ from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QListWidget, QPushBu
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QFont
 
-from core.models import Project
 from core.midi_io import JoystickMapper, MidiIO
-from core.utils import get_resource_path
-from core.voice import VoiceType
+from core.voice import VoicePresenter
 
 class StartupMenu(QDialog):
     """A visual, MIDI-controlled startup menu."""
@@ -18,18 +16,18 @@ class StartupMenu(QDialog):
     selection_changed = Signal(int)
     project_confirmed = Signal()
 
-    def __init__(self, voice_service):
+    def __init__(self, voice_presenter: VoicePresenter):
         super().__init__()
-        self.voice = voice_service
-        self.mapping = MidiIO.DEFAULT_MIDI_MAPPING
-        self.joystick = JoystickMapper()
+        self.voice: VoicePresenter = voice_presenter
+        self.mapping: dict[int, str] = MidiIO.DEFAULT_MIDI_MAPPING
+        self.joystick: JoystickMapper = JoystickMapper()
         
-        self.projects = [None] + self._get_saved_projects()
-        self.current_idx = 0
-        self.selected_folder_path = None
+        self.projects: list[None | str] = [None] + self._get_saved_projects()
+        self.current_idx: int = 0
+        self.selected_folder_path: None | str = None
         
         # Tracks if the user clicked the 'X' or 'Escape' to close the window
-        self._aborted = True 
+        self._aborted: bool = True 
 
         self._setup_ui()
 
@@ -37,7 +35,8 @@ class StartupMenu(QDialog):
         self.selection_changed.connect(self._update_ui_selection, Qt.QueuedConnection)
         self.project_confirmed.connect(self.accept, Qt.QueuedConnection)
         
-    def _get_saved_projects(self) -> list:
+    def _get_saved_projects(self) -> list[str]:
+        # Shouldn't be using _get_resource_path since we want 'Saves/' outside the app bundle
         base_dir = os.path.abspath("./Saves")
         os.makedirs(base_dir, exist_ok=True)
         
@@ -115,27 +114,29 @@ class StartupMenu(QDialog):
 
     def accept(self):
         """
-        OVERRIDE: This triggers whether the user hits Enter, clicks Confirmer, 
+        OVERRIDE: This triggers whether the user hits Enter, clicks 'Confirmer', 
         double-clicks, or uses NAV_RIGHT. It is the single source of truth.
         """
         self.current_idx = self.list_widget.currentRow()
         self.selected_folder_path = self.projects[self.current_idx]
         self._aborted = False
         
-        self.voice.speak(VoiceType.METR_INFO, "Chargement du projet.")
+        # TODO: handle 'None' proj_name
+        proj_name = f"{self.projects[self.current_idx]}" if self.projects[self.current_idx] else "erreur"
+        self.voice.announce_loading_proj(proj_name)
         super().accept() # Call the parent QDialog close routine
 
     def _announce(self) -> None:
         if self.current_idx == 0:
-            self.voice.speak(VoiceType.METR_INFO, "Nouveau Projet")
+            self.voice.announceb_new_proj()
         else:
             folder_name = os.path.basename(self.projects[self.current_idx])
             clean_name = folder_name.replace("_", " ")
-            self.voice.speak(VoiceType.METR_INFO, f" {clean_name}")
+            self.voice.announce_selected_proj(clean_name)
 
     def run(self, port_name: str | None = None) -> str | None:
         time.sleep(0.5) # Small delay to ensure the UI is fully rendered before MIDI input starts
-        self.voice.speak(VoiceType.METR_INFO, "Menu de démarrage. Nouveau projet.")
+        self.voice.announce_started()
         
         inport = None
         try:

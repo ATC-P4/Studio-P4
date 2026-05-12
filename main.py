@@ -60,13 +60,12 @@ def find_and_register_fluidsynth():
                     break
             else:
                 raise FileNotFoundError("FluidSynth not found. Try: sudo apt install libfluidsynth-dev")
-find_and_register_fluidsynth()
+# find_and_register_fluidsynth()
 
 import faulthandler
 faulthandler.enable() # Catches C++ Segfaults!
 
 from PySide6.QtWidgets import QApplication
-from piper import PiperVoice
 import mido
 
 
@@ -77,7 +76,7 @@ from core.api import LooperAPI
 from core.midi_io import MidiIO, MidiInputRouter
 
 # Infrastructure & Utilities
-from core.voice import VoicePresenter, VoiceService, VoiceType
+from core.voice import VoicePresenter
 from core.utils import EventBus, get_resource_path, get_available_instruments
 from core.project_io import ProjectIO
 from core.startup_menu import StartupMenu 
@@ -97,8 +96,7 @@ def main() -> None:
     
     # We MUST boot Voice first so the Startup Menu can speak
     voice_path = get_resource_path("fr_FR-siwis-medium.onnx")
-    voice_service = VoiceService(PiperVoice.load(voice_path))
-    voice_presenter = VoicePresenter(voice_service, event_bus)
+    voice_presenter = VoicePresenter(voice_path, event_bus)
 
     # ==========================================
     # PHASE 2: Headless Hardware Startup Menu
@@ -121,7 +119,7 @@ def main() -> None:
                 break
     
     midi_port_name = found_port if found_port else "MPK mini Plus 0"
-    startup_menu = StartupMenu(voice_service)
+    startup_menu = StartupMenu(voice_presenter)
     
     # This completely blocks Python until NAV_RIGHT is pressed
     selected_folder_path = startup_menu.run(port_name=midi_port_name)
@@ -183,7 +181,7 @@ def main() -> None:
     # ==========================================
     app.aboutToQuit.connect(midi_io.stop)
     app.aboutToQuit.connect(lambda: engine.set_state("STOPPED"))
-    app.aboutToQuit.connect(voice_service.shutdown) 
+    app.aboutToQuit.connect(voice_presenter.shutdown)
 
     # ==========================================
     # PHASE 8: Launch Main App
@@ -192,7 +190,7 @@ def main() -> None:
     window.update_ui(api.get_state_dto())
 
     print("Application Ready.")
-    voice_service.speak(VoiceType.WELCOME, "Bienvenue dans le studio.")
+    voice_presenter.welcome()
     
     sys.exit(app.exec())
 
