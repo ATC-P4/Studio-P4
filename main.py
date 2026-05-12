@@ -1,6 +1,9 @@
 import os, sys, subprocess, platform
 
 def find_and_register_fluidsynth():
+    #if statement to avoid rerunning the fluid synth search 
+    if not getattr(sys, 'frozen', False):
+        return
     
     system = platform.system()
     print("Searching for fluidsynth library")
