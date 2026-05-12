@@ -134,7 +134,6 @@ class StartupMenu(QDialog):
             self.voice.speak(VoiceType.METR_INFO, f" {clean_name}")
 
     def run(self, port_name: str | None = None) -> str | None:
-        time.sleep(0.5) # Small delay to ensure the UI is fully rendered before MIDI input starts
         self.voice.speak(VoiceType.METR_INFO, "Menu de démarrage. Nouveau projet.")
         
         inport = None
@@ -148,6 +147,7 @@ class StartupMenu(QDialog):
         self.exec()
 
         if inport:
+            time.sleep(0.5) #Attempt at stopping bug with closing midi input before window is closed.
             inport.close()
 
         if self._aborted:
