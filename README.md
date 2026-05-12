@@ -103,7 +103,7 @@ This application is officially mapped and tested for the **AKAI MPK Mini Plus**.
 
 While other MIDI controllers can be used, the automatic port connection and default MIDI CC mappings (e.g., joystick navigation on CC 2, 3, 12, 13 and transport controls on CC 117-119) are hardcoded for the MPK Mini Plus. If you are using a different controller, you will need to manually adjust the `DEFAULT_MIDI_MAPPING` in `core/midi_io.py` to match your hardware's output.
 
-*(Don't have a physical controller? You can use the included `virtual_akai.py` script to simulate the exact hardware inputs on your screen!)*
+*Note: Don't have a physical controller? You can use the included `virtual_akai.py` script to simulate the exact hardware inputs on your screen!*
 
 ---
 
