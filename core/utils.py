@@ -20,10 +20,23 @@ def get_resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
+def get_sf2_filename(path):
+    return os.path.basename(sf2_path)
+
+def get_sf2_display_name(path):
+    return get_sf2_filename.replace(".sf2", "").title().replace("_", " ")
+
+def get_sf2_dir():
+    return os.path.join(os.path.abspath("."),("sf2")) 
+
+
+
+
+
 def get_available_instruments() -> dict:
     """Scans the sf2 directory and returns a dictionary grouped by folder."""
 
-    base_dir = os.path.join(os.path.abspath("."),("sf2")) 
+    base_dir = get_sf2_dir()
     print(base_dir)
 
     instruments = {}
@@ -52,6 +65,9 @@ def get_available_instruments() -> dict:
     # print(f"[get_available_instruments] Found: {len(instruments)} instruments in: {base_dir}")
             
     return instruments
+
+def get_default_instrument(available_instruments = get_available_instruments()): # return the first instrument in the dict. pretty much a random selection.
+    return next(iter(available_instruments.values()))[0]
 
 class MidiExporter:
     """Handles the conversion of internal Track data into standard .mid files on disk."""

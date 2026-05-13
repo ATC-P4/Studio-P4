@@ -78,7 +78,7 @@ from core.midi_io import MidiIO, MidiInputRouter
 
 # Infrastructure & Utilities
 from core.voice import VoicePresenter, VoiceService, VoiceType
-from core.utils import EventBus, get_resource_path, get_available_instruments
+from core.utils import EventBus, get_resource_path, get_available_instruments, get_default_instrument
 from core.project_io import ProjectIO
 from core.startup_menu import StartupMenu 
 
@@ -137,7 +137,9 @@ def main() -> None:
         input()
         available_instruments = get_available_instruments()
 
-    project = Project("My Live Session", bpm=120, default_instrument = next(iter(available_instruments.values()))[0])
+
+
+    project = Project("My Live Session", bpm=120, default_instrument = get_default_instrument(available_instruments))
     
     if selected_folder_path is None:
         print("Creating new project...")

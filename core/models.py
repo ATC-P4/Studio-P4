@@ -3,7 +3,7 @@ import threading
 import time
 import fluidsynth
 import mido
-from core.utils import get_resource_path
+from core.utils import get_resource_path,get_sf2_dir, get_default_instrument
 from core.utils import MidiExporter
 import platform
 
@@ -51,7 +51,9 @@ class Track:
         if os.path.isabs(sf2_filename_or_path):
             self.sf2_path = os.path.normpath(sf2_filename_or_path)
         else:
-            self.sf2_path = os.path.normpath(get_resource_path(f"sf2/{sf2_filename_or_path}"))
+            self.sf2_path = os.path.normpath(os.path.join(get_sf2_dir(),sf2_filename_or_path))
+            if not os.path.exists(self.sf2_path):
+                self.sf2_path = get_default_instrument()
             
         self._update_synth_program()
 
