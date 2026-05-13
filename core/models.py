@@ -8,7 +8,7 @@ from core.utils import MidiExporter
 import platform
 
 class Track:
-    def __init__(self, name: str, synth: fluidsynth.Synth, channel: int, sf2_path: str = "sf2/basic_piano.sf2"):
+    def __init__(self, name: str, synth: fluidsynth.Synth, channel: int, sf2_path: str):
         self.name = name
         self.is_muted = False
         self.is_armed = False
@@ -19,7 +19,8 @@ class Track:
         
         self.synth = synth
         self.channel = channel
-        self.sf2_path = os.path.normpath(get_resource_path(sf2_path))
+        self.sf2_path = sf2_path
+
         self.sf_id = 0
         self.volume = 100 
 
@@ -135,7 +136,7 @@ class Metronome:
 
 
 class Project:
-    def __init__(self, pname: str, bpm: int = 120, time_signature: tuple = (4, 4)):
+    def __init__(self, pname: str, bpm: int = 120, time_signature: tuple = (4, 4), default_instrument = "basic_piano.sf2"):
         self.name = pname
         self.bpm = bpm
         self.time_signature = time_signature
@@ -144,6 +145,7 @@ class Project:
         self.beat_duration = 60.0 / self.bpm 
         self.master_loop_beats = 0
         self.master_track = None
+        self.default_instrument = default_instrument
 
         # Audio setup
         self.master_synth = fluidsynth.Synth()
@@ -188,7 +190,7 @@ class Project:
         if not self.available_channels: 
             return
         assigned_channel = self.available_channels.pop(0)
-        track = Track(name, synth=self.master_synth, channel=assigned_channel)
+        track = Track(name, synth=self.master_synth, channel=assigned_channel, sf2_path=self.default_instrument)
         track.initialize_synth()  
         track.is_armed = (len(self.tracks) == 0)  
         self.tracks.append(track)
