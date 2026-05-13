@@ -144,7 +144,14 @@ def main() -> None:
             sys.exit(1)
 
     engine = MasterClockEngine(project)
-    available_instruments = get_available_instruments()
+    
+    available_instruments = get_available_instruments()    
+    while not available_instruments :
+        voice_service.speak(VoiceType.WELCOME, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")
+        input()
+        available_instruments = get_available_instruments()
+
+
 
     # ==========================================
     # PHASE 4: Instantiate Views & Controllers
