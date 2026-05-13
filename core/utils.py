@@ -22,11 +22,15 @@ def get_resource_path(relative_path):
 
 def get_available_instruments() -> dict:
     """Scans the sf2 directory and returns a dictionary grouped by folder."""
-    base_dir = get_resource_path("./sf2")
+
+    base_dir = os.path.join(os.path.abspath("."),("sf2")) 
+    print(base_dir)
+
     instruments = {}
     
     if not os.path.exists(base_dir):
         # print("[get_available_instruments] No instruments found")
+        os.makedirs(base_dir)
         return instruments
 
     for item in os.listdir(base_dir):

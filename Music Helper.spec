@@ -1,7 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_all
 
-datas = [('sf2', 'sf2'), ('fr_FR-siwis-medium.onnx', '.'), ('fr_FR-siwis-medium.onnx.json', '.')]
+datas = [('sf2\\Metronom.sf2', 'sf2'), ('fr_FR-siwis-medium.onnx', '.'), ('fr_FR-siwis-medium.onnx.json', '.')]
 binaries = [('C:\\tools\\fluidsynth\\bin\\libfluidsynth-3.dll', '.')]
 hiddenimports = ['mido.backends.rtmidi']
 tmp_ret = collect_all('PySide6')
