@@ -78,7 +78,7 @@ from core.midi_io import MidiIO, MidiInputRouter
 
 # Infrastructure & Utilities
 from core.voice import VoicePresenter, VoiceService, VoiceType
-from core.utils import EventBus, get_resource_path, get_available_instruments
+from core.utils import EventBus, get_resource_path, get_available_instruments, get_default_instrument
 from core.project_io import ProjectIO
 from core.startup_menu import StartupMenu 
 
@@ -130,7 +130,16 @@ def main() -> None:
     # ==========================================
     # PHASE 3: Instantiate Core Business Logic
     # ==========================================
-    project = Project("My Live Session", bpm=120)
+
+    available_instruments = get_available_instruments()    
+    while not available_instruments :
+        voice_service.speak(VoiceType.WELCOME, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")
+        input()
+        available_instruments = get_available_instruments()
+
+
+
+    project = Project("My Live Session", bpm=120, default_instrument = get_default_instrument(available_instruments))
     
     if selected_folder_path is None:
         print("Creating new project...")
@@ -145,11 +154,7 @@ def main() -> None:
 
     engine = MasterClockEngine(project)
     
-    available_instruments = get_available_instruments()    
-    while not available_instruments :
-        voice_service.speak(VoiceType.WELCOME, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")
-        input()
-        available_instruments = get_available_instruments()
+
 
 
 
