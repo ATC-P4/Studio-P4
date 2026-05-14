@@ -6,6 +6,7 @@ import time
 from typing import TypeVar, Generic
 from piper import PiperVoice, AudioChunk, SynthesisConfig
 from collections.abc import Iterable
+from ui.voice_settings import SETTING_NAMES, RATE_STEPS
 
 
 class VoiceType(Enum):
@@ -23,6 +24,9 @@ class VoiceType(Enum):
     TRACK_NAME = 11
     ERROR = 12
     MIDI_IN = 13
+    VSETT = 14
+    VSETT2 = 15
+    VSETT_W = 16
 
 K = TypeVar('K')
 V = TypeVar('V')
@@ -102,9 +106,9 @@ class VoiceService:
     def current_cfg(self) -> SynthesisConfig:
         return self._cfg
     
-    def update_cfg(self, new_cfg: SynthesisConfig, enable: bool) -> None:
-        self._enable = enable
-        self._cfg = new_cfg
+    def update_cfg(self, new_cfg: SynthesisConfig | None = None, enable: bool | None = None) -> None:
+        self._enable = enable if enable is not None else self._enable
+        self._cfg = new_cfg if new_cfg is not None else self._cfg
 
     def _voice_worker(self):
         """Single persistent thread that owns the audio engine exclusively."""
@@ -348,3 +352,35 @@ class VoicePresenter:
 
     def announce_no_sf2(self) -> None:
         self._voice.speak(VoiceType.ERROR, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")
+
+    def announce_vsett_opened(self) -> None:
+        # Temporarily re-enable voice upon voice settings open
+        self._voice.update_cfg(enable=True)
+        self._voice.speak(VoiceType.VSETT_W, "Ouverture de la fenêtre de réglages pour la voix.")
+
+    def announce_vsett(self, sett: str, value: float) -> None:
+
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+
+        if sett == SETTING_NAMES[0]: # enabled button
+            enabled = value >= 0.0
+            msg = "Voix activée." if enabled else "Voix désactivée."
+            self._voice.speak(VoiceType.VSETT, msg)
+        elif sett == SETTING_NAMES[1]: # rate slider
+            self._voice.speak(VoiceType.VSETT, f"Vitesse de parole à {value}.")
+            if value == RATE_STEPS[0]:
+                self._voice.speak(VoiceType.VSETT2, "Valeur minimale.")
+            elif value == RATE_STEPS[len(RATE_STEPS)-1]:
+                self._voice.speak(VoiceType.VSETT2, "Valeur maximale.")
+        elif sett == SETTING_NAMES[2]: # volume slider
+            self._voice.speak(VoiceType.VSETT, f"Volume de parole à {value} sur 1.")
+        else:
+            pass # TODO error handling ?
+
+    def announce_vsett_closed(self, changed: bool) -> None:
+
+        if changed:
+            self._voice.speak(VoiceType.VSETT_W, "Sauvegarde des nouveaux réglages de la voix.")
+        else:
+            self._voice.speak(VoiceType.VSETT_W, "Annulation des modifications aux réglages de la voix.")
