@@ -137,8 +137,8 @@ class MainWindow(QMainWindow):
 
 
 class VoiceConfigDialog(QDialog):
-    # Non-linear rate steps: 0.2 to 1.0 in 0.1 steps, 1.0 to 2.0 in 0.25 steps
-    RATE_STEPS = [round(x * 0.1, 1) for x in range(2, 11)] + [1.25, 1.5, 1.75, 2.0]
+    # Non-linear rate steps: 0.2 to 1.0 in 0.1 steps, 1.0 to 3.0 in 0.25 steps
+    RATE_STEPS = [round(x * 0.1, 1) for x in range(5, 11)] + [round(x * 0.25, 2) + 1 for x in range(1, 9)] # [1.25, 1.5, 1.75, 2.0, ]
 
     def __init__(self, current: dict, parent=None):
         super().__init__(parent)

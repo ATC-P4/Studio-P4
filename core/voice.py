@@ -258,8 +258,6 @@ class VoicePresenter:
         """
 
         self._enable = cfg.get("enabled", self._enable)
-
-        print(f"\n\nUpdating settings with dict: {cfg}")
         
         # Get current voice config
         voice_config = self._voice.current_cfg()
