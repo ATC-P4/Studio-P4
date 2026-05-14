@@ -2,7 +2,7 @@
 from PySide6.QtWidgets import QApplication, QCheckBox, QDialog, QHBoxLayout
 # ... continued (L-Z)
 from PySide6.QtWidgets import QLabel, QMainWindow, QPushButton, QVBoxLayout, QWidget
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Qt, Signal
 from ui.track_widget import TrackWidget
 from ui.voice_settings import VoiceConfigDialog
 
@@ -139,6 +139,13 @@ class MainWindow(QMainWindow):
             focused_widget = QApplication.focusWidget()
             if isinstance(focused_widget, TrackWidget):
                 self.track_armed.emit(focused_widget.track_id)
+
+    # TODO: add MIDI mapping for opening/controlling the voice settings dialogue
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_V:
+            self._open_voice_config()
+        else:
+            super().keyPressEvent(event)
 
     def _open_voice_config(self):
 
