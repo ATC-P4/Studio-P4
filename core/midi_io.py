@@ -3,15 +3,14 @@ from enum import Enum, auto
 import os
 import mido
 import time
-from typing import Callable, TYPE_CHECKING
+from typing import Callable
 import threading
 
 # enable class type checking
-if TYPE_CHECKING:
-    from core.engine import MasterClockEngine
-    from core.models import Project
-    from core.utils import EventBus
-    from core.api import LooperAPI
+
+from core.engine import MasterClockEngine
+from core.models import Project
+from core.utils import EventBus, EventType
 
 class MidiIO:
 
@@ -37,9 +36,9 @@ class MidiIO:
     Manages the MIDI input port, routes commands to the API, 
     and routes live musical notes to the Synthesizer.
     """
-    def __init__(self, project : 'Project', engine : 'MasterClockEngine', on_command_cb=None):
-        self.project = project
-        self.engine = engine
+    def __init__(self, project : Project, engine : MasterClockEngine, on_command_cb=None):
+        self.project: Project = project
+        self.engine: MasterClockEngine = engine
         self.on_command_cb = on_command_cb  # This is your main trigger to the API
         self.inport = None
         self.joystick = JoystickMapper()
@@ -219,7 +218,7 @@ class MidiInputRouter:
     def __init__(self, api):
         self.api = api
         self.project = api.project
-        self.events = api.events
+        self.event_bus: EventBus = api.events
         # Track what the joystick is currently controlling
         self.nav_mode = NavMode.TRACK 
 
@@ -290,16 +289,16 @@ class MidiInputRouter:
             self._pending_edge = None # Clear any pending edge state when switching modes to prevent accidental triggers
             self.nav_mode = mode
             print(f"[API] Joystick Mode: {mode.name} CYCLE")
-            self.events.emit("GENERIC_ANNOUNCEMENT", message=voice_announcement)
+            self.event_bus.emit(EventType.GENERAL, message=voice_announcement) # TODO: voice
             if mode.name == "TRACK":
                 armed_track = self.project.get_armed_track()
                 if armed_track:
-                    self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{armed_track.name}")
+                    self.event_bus.emit(EventType.GENERAL, message=f"{armed_track.name}") # TODO: voice
             if mode.name == "INSTRUMENT":
                 armed_track = self.project.get_armed_track()
                 if armed_track:
                     current_instrument_name = os.path.basename(armed_track.sf2_path).replace(".sf2", "").replace("_", " ")
-                    self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{current_instrument_name}")
+                    self.event_bus.emit(EventType.GENERAL, message=f"{current_instrument_name}") # TODO: voice
             if mode.name == "GROUP":
                 armed_track = self.project.get_armed_track()
                 if armed_track:
@@ -307,7 +306,7 @@ class MidiInputRouter:
                     instruments_dict = self.api._available_instruments
                     for group_name, sf2_list in instruments_dict.items():
                         if current_sf2 in sf2_list:
-                            self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{group_name}")
+                            self.event_bus.emit(EventType.GENERAL, message=f"{group_name}") # TODO: voice
                             break
         return transition
     
@@ -358,10 +357,10 @@ class MidiInputRouter:
         """
         if self._pending_edge == BoundaryState.TOP:
             self.api.saveproject_to_disk()
-            self.events.emit("GENERIC_ANNOUNCEMENT", message="Projet sauvegardé")
+            self.event_bus.emit(EventType.PROJ_SAVED)
             self._pending_edge = None
         else:
-            self.events.emit("GENERIC_ANNOUNCEMENT", message="Appuyez à nouveau vers le haut pour sauvegarder")
+            self.event_bus.emit(EventType.GENERAL, message="Appuyez à nouveau vers le haut pour sauvegarder") # TODOß
             self._pending_edge = BoundaryState.TOP
         
         return 0  # Always keep index at 0 (the top)
@@ -371,12 +370,12 @@ class MidiInputRouter:
         if self._pending_edge == BoundaryState.BOTTOM:
             new_track_num = len(tracks) + 1
             self.api.add_track(f"Track {new_track_num}")
-            self.events.emit("GENERIC_ANNOUNCEMENT", message=f"Nouvelle piste ajoutée: Track {new_track_num}")
+            self.event_bus.emit(EventType.GENERAL, message=f"Nouvelle piste ajoutée: Track {new_track_num}") # TODO: voice
             self._pending_edge = None
             # Return the new length - 1 so the newly created track is armed
             return len(self.project.tracks) - 1 
         else:
-            self.events.emit("GENERIC_ANNOUNCEMENT", message="Appuyez vers le bas à nouveau pour ajouter une piste")
+            self.event_bus.emit(EventType.GENERAL, message="Appuyez vers le bas à nouveau pour ajouter une piste") # TODO: voice
             self._pending_edge = BoundaryState.BOTTOM
             
         return len(tracks) - 1 # Keep index at the bottom
@@ -426,7 +425,7 @@ class MidiInputRouter:
         next_instrument = instruments_dict[next_group][0]
         armed_track.set_soundfont(next_instrument)
         
-        self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{next_group}")
+        self.event_bus.emit(EventType.GENERAL, message=f"{next_group}") # TODO: voice
         if self.api._ui_callback: self.api._ui_callback()
 
     def cycle_instrument(self, direction: int) -> None:
@@ -455,7 +454,7 @@ class MidiInputRouter:
         
         # Clean up the name for the voice (e.g., "basic_piano.sf2" -> "basic piano")
         clean_name = os.path.basename(next_instrument).replace(".sf2", "").replace("_", " ")
-        #self.events.emit("GENERIC_ANNOUNCEMENT", message=f"Instrument: {clean_name}")
+        self.event_bus.emit(EventType.GENERAL, message=f"Instrument: {clean_name}") # TODO: voice
         
         if self.api._ui_callback: self.api._ui_callback()
 

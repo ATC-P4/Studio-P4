@@ -22,6 +22,7 @@ class VoiceType(Enum):
     TRACK_INFO = 10
     TRACK_NAME = 11
     ERROR = 12
+    MIDI_IN = 13
 
 K = TypeVar('K')
 V = TypeVar('V')
@@ -58,6 +59,9 @@ class VoiceService:
     _nsscale = 0.667
     _nswscale = 0.8
     _normaudio = True
+    # In theory, smaller chunk sizes will result in faster 
+    # voice interruptions
+    CHUNK_SIZE = 256
 
     def __init__(self, voice_engine: PiperVoice):
         """
@@ -88,8 +92,6 @@ class VoiceService:
                 clear_interrupt()
             return interrupt
         
-        CHUNK_SIZE = 256
-
         while self._is_running:
             # This uses your BlockingMap's pop function
             voicetype, audio = self._voice_queue.pop() 
@@ -112,10 +114,10 @@ class VoiceService:
                     for chunk in audio:
 
                         raw = chunk.audio_int16_bytes
-                        for i in range(0, len(raw), CHUNK_SIZE):
+                        for i in range(0, len(raw), self.CHUNK_SIZE):
                             if check_interrupt():
                                 break
-                            stream.write(raw[i:i + CHUNK_SIZE])
+                            stream.write(raw[i:i + self.CHUNK_SIZE])
 
                     # Clear interruption 
                     clear_interrupt()
@@ -190,7 +192,11 @@ class VoicePresenter:
         event_bus.subscribe(EventType.TRACK_MUTE, self.announce_track_muted)
         event_bus.subscribe(EventType.STAT_REQ, self.announce_current_state)
         event_bus.subscribe(EventType.PROJ_LOAD, lambda name: self.announce_loading_proj(name))
-        # Only for errors
+        # MIDI input updated
+        # event_bus.subscribe(EventType.MIDI_UPD, self.ann)
+        # MIDI not found
+
+        # Only for general errors
         event_bus.subscribe(EventType.ERR, lambda error: self.voice.speak(VoiceType.ERROR, error))
 
         # Shouldn't be used
@@ -246,3 +252,9 @@ class VoicePresenter:
 
     def welcome(self) -> None:
         self.voice.speak(VoiceType.WELCOME, "Bienvenue dans le studio.")
+
+    def announce_sel_midiin(self, midi_name: str) -> None:
+        self.voice.speak(VoiceType.MIDI_IN, f"ine poute MIDI actuel: {midi_name}")
+
+    def announce_no_midiin(self) -> None:
+        self.voice.speak(VoiceType.MIDI_IN, "Aucun ine poute MIDI trouvé.")

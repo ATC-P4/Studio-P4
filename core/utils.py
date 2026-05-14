@@ -101,16 +101,18 @@ class MidiExporter:
 
 
 class EventType(Enum):
-    TRACK_SELECT = 0,
-    PROJ_SAVED = 1,
-    METR_TOGGLE = 2,
-    BPM_MOD = 3,
-    REC_STOP = 4,
-    TRACK_MUTE = 5,
-    STAT_REQ = 6,
-    GENERAL = 7,
-    ERR = 8,
+    TRACK_SELECT = 0
+    PROJ_SAVED = 1
+    METR_TOGGLE = 2
+    BPM_MOD = 3
+    REC_STOP = 4
+    TRACK_MUTE = 5
+    STAT_REQ = 6
+    GENERAL = 7
+    ERR = 8
     PROJ_LOAD = 9
+    NO_MIDI = 10
+    MIDI_UPD = 11
 
     
 
