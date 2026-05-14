@@ -36,12 +36,13 @@ class MidiIO:
     Manages the MIDI input port, routes commands to the API, 
     and routes live musical notes to the Synthesizer.
     """
-    def __init__(self, project : Project, engine : MasterClockEngine, on_command_cb=None):
+    def __init__(self, project : Project, engine : MasterClockEngine, event_bus: EventBus, on_command_cb=None):
         self.project: Project = project
         self.engine: MasterClockEngine = engine
         self.on_command_cb = on_command_cb  # This is your main trigger to the API
         self.inport = None
         self.joystick = JoystickMapper()
+        self._event_bus = event_bus
 
         self._is_monitoring = False
         self._target_hints = ["iPad", "MPK mini", "LoopBe", "IAC"] # TODO: this severely limits the input options to the app
@@ -70,11 +71,12 @@ class MidiIO:
     def _monitor_loop(self):
         """A background thread that checks the ports every 2 seconds."""
         while self._is_monitoring:
-            available_ports = mido.get_input_names()
+            available_ports: list[str] = mido.get_input_names()
             
             # 1. Handling a disconnection (if the cable is pulled out)
             if self.inport and self.inport.name not in available_ports:
                 print(f"[MidiIO] Clavier déconnecté : {self.inport.name}")
+                self._event_bus.emit(EventType.MIDI_DISC, self.inport.name)
                 self.inport.close()
                 self.inport = None
                 
@@ -84,6 +86,7 @@ class MidiIO:
                     for hint in self._target_hints:
                         if hint in port and "MIDIIN" not in port:
                             self.start(port)
+                            self._event_bus.emit(EventType.MIDI_UPD, port)
                             break 
                     if self.inport:
                         break 

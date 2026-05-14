@@ -194,6 +194,8 @@ class VoicePresenter:
         event_bus.subscribe(EventType.PROJ_LOAD, lambda name: self.announce_loading_proj(name))
         # MIDI input updated
         event_bus.subscribe(EventType.MIDI_UPD, lambda name: self.announce_sel_midiin(name))
+        # MIDI input disconnected
+        event_bus.subscribe(EventType.MIDI_DISC, lambda name: self.announce_disc_midiin(name))
 
         # Only for general errors
         event_bus.subscribe(EventType.ERR, lambda error: self.voice.speak(VoiceType.ERROR, error))
@@ -213,7 +215,7 @@ class VoicePresenter:
         self.voice.speak(VoiceType.PROJ_SAVE, "Projet sauvegardé")
         
     def announce_metronome(self, is_on: bool) -> None:
-        msg = "Métronome On" if is_on else "Métronome Off"
+        msg = "Métronome activé" if is_on else "Métronome désactivé"
         self.voice.speak(VoiceType.METR_TOGGLE, msg)
 
     def announce_bpm(self, bpm: int) -> None:
@@ -253,7 +255,16 @@ class VoicePresenter:
         self.voice.speak(VoiceType.WELCOME, "Bienvenue dans le studio.")
 
     def announce_sel_midiin(self, midi_name: str) -> None:
-        self.voice.speak(VoiceType.MIDI_IN, f"ine poute MIDI actuel: {midi_name}")
+        self.voice.speak(VoiceType.MIDI_IN, f"ine poute MIDI sélectionné: {midi_name}")
 
-    def announce_no_midiin(self) -> None:
-        self.voice.speak(VoiceType.MIDI_IN, "Aucun ine poute MIDI trouvé.")
+    def announce_no_menu_ctr(self, name: str | None) -> None:
+        if name:
+            self.voice.speak(VoiceType.MIDI_IN, f"L'ine poute {name} est incompatible avec le menu de démarrage, veuillez utiliser le clavier.")
+        else:
+            self.voice.speak(VoiceType.MIDI_IN, "Aucun ine poute MIDI trouvé, veuillez utiliser le clavier pour naviguer le menu de démarrage.")
+
+    def announce_disc_midiin(self, midi_name: str) -> None:
+        self.voice.speak(VoiceType.MIDI_IN, f"ine poute MIDI {midi_name} déconnecté.")
+
+    def announce_no_sf2(self) -> None:
+        self.voice.speak(VoiceType.ERROR, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")

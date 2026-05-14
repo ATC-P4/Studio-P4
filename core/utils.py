@@ -131,7 +131,7 @@ class EventType(Enum):
     GENERAL = 7
     ERR = 8
     PROJ_LOAD = 9
-    NO_MIDI = 10
+    MIDI_DISC = 10
     MIDI_UPD = 11
 
     

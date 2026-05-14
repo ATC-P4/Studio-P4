@@ -28,7 +28,7 @@ from core.midi_io import MidiIO, MidiInputRouter
 
 # Infrastructure & Utilities
 from core.voice import VoicePresenter
-from core.utils import EventBus, get_resource_path, get_available_instruments
+from core.utils import EventBus, get_resource_path, get_available_instruments, get_default_instrument
 from core.project_io import ProjectIO
 from core.startup_menu import StartupMenu 
 
@@ -56,28 +56,39 @@ def main() -> None:
     #midi_port_name = 'LoopBe Internal MIDI 0' # Change to 'MPK mini Plus 0' for hardware
     # find a port name that contains "MPK mini" (case-insensitive) but doesn't contain MIDIIN
     found_port = None
-    for port in mido.get_input_names():
+    compat_port = None
+    avail_ports = mido.get_input_names()
+    print(f"\n\nFOUND MIDI ports: {avail_ports}\n\n")
+    for port in avail_ports:
         if "MPK mini" in port and "MIDIIN" not in port:
             found_port = port
+            compat_port = port
             print(f"[STARTUP] Found MIDI port for startup menu: {found_port}")
             break
-    else:
-        for port in mido.get_input_names():
+    if not compat_port:
+        for port in avail_ports:
             # search for loopbe port as a fallback
             if "LoopBe" in port or "IAC" in port:
                 found_port = port
+                compat_port = port
                 print(f"[STARTUP] Found LoopBe MIDI port for startup menu: {found_port}")
                 break
+    if not compat_port:
+        for port in avail_ports:
+            # Select first available port if no startup menu compatible ports exist
+            found_port = port
+            break
     
-    if found_port:
-        voice_presenter.announce_sel_midiin(found_port)
+    if compat_port:
+        voice_presenter.announce_sel_midiin(compat_port)
     else:
-        voice_presenter.announce_no_midiin()
-    midi_port_name = found_port if found_port else "MPK mini Plus 0"
+        # Different announcement depending on whether found_port is None or not
+        voice_presenter.announce_no_menu_ctr(found_port)
+
     startup_menu = StartupMenu(voice_presenter)
     
     # This completely blocks Python until NAV_RIGHT is pressed
-    selected_folder_path = startup_menu.run(port_name=midi_port_name)
+    selected_folder_path = startup_menu.run(port_name=found_port)
 
     time.sleep(1.5)
     # ==========================================
@@ -86,7 +97,7 @@ def main() -> None:
 
     available_instruments = get_available_instruments()    
     while not available_instruments :
-        voice_service.speak(VoiceType.WELCOME, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")
+        voice_presenter.announce_no_sf2()
         input()
         available_instruments = get_available_instruments()
 
@@ -127,7 +138,7 @@ def main() -> None:
     # ==========================================
     # PHASE 5: Hardware & Input Routing
     # ==========================================
-    midi_io = MidiIO(project=project, engine=engine)
+    midi_io = MidiIO(project=project, engine=engine, event_bus=event_bus)
     midi_router = MidiInputRouter(api)
     midi_io.on_command_cb = midi_router.handle_midi_action 
     midi_io.start_auto_connection() # Keyboard connection
