@@ -4,7 +4,7 @@ from enum import Enum
 from core.utils import EventBus, EventType
 import time
 from typing import TypeVar, Generic
-from piper import PiperVoice, AudioChunk
+from piper import PiperVoice, AudioChunk, SynthesisConfig
 from collections.abc import Iterable
 
 
@@ -52,29 +52,54 @@ class BlockingMap(Generic[K, V], object):
     def clear_last_popped(self) -> None:
         self._last_popped = None
 
+    def is_empty(self) -> bool:
+        if self._queue:
+            return False
+        return True
+
+
+
 class VoiceService:
 
-    _vol = 0.5
-    _lenscale = 1.2
-    _nsscale = 0.667
-    _nswscale = 0.8
-    _normaudio = True
+    _vol:float = 0.5
+    _speech_rate: float = 1.2       # length_scale in SynthesisConfig = speech rate (higher is slower)
+    _nsscale: float = 0.667
+    _nswscale: float = 0.8
+    _normaudio: bool = True
     # In theory, smaller chunk sizes will result in faster 
     # voice interruptions
-    CHUNK_SIZE = 256
+    CHUNK_SIZE: int = 256
 
-    def __init__(self, voice_engine: PiperVoice):
+    def __init__(self, voice_engine: PiperVoice, cfg: SynthesisConfig | None = None):
         """
         voice_engine: Your text-to-speech synthesizer instance.
         voice_config: Configuration for the voice synthesizer.
         """
         self._voice = voice_engine
+
+        if cfg:
+            self._vol = cfg.volume if cfg.volume else self._vol
+            self._speech_rate = cfg.length_scale if cfg.length_scale else self._speech_rate
+            self._nsscale = cfg.noise_scale if cfg.noise_scale else self. _nsscale
+            self._nswscale = cfg.noise_w_scale if cfg.noise_w_scale else self._nswscale
+            self._normaudio = cfg.normalize_audio
+
+        self._cfg: SynthesisConfig = SynthesisConfig(length_scale=self._speech_rate, 
+                               noise_scale=self._nsscale, 
+                               noise_w_scale=self._nswscale, 
+                               normalize_audio=self._normaudio, 
+                               volume=self._vol)
+
         self._voice_queue: BlockingMap[VoiceType, Iterable[AudioChunk] | None] = BlockingMap()
         self._is_running = True
         self._interrupt = threading.Event()
         
         # Start the persistent audio worker
         threading.Thread(target=self._voice_worker, daemon=True).start()
+
+    # Returns current configuration
+    def current_cfg(self) -> SynthesisConfig:
+        return self._cfg
 
     def _voice_worker(self):
         """Single persistent thread that owns the audio engine exclusively."""
@@ -149,7 +174,7 @@ class VoiceService:
     def speak(self, voice_type: VoiceType, text: str):
         """Synthesizes text in the background and queues it for voice."""
         def _add_sentence():
-            snt = self._voice.synthesize(text)
+            snt = self._voice.synthesize(text, syn_config=self._cfg)
             self._voice_queue.put(voice_type, snt)
             
         # We run the text-generation on a temp thread so the UI never freezes
@@ -178,10 +203,12 @@ class VoiceService:
 class VoicePresenter:
     """Translates backend events into voice synthesizer commands."""
     
-    def __init__(self, voice_path: str, event_bus: EventBus):
+    def __init__(self, voice_path: str, event_bus: EventBus, enable: bool=True):
 
         voice_service = VoiceService(PiperVoice.load(voice_path))
-        self.voice = voice_service
+        self._vpath: str = voice_path
+        self._voice: VoiceService = voice_service
+        self._enable: bool = enable
         
         # Wire up the event subscriptions
 
@@ -207,74 +234,120 @@ class VoicePresenter:
         event_bus.subscribe(EventType.MIDI_DISC, lambda name: self.announce_disc_midiin(name))
 
         # Only for general errors
-        event_bus.subscribe(EventType.ERR, lambda error: self.voice.speak(VoiceType.ERROR, error))
+        event_bus.subscribe(EventType.ERR, lambda error: self._voice.speak(VoiceType.ERROR, error))
 
         # Shouldn't be used
-        event_bus.subscribe(EventType.GENERAL, lambda message: self.voice.speak(VoiceType.GENERAL_INFO, message))
+        event_bus.subscribe(EventType.GENERAL, lambda message: self._voice.speak(VoiceType.GENERAL_INFO, message))
 
 
+    # Update voice settings
+    def update_settings(self, enable=True, speech_rate: float | None = None, noise_scale: float | None = None, 
+                        noise_w_scale: float | None = None, volume: float | None = None, normalize_audio: bool | None = None) -> None:
+
+        # If voice currently disabled and call was to disable voice, ignore
+        if not self._enable and not enable:
+            return
+        
+        # If currently enabled, shutdown current voice
+        voice_config = self._voice.current_cfg()
+        self._voice.shutdown()
+
+        # If new_cfg is None, we want to disable the voice
+        if not enable:
+            self._enable = False
+            return
+        
+        new_voice_engine = PiperVoice.load(self._vpath)
+        
+        # Else create new voice with new config
+        if speech_rate:
+            voice_config.length_scale = speech_rate
+        if noise_scale:
+            voice_config.noise_scale = noise_scale
+        if noise_w_scale:
+            voice_config.noise_w_scale = noise_w_scale
+        if volume:
+            voice_config.volume = volume
+        if normalize_audio is not None:
+            voice_config.normalize_audio = normalize_audio
+
+        # Init new voice with updated settings
+        self._voice = VoiceService(new_voice_engine, voice_config)
+
+        # Already subscribed to EventBus events, no need to resubscribe => we're done
+
+
+
+    # Shutdown voice
     def shutdown(self) -> None:
-        self.voice.shutdown()
+        if self._enable:
+            self._enable = False
+            self._voice.shutdown()
 
-    # 2. Define the exact text and voice types for each event
+
+
+    # ----------------------------------------
+    # Voice announcements of individual events
+    # ----------------------------------------
+
     def announce_selected_track(self, track_name: str) -> None:
-        self.voice.speak(VoiceType.TRACK_NAME, f"{track_name} armé")
+        self._voice.speak(VoiceType.TRACK_NAME, f"{track_name} armé")
 
     def announce_saved(self) -> None:
-        self.voice.speak(VoiceType.PROJ_SAVE, "Projet sauvegardé")
+        self._voice.speak(VoiceType.PROJ_SAVE, "Projet sauvegardé")
         
     def announce_metronome(self, is_on: bool) -> None:
         msg = "Métronome activé" if is_on else "Métronome désactivé"
-        self.voice.speak(VoiceType.METR_TOGGLE, msg)
+        self._voice.speak(VoiceType.METR_TOGGLE, msg)
 
     def announce_bpm(self, bpm: int) -> None:
-        self.voice.speak(VoiceType.BPM_MOD, f"B P M {bpm}")
+        self._voice.speak(VoiceType.BPM_MOD, f"B P M {bpm}")
         
     def announce_recording_stopped(self) -> None:
-        self.voice.speak(VoiceType.REC_STOP, "Enregistrement arrêté.")
+        self._voice.speak(VoiceType.REC_STOP, "Enregistrement arrêté.")
 
     def announce_track_muted(self, track_name: str, is_muted: bool) -> None:
         status = "muté" if is_muted else "démuté"
-        self.voice.speak(VoiceType.TRACK_INFO, f"{track_name} {status}")
+        self._voice.speak(VoiceType.TRACK_INFO, f"{track_name} {status}")
     
     def announce_current_state(self, metronome_status: bool, bpm: int) -> None:
         """announce current BPM and metronome status on demand"""
         status = "activé" if metronome_status else "désactivé"
-        self.voice.speak(VoiceType.METR_INFO, f"Métronome actuellement {status}.")
-        self.voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}.")
+        self._voice.speak(VoiceType.METR_INFO, f"Métronome actuellement {status}.")
+        self._voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}.")
 
     def announce_loading_proj(self, name: str) -> None:
-        if self.voice.currently_speaking():
-            self.voice.interrupt()
-        self.voice.speak(VoiceType.PROJ_INFO, f"Chargement du projet {name}.")
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        self._voice.speak(VoiceType.PROJ_INFO, f"Chargement du projet {name}.")
 
     def announceb_new_proj(self) -> None:
-        if self.voice.currently_speaking():
-            self.voice.interrupt()
-        self.voice.speak(VoiceType.PROJ_INFO, "Nouveau Projet")
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        self._voice.speak(VoiceType.PROJ_INFO, "Nouveau Projet")
 
     def announce_selected_proj(self, name: str) -> None:
-        if self.voice.currently_speaking():
-            self.voice.interrupt()
-        self.voice.speak(VoiceType.PROJ_INFO, name)
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        self._voice.speak(VoiceType.PROJ_INFO, name)
 
     def announce_started(self) -> None:
-        self.voice.speak(VoiceType.WELCOME, "Menu de démarrage. Nouveau projet.")
+        self._voice.speak(VoiceType.WELCOME, "Menu de démarrage. Nouveau projet.")
 
     def welcome(self) -> None:
-        self.voice.speak(VoiceType.WELCOME, "Bienvenue dans le studio.")
+        self._voice.speak(VoiceType.WELCOME, "Bienvenue dans le studio.")
 
     def announce_sel_midiin(self, midi_name: str) -> None:
-        self.voice.speak(VoiceType.MIDI_IN, f"ine poute MIDI sélectionné: {midi_name}")
+        self._voice.speak(VoiceType.MIDI_IN, f"ine poute MIDI sélectionné: {midi_name}")
 
     def announce_no_menu_ctr(self, name: str | None) -> None:
         if name:
-            self.voice.speak(VoiceType.MIDI_IN, f"L'ine poute {name} est incompatible avec le menu de démarrage, veuillez utiliser le clavier.")
+            self._voice.speak(VoiceType.MIDI_IN, f"L'ine poute {name} est incompatible avec le menu de démarrage, veuillez utiliser le clavier.")
         else:
-            self.voice.speak(VoiceType.MIDI_IN, "Aucun ine poute MIDI trouvé, veuillez utiliser le clavier pour naviguer le menu de démarrage.")
+            self._voice.speak(VoiceType.MIDI_IN, "Aucun ine poute MIDI trouvé, veuillez utiliser le clavier pour naviguer le menu de démarrage.")
 
     def announce_disc_midiin(self, midi_name: str) -> None:
-        self.voice.speak(VoiceType.MIDI_IN, f"ine poute MIDI {midi_name} déconnecté.")
+        self._voice.speak(VoiceType.MIDI_IN, f"ine poute MIDI {midi_name} déconnecté.")
 
     def announce_no_sf2(self) -> None:
-        self.voice.speak(VoiceType.ERROR, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")
+        self._voice.speak(VoiceType.ERROR, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")

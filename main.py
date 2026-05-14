@@ -58,7 +58,6 @@ def main() -> None:
     found_port = None
     compat_port = None
     avail_ports = mido.get_input_names()
-    print(f"\n\nFOUND MIDI ports: {avail_ports}\n\n")
     for port in avail_ports:
         if "MPK mini" in port and "MIDIIN" not in port:
             found_port = port
