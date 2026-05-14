@@ -18,6 +18,7 @@ class Track:
         self.event_lock = threading.Lock()
         
         self.synth = synth
+        synth.setting('synth.gain', 1)
         self.channel = channel
         self.sf2_path = sf2_path
 

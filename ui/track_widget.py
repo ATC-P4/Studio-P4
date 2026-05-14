@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QCheckBox, QRadioButton, QComboBox
 from PySide6.QtCore import Signal, Qt
 import os
+
 class TrackWidget(QWidget):
     # Define the signals this widget will emit to the MainWindow
     mute_toggled = Signal(int, bool) # track_id, is_muted
@@ -11,7 +12,7 @@ class TrackWidget(QWidget):
         super().__init__()
         self.track_id = track_id
         self.available_instruments = available_instruments
-        self.setFocusPolicy(Qt.StrongFocus) 
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus) 
 
         layout = QHBoxLayout(self)
         
@@ -34,10 +35,10 @@ class TrackWidget(QWidget):
         layout.addWidget(self.instrument_combo)
 
         # Prevent stealing MIDI focus
-        self.arm_radio.setFocusPolicy(Qt.NoFocus)
-        self.mute_checkbox.setFocusPolicy(Qt.NoFocus)
-        self.group_combo.setFocusPolicy(Qt.NoFocus)
-        self.instrument_combo.setFocusPolicy(Qt.NoFocus)
+        self.arm_radio.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.mute_checkbox.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.group_combo.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.instrument_combo.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.mute_checkbox.toggled.connect(lambda state: self.mute_toggled.emit(self.track_id, state))
         self.arm_radio.clicked.connect(lambda: self.armed.emit(self.track_id))

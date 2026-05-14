@@ -1,66 +1,140 @@
 import pyaudio as pa
 import threading
 from enum import Enum
-from piper import SynthesisConfig
-from core.utils import EventBus
+from core.utils import EventBus, EventType
 import time
+from typing import TypeVar, Generic
+from piper import PiperVoice, AudioChunk, SynthesisConfig
+from collections.abc import Iterable
+from ui.voice_settings import SETTING_NAMES, RATE_STEPS
 
 
 class VoiceType(Enum):
+    STOP = 0
     BPM_INFO = 1
     BPM_MOD = 2
     REC_STOP = 3
     WELCOME = 4
     METR_TOGGLE = 5
-    TRACK_SAVE = 6
+    PROJ_SAVE = 6
     METR_INFO = 7
-    STOP = 0
+    PROJ_INFO = 8
+    GENERAL_INFO = 9
+    TRACK_INFO = 10
+    TRACK_NAME = 11
+    ERROR = 12
+    MIDI_IN = 13
+    VSETT = 14
+    VSETT_W = 15
 
+K = TypeVar('K')
+V = TypeVar('V')
 # Your requested BlockingMap from Slack
-class BlockingMap(object):
+class BlockingMap(Generic[K, V], object):
     def __init__(self):
-        self.queue = {}
-        self.cv = threading.Condition()
+        self._queue: dict[K, V] = {}
+        self._cv = threading.Condition()
+        self._last_popped: None | tuple[K, V] = None
 
-    def put(self, key, value):
-        with self.cv:
-            self.queue[key] = value
-            self.cv.notify()
+    def put(self, key: K, value: V) -> None:
+        with self._cv:
+            self._queue[key] = value
+            self._cv.notify()
 
-    def pop(self):
-        with self.cv:
-            while not self.queue:
-                self.cv.wait()
+    def pop(self) -> tuple[K, V]:
+        with self._cv:
+            while not self._queue:
+                self._cv.wait()
             # popitem() returns the most recently inserted key-value pair (LIFO)
-            return self.queue.popitem()
+            self._last_popped = self._queue.popitem()
+            return self._last_popped
+        
+    def get_last_popped(self) -> None | tuple[K, V]:
+        return self._last_popped
+    
+    def clear_last_popped(self) -> None:
+        self._last_popped = None
+
+    def is_empty(self) -> bool:
+        if self._queue:
+            return False
+        return True
+    
+    def clear(self) -> None:
+        self._queue.clear()
+
+
 
 class VoiceService:
-    def __init__(self, voice_engine, voice_config = SynthesisConfig(
-        volume=0.5,
-        length_scale=1.2,
-        noise_scale=0.667,
-        noise_w_scale=0.8,
-            normalize_audio=True
-        )):
+
+    _vol:float = 0.5
+    _speech_rate: float = 1.2       # length_scale in SynthesisConfig = speech rate (higher is slower)
+    _nsscale: float = 0.667
+    _nswscale: float = 0.8
+    _normaudio: bool = True
+    # In theory, smaller chunk sizes will result in faster 
+    # voice interruptions
+    CHUNK_SIZE: int = 256
+
+    def __init__(self, voice_engine: PiperVoice, enable: bool = True, cfg: SynthesisConfig | None = None):
         """
         voice_engine: Your text-to-speech synthesizer instance.
         voice_config: Configuration for the voice synthesizer.
         """
         self._voice = voice_engine
-        self._voice_config = voice_config
-        self._voice_queue = BlockingMap()
+        self._enable = enable
+
+        if cfg:
+            self._vol = cfg.volume if cfg.volume else self._vol
+            self._speech_rate = cfg.length_scale if cfg.length_scale else self._speech_rate
+            self._nsscale = cfg.noise_scale if cfg.noise_scale else self. _nsscale
+            self._nswscale = cfg.noise_w_scale if cfg.noise_w_scale else self._nswscale
+            self._normaudio = cfg.normalize_audio
+
+        self._cfg: SynthesisConfig = SynthesisConfig(length_scale=self._speech_rate, 
+                               noise_scale=self._nsscale, 
+                               noise_w_scale=self._nswscale, 
+                               normalize_audio=self._normaudio, 
+                               volume=self._vol)
+
+        self._voice_queue: BlockingMap[VoiceType, Iterable[AudioChunk] | None] = BlockingMap()
         self._is_running = True
+        self._interrupt = threading.Event()
         
         # Start the persistent audio worker
         threading.Thread(target=self._voice_worker, daemon=True).start()
+
+    # Returns current configuration
+    def current_cfg(self) -> SynthesisConfig:
+        return self._cfg
+    
+    def update_cfg(self, new_cfg: SynthesisConfig | None = None, enable: bool | None = None) -> None:
+        self._enable = enable if enable is not None else self._enable
+        self._cfg = new_cfg if new_cfg is not None else self._cfg
 
     def _voice_worker(self):
         """Single persistent thread that owns the audio engine exclusively."""
         sample_rate = getattr(self._voice.config, 'sample_rate', 44100) 
 
+        def clear_interrupt() -> None:
+            """Clears interrupt request"""
+            self._voice_queue.clear_last_popped()
+            self._interrupt.clear()
+
+        def check_interrupt() -> bool:
+            """Checks if there's been an interruption request, if yes clear it and return true"""
+            interrupt = self._interrupt.is_set()
+            if interrupt:
+                clear_interrupt()
+                # self._voice_queue.clear() # TODO: clear queue or no?
+            return interrupt
+        
         while self._is_running:
             # This uses your BlockingMap's pop function
             voicetype, audio = self._voice_queue.pop() 
+
+            if not self._enable:
+                continue
             
             if voicetype == VoiceType.STOP:
                 return # clean up after ourselves
@@ -78,17 +152,27 @@ class VoiceService:
                     )
                     
                     for chunk in audio:
-                        try:
-                            stream.write(chunk.audio_int16_bytes)
-                        except AttributeError:
-                            stream.write(chunk) 
+
+                        raw = chunk.audio_int16_bytes
+                        for i in range(0, len(raw), self.CHUNK_SIZE):
+                            if check_interrupt():
+                                break
+                            stream.write(raw[i:i + self.CHUNK_SIZE])
+
+                    # Clear interruption 
+                    clear_interrupt()
                             
                 except Exception as e:
                     # intercept the sudden disconnection
+                    clear_interrupt()
                     print(f"[Audio] Switching computer sound cards...")
                     time.sleep(0.5) # Give a moment to route the audio!
                     
                 finally:
+                    
+                    # Clear interrupt
+                    clear_interrupt()
+
                     if stream:
                         try:
                             stream.stop_stream()
@@ -105,57 +189,226 @@ class VoiceService:
     def speak(self, voice_type: VoiceType, text: str):
         """Synthesizes text in the background and queues it for voice."""
         def _add_sentence():
-            snt = self._voice.synthesize(text)
+            snt = self._voice.synthesize(text, syn_config=self._cfg)
             self._voice_queue.put(voice_type, snt)
-
+            
         # We run the text-generation on a temp thread so the UI never freezes
         threading.Thread(target=_add_sentence, daemon=True).start()
 
+    def interrupt(self):
+        """Cuts off the currently playing audio immediately."""
+        self._interrupt.set()
+
+    def currently_speaking(self) -> None | VoiceType:
+        """Returns the type of the currently playing (or most recently 
+            played) spoken sentence."""
+        v = self._voice_queue.get_last_popped()
+        if not v:
+            return None
+        ret, _ = v
+        return ret
+
     def shutdown(self):
         """Cleanly closes the audio stream."""
-        self._is_running = False
         self._voice_queue.put(VoiceType.STOP, None)
+        self._is_running = False
     
 
 
 class VoicePresenter:
     """Translates backend events into voice synthesizer commands."""
     
-    def __init__(self, voice_service: VoiceService, event_bus: EventBus):
-        self.voice = voice_service
-        
-        # 1. Wire up the event subscriptions
-        event_bus.subscribe("TRACK_ARMED", self.announce_armed_track)
-        event_bus.subscribe("PROJECT_SAVED", self.announce_saved)
-        event_bus.subscribe("METRONOME_TOGGLED", self.announce_metronome)
-        event_bus.subscribe("BPM_CHANGED", self.announce_bpm)
-        event_bus.subscribe("RECORDING_STOPPED", self.announce_recording_stopped)
-        event_bus.subscribe("TRACK_MUTED", self.announce_track_muted)
-        event_bus.subscribe("STATUS_REQUESTED", self.announce_current_state)
-        event_bus.subscribe("GENERIC_ANNOUNCEMENT", lambda message: self.voice.speak(VoiceType.METR_INFO, message))
+    def __init__(self, voice_path: str, event_bus: EventBus, enable: bool=True):
 
-    # 2. Define the exact text and voice types for each event
-    def announce_armed_track(self, track_name: str) -> None:
-        self.voice.speak(VoiceType.METR_INFO, f"{track_name} armé")
+        voice_service = VoiceService(PiperVoice.load(voice_path))
+        self._vpath: str = voice_path
+        self._voice: VoiceService = voice_service
+        self._enable: bool = enable
+        
+        # Wire up the event subscriptions
+
+        # Announces that a track has been selected
+        event_bus.subscribe(EventType.TRACK_SELECT, lambda name: self.announce_selected_track(name))
+        # Announces that project has been saved
+        event_bus.subscribe(EventType.PROJ_SAVED, self.announce_saved)
+        # Announces new metronome status
+        event_bus.subscribe(EventType.METR_TOGGLE, lambda is_on: self.announce_metronome(is_on))
+        # Announces new BPM value
+        event_bus.subscribe(EventType.BPM_MOD, lambda new_bpm: self.announce_bpm(new_bpm))
+        # Announces that recording has stopped
+        event_bus.subscribe(EventType.REC_STOP, self.announce_recording_stopped)
+        # Announces mute state of track
+        event_bus.subscribe(EventType.TRACK_MUTE, lambda track_name, is_muted: self.announce_track_muted(track_name, is_muted))
+        # Announce current state (TODO: improve this)
+        event_bus.subscribe(EventType.STAT_REQ, lambda metronome_status, bpm: self.announce_current_state(metronome_status, bpm))
+        # Loading project with specific name
+        event_bus.subscribe(EventType.PROJ_LOAD, lambda name: self.announce_loading_proj(name))
+        # MIDI input updated
+        event_bus.subscribe(EventType.MIDI_UPD, lambda name: self.announce_sel_midiin(name))
+        # MIDI input disconnected
+        event_bus.subscribe(EventType.MIDI_DISC, lambda name: self.announce_disc_midiin(name))
+
+        # Only for general errors
+        event_bus.subscribe(EventType.ERR, lambda error: self._voice.speak(VoiceType.ERROR, error))
+
+        # Shouldn't be used
+        event_bus.subscribe(EventType.GENERAL, lambda message: self._voice.speak(VoiceType.GENERAL_INFO, message))
+
+
+    # Update voice settings
+    def update_settings(self, cfg: dict) -> None:
+        """
+        Updates voice settings.
+        
+        To see which values can be updated by the UI, 
+        check main_window.py: VoiceConfigDialog.get_values
+        """
+
+        self._enable = cfg.get("enabled", self._enable)
+        
+        # Get current voice config
+        voice_config = self._voice.current_cfg()
+
+        # Update speech rate
+        if (rate := cfg.get("rate")) is not None:
+            voice_config.length_scale = 1/rate
+            
+        # Update volume
+        if (volume := cfg.get("volume")) is not None:
+            voice_config.volume = volume
+
+        # Init new voice with updated settings
+        self._voice.update_cfg(voice_config, self._enable)
+
+
+
+    # Shutdown voice
+    def shutdown(self) -> None:
+        if self._enable:
+            self._enable = False
+            self._voice.shutdown()
+
+
+
+    # ----------------------------------------
+    # Voice announcements of individual events
+    # ----------------------------------------
+
+    # INTERRUPTS
+    def announce_selected_track(self, track_name: str) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        self._voice.speak(VoiceType.TRACK_NAME, f"{track_name} armé")
 
     def announce_saved(self) -> None:
-        self.voice.speak(VoiceType.METR_INFO, "Projet sauvegardé")
+        self._voice.speak(VoiceType.PROJ_SAVE, "Projet sauvegardé")
         
+    # INTERRUPTS
     def announce_metronome(self, is_on: bool) -> None:
-        msg = "Metronome On" if is_on else "Metronome Off"
-        self.voice.speak(VoiceType.METR_TOGGLE, msg)
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        msg = "Métronome activé" if is_on else "Métronome désactivé"
+        self._voice.speak(VoiceType.METR_TOGGLE, msg)
 
     def announce_bpm(self, bpm: int) -> None:
-        self.voice.speak(VoiceType.BPM_MOD, f"B P M {bpm}")
+        self._voice.speak(VoiceType.BPM_MOD, f"B P M {bpm}")
         
+    # INTERRUPTS
     def announce_recording_stopped(self) -> None:
-        self.voice.speak(VoiceType.REC_STOP, "Enregistrement arrêté.")
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        self._voice.speak(VoiceType.REC_STOP, "Enregistrement arrêté.")
 
+    # INTERRUPTS
     def announce_track_muted(self, track_name: str, is_muted: bool) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
         status = "muté" if is_muted else "démuté"
-        self.voice.speak(VoiceType.METR_INFO, f"{track_name} {status}")
+        self._voice.speak(VoiceType.TRACK_INFO, f"{track_name} {status}")
     
-    def announce_current_state(self, metronome_status: str, bpm: int) -> None:
+    def announce_current_state(self, metronome_status: bool, bpm: int) -> None:
         """announce current BPM and metronome status on demand"""
-        self.voice.speak(VoiceType.METR_INFO, f"Métronome actuellement {metronome_status}.")
-        self.voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}")
+        status = "activé" if metronome_status else "désactivé"
+        self._voice.speak(VoiceType.METR_INFO, f"Métronome actuellement {status}.")
+        self._voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}.")
+
+    # INTERRUPTS
+    def announce_loading_proj(self, name: str) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        self._voice.speak(VoiceType.PROJ_INFO, f"Chargement du projet {name}.")
+
+    # INTERRUPTS
+    def announceb_new_proj(self) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        self._voice.speak(VoiceType.PROJ_INFO, "Nouveau Projet")
+
+    # INTERRUPTS
+    def announce_selected_proj(self, name: str) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        self._voice.speak(VoiceType.PROJ_INFO, name)
+
+    def announce_started(self) -> None:
+        self._voice.speak(VoiceType.WELCOME, "Menu de démarrage. Nouveau projet.")
+
+    def welcome(self) -> None:
+        self._voice.speak(VoiceType.WELCOME, "Bienvenue dans le studio.")
+
+    def announce_sel_midiin(self, midi_name: str) -> None:
+        self._voice.speak(VoiceType.MIDI_IN, f"ine poute MIDI sélectionné: {midi_name}")
+
+    def announce_no_menu_ctr(self, name: str | None) -> None:
+        if name:
+            self._voice.speak(VoiceType.MIDI_IN, f"L'ine poute {name} est incompatible avec le menu de démarrage, veuillez utiliser le clavier.")
+        else:
+            self._voice.speak(VoiceType.MIDI_IN, "Aucun ine poute MIDI trouvé, veuillez utiliser le clavier pour naviguer le menu de démarrage.")
+
+    def announce_disc_midiin(self, midi_name: str) -> None:
+        self._voice.speak(VoiceType.MIDI_IN, f"ine poute MIDI {midi_name} déconnecté.")
+
+    def announce_no_sf2(self) -> None:
+        self._voice.speak(VoiceType.ERROR, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")
+
+    # INTERRUPTS
+    def announce_vsett_opened(self) -> None:
+        # Temporarily re-enable voice upon voice settings open
+        self._voice.update_cfg(enable=True)
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+
+        self._voice.speak(VoiceType.VSETT_W, "Ouverture de la fenêtre de réglages pour la voix.")
+
+    # INTERRUPTS
+    def announce_vsett(self, sett: str, value: float) -> None:
+
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+
+        if sett == SETTING_NAMES[0]: # enabled button
+            enabled = value >= 0.0
+            msg = "Voix activée." if enabled else "Voix désactivée."
+            self._voice.speak(VoiceType.VSETT, msg)
+        elif sett == SETTING_NAMES[1]: # rate slider
+            limit = ""
+            if value == RATE_STEPS[0]:
+                limit += "Valeur minimale."
+            elif value == RATE_STEPS[len(RATE_STEPS)-1]:
+                limit += "Valeur maximale."
+            self._voice.speak(VoiceType.VSETT, f"Vitesse de parole à {value}. {limit}")
+        elif sett == SETTING_NAMES[2]: # volume slider
+            self._voice.speak(VoiceType.VSETT, f"Volume de parole à {value} sur 1.")
+        else:
+            pass # TODO error handling ?
+
+    # INTERRUPTS
+    def announce_vsett_closed(self, changed: bool) -> None:
+
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+
+        if changed:
+            self._voice.speak(VoiceType.VSETT_W, "Sauvegarde des nouveaux réglages de la voix.")
+        else:
+            self._voice.speak(VoiceType.VSETT_W, "Annulation des modifications aux réglages de la voix.")

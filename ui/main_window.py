@@ -1,6 +1,11 @@
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QCheckBox, QApplication
-from PySide6.QtCore import Signal, Qt
+# QtWidgets A-K imports
+from PySide6.QtWidgets import QApplication, QCheckBox, QDialog, QHBoxLayout
+# ... continued (L-Z)
+from PySide6.QtWidgets import QLabel, QMainWindow, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtCore import Qt, Signal
 from ui.track_widget import TrackWidget
+from ui.voice_settings import VoiceConfigDialog
+
 
 class MainWindow(QMainWindow):
     # These signals perfectly match the connections we set up in main.py
@@ -13,13 +18,20 @@ class MainWindow(QMainWindow):
     instrument_changed = Signal(int, str)
     add_track_requested = Signal()
     backend_state_changed = Signal(dict)
+    # Signals that voice settings have been opened
+    voice_settings_opened = Signal()
+    # True if settings confirmed else False
+    voice_settings_close = Signal(bool)
+    # For "enabled" (bool), float < 0 -> False, float >= 0 -> True
+    voice_setting_value = Signal(str, float)
+    voice_settings_changed = Signal(dict)
 
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Python Live Looper")
         self.setMinimumSize(450, 300)
 
-        # signal from the backhand that something changed
+        # signal from the backend that something changed
         self.backend_state_changed.connect(self.update_ui)
 
         # Set up the main layout
@@ -36,6 +48,7 @@ class MainWindow(QMainWindow):
         self.status_label = QLabel("STOPPED | 120 BPM")
         self.add_track = QPushButton("➕ Add Track") 
         self.save_btn = QPushButton("💾 Save")              # Save project
+        self.voice_btn = QPushButton("🎙 Voice")            # Change voice settings
 
         control_layout.addWidget(self.record_btn)
         control_layout.addWidget(self.play_btn)
@@ -43,6 +56,7 @@ class MainWindow(QMainWindow):
         control_layout.addWidget(self.status_label)
         control_layout.addWidget(self.add_track)
         control_layout.addWidget(self.save_btn)
+        control_layout.addWidget(self.voice_btn)
         
         self.main_layout.addLayout(control_layout)
 
@@ -52,6 +66,12 @@ class MainWindow(QMainWindow):
         
         self.track_widgets = {} # Dictionary tracking {track_id: TrackWidget_Instance}
 
+        # Voice settings internal
+        self._voice_settings = {"enabled": True, "rate": 1.0, "volume": 0.5}
+        self._vdialog = VoiceConfigDialog(self._voice_settings, parent=self)
+        # Connect voice settings dialog items
+        self._vdialog.voice_setting_value.connect(self.voice_setting_value.emit)
+
         # Add the button to your layout (e.g., self.layout.addWidget(self.reset_map_btn))
 
         # Wire top bar clicks to our MainWindow signals
@@ -60,6 +80,7 @@ class MainWindow(QMainWindow):
         self.metro_checkbox.toggled.connect(self.metronome_toggled.emit)
         self.add_track.clicked.connect(self.add_track_requested.emit)
         self.save_btn.clicked.connect(self.save_requested.emit)
+        self.voice_btn.clicked.connect(self._open_voice_config)
 
     def update_ui(self, dto: dict):
         """Consumes the 'dumb' dictionary from the core API and redraws the screen."""
@@ -118,3 +139,25 @@ class MainWindow(QMainWindow):
             focused_widget = QApplication.focusWidget()
             if isinstance(focused_widget, TrackWidget):
                 self.track_armed.emit(focused_widget.track_id)
+
+    # TODO: add MIDI mapping for opening/controlling the voice settings dialogue
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_V:
+            self._open_voice_config()
+        else:
+            super().keyPressEvent(event)
+
+    def _open_voice_config(self):
+
+        # Signal that voice settings dialog has been opened
+        self.voice_settings_opened.emit()
+
+        # Open voice settings dialog
+        if self._vdialog.exec() == QDialog.DialogCode.Accepted:
+            # Change settings
+            self._voice_settings = self._vdialog.get_values()
+            self.voice_settings_changed.emit(self._voice_settings)
+            # Signal closed voice settings
+            self.voice_settings_close.emit(True)
+        else:
+            self.voice_settings_close.emit(False)

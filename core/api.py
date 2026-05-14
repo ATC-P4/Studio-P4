@@ -1,12 +1,8 @@
-import os
-import json
-import time
-import mido
-from core.utils import MidiExporter
 from core.project_io import ProjectIO
 
-from enum import Enum, auto
-from typing import Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING
+
+from core.utils import EventType
 
 # enable class type checking
 if TYPE_CHECKING:
@@ -38,7 +34,7 @@ class LooperAPI:
             self._engine.set_state("STOPPED") # Cancel recording or count-in
 
             # Trigger voice on record toggle
-            self.events.emit("RECORDING_STOPPED")  
+            self.events.emit(EventType.REC_STOP)  
         else:
             # If STOPPED or PLAYING, start the record sequence
             self._engine.set_state("COUNT_IN")
@@ -63,7 +59,7 @@ class LooperAPI:
         self._ui_callback()
 
         # Trigger voice on metronome change
-        self.events.emit("METRONOME_TOGGLED", is_on=not current_state)
+        self.events.emit(EventType.METR_TOGGLE, is_on=not current_state)
 
     def mute_track(self, track_id: int, state: bool) -> None:
         """
@@ -77,7 +73,7 @@ class LooperAPI:
         track.is_muted = state
         if state:
             track.flush_notes()  # Stop any currently playing notes immediately, handles the drone issue when muting.
-        self.events.emit("TRACK_MUTED", track_name=track.name, is_muted=track.is_muted)
+        self.events.emit(EventType.TRACK_MUTE, track_name=track.name, is_muted=track.is_muted)
         self._ui_callback()
 
     def _toggle_armed_track_mute(self) -> None:
@@ -110,7 +106,7 @@ class LooperAPI:
                 track.flush_notes()  # Stop any currently playing notes immediately, handles the drone issue when switching armed tracks.
             track.is_armed = (i == track_id)
         #print(f"[API] Track {track_id} is now exclusively armed.")
-        self.events.emit("GENERIC_ANNOUNCEMENT", message=f"{self.project.tracks[track_id].name} armé")
+        self.events.emit(EventType.TRACK_SELECT, name=self.project.tracks[track_id].name)
         self._ui_callback()
 
     def set_soundfont_instrument(self, track_id: int, program_id: int) -> None:
@@ -175,7 +171,7 @@ class LooperAPI:
         """
         metronome_status = "activé" if self._engine.metronome_on else "désactivé"
         bpm = self.project.bpm
-        self.events.emit("STATUS_REQUESTED", metronome_status=metronome_status, bpm=bpm)
+        self.events.emit(EventType.STAT_REQ, metronome_status=metronome_status, bpm=bpm)
 
 
     def adjust_bpm(self, delta: int) -> None:
@@ -192,7 +188,7 @@ class LooperAPI:
             self.project.beat_duration = 60.0 / new_bpm
             
             # If you added the voice service:
-            self.events.emit("BPM_CHANGED", bpm=new_bpm)
+            self.events.emit(EventType.BPM_MOD, bpm=new_bpm)
             self._ui_callback()
     
     def change_volume(self, value: int) -> None:
@@ -205,10 +201,10 @@ class LooperAPI:
         """Delegates saving to the IO service and notifies the user."""
         try:
             ProjectIO.save(self.project, folder_name)
-            self.events.emit("GENERIC_ANNOUNCEMENT", message="Projet sauvegardé")
+            self.events.emit(EventType.PROJ_SAVED)
         except Exception as e:
             print(f"Save failed: {e}")
-            self.events.emit("GENERIC_ANNOUNCEMENT", message="Erreur de sauvegarde")
+            self.events.emit(EventType.ERR, error="Erreur de sauvegarde")
 
     def load_project_from_disk(self, folder_path: str) -> None:
         """Safely stops the engine, loads new data, and redraws the UI."""
@@ -224,8 +220,8 @@ class LooperAPI:
             
             # 4. Force UI Redraw
             self._ui_callback()
-            self.events.emit("GENERIC_ANNOUNCEMENT", message=f"Projet {self.project.name} chargé")
+            self.events.emit(EventType.PROJ_LOAD, message=f"Projet {self.project.name} chargé")
             
         except Exception as e:
             print(f"Failed to load project: {e}")
-            self.events.emit("GENERIC_ANNOUNCEMENT", message="Erreur de chargement")
+            self.events.emit(EventType.ERR, error="Erreur de chargement de projet.")
