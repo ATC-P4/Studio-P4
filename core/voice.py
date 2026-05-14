@@ -25,8 +25,7 @@ class VoiceType(Enum):
     ERROR = 12
     MIDI_IN = 13
     VSETT = 14
-    VSETT2 = 15
-    VSETT_W = 16
+    VSETT_W = 15
 
 K = TypeVar('K')
 V = TypeVar('V')
@@ -60,6 +59,9 @@ class BlockingMap(Generic[K, V], object):
         if self._queue:
             return False
         return True
+    
+    def clear(self) -> None:
+        self._queue.clear()
 
 
 
@@ -124,6 +126,7 @@ class VoiceService:
             interrupt = self._interrupt.is_set()
             if interrupt:
                 clear_interrupt()
+                # self._voice_queue.clear() # TODO: clear queue or no?
             return interrupt
         
         while self._is_running:
@@ -291,23 +294,35 @@ class VoicePresenter:
     # Voice announcements of individual events
     # ----------------------------------------
 
+    # INTERRUPTS
     def announce_selected_track(self, track_name: str) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
         self._voice.speak(VoiceType.TRACK_NAME, f"{track_name} armé")
 
     def announce_saved(self) -> None:
         self._voice.speak(VoiceType.PROJ_SAVE, "Projet sauvegardé")
         
+    # INTERRUPTS
     def announce_metronome(self, is_on: bool) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
         msg = "Métronome activé" if is_on else "Métronome désactivé"
         self._voice.speak(VoiceType.METR_TOGGLE, msg)
 
     def announce_bpm(self, bpm: int) -> None:
         self._voice.speak(VoiceType.BPM_MOD, f"B P M {bpm}")
         
+    # INTERRUPTS
     def announce_recording_stopped(self) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
         self._voice.speak(VoiceType.REC_STOP, "Enregistrement arrêté.")
 
+    # INTERRUPTS
     def announce_track_muted(self, track_name: str, is_muted: bool) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
         status = "muté" if is_muted else "démuté"
         self._voice.speak(VoiceType.TRACK_INFO, f"{track_name} {status}")
     
@@ -317,16 +332,19 @@ class VoicePresenter:
         self._voice.speak(VoiceType.METR_INFO, f"Métronome actuellement {status}.")
         self._voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}.")
 
+    # INTERRUPTS
     def announce_loading_proj(self, name: str) -> None:
         if self._voice.currently_speaking():
             self._voice.interrupt()
         self._voice.speak(VoiceType.PROJ_INFO, f"Chargement du projet {name}.")
 
+    # INTERRUPTS
     def announceb_new_proj(self) -> None:
         if self._voice.currently_speaking():
             self._voice.interrupt()
         self._voice.speak(VoiceType.PROJ_INFO, "Nouveau Projet")
 
+    # INTERRUPTS
     def announce_selected_proj(self, name: str) -> None:
         if self._voice.currently_speaking():
             self._voice.interrupt()
@@ -353,11 +371,16 @@ class VoicePresenter:
     def announce_no_sf2(self) -> None:
         self._voice.speak(VoiceType.ERROR, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")
 
+    # INTERRUPTS
     def announce_vsett_opened(self) -> None:
         # Temporarily re-enable voice upon voice settings open
         self._voice.update_cfg(enable=True)
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+
         self._voice.speak(VoiceType.VSETT_W, "Ouverture de la fenêtre de réglages pour la voix.")
 
+    # INTERRUPTS
     def announce_vsett(self, sett: str, value: float) -> None:
 
         if self._voice.currently_speaking():
@@ -368,17 +391,22 @@ class VoicePresenter:
             msg = "Voix activée." if enabled else "Voix désactivée."
             self._voice.speak(VoiceType.VSETT, msg)
         elif sett == SETTING_NAMES[1]: # rate slider
-            self._voice.speak(VoiceType.VSETT, f"Vitesse de parole à {value}.")
+            limit = ""
             if value == RATE_STEPS[0]:
-                self._voice.speak(VoiceType.VSETT2, "Valeur minimale.")
+                limit += "Valeur minimale."
             elif value == RATE_STEPS[len(RATE_STEPS)-1]:
-                self._voice.speak(VoiceType.VSETT2, "Valeur maximale.")
+                limit += "Valeur maximale."
+            self._voice.speak(VoiceType.VSETT, f"Vitesse de parole à {value}. {limit}")
         elif sett == SETTING_NAMES[2]: # volume slider
             self._voice.speak(VoiceType.VSETT, f"Volume de parole à {value} sur 1.")
         else:
             pass # TODO error handling ?
 
+    # INTERRUPTS
     def announce_vsett_closed(self, changed: bool) -> None:
+
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
 
         if changed:
             self._voice.speak(VoiceType.VSETT_W, "Sauvegarde des nouveaux réglages de la voix.")
