@@ -193,8 +193,7 @@ class VoicePresenter:
         event_bus.subscribe(EventType.STAT_REQ, self.announce_current_state)
         event_bus.subscribe(EventType.PROJ_LOAD, lambda name: self.announce_loading_proj(name))
         # MIDI input updated
-        # event_bus.subscribe(EventType.MIDI_UPD, self.ann)
-        # MIDI not found
+        event_bus.subscribe(EventType.MIDI_UPD, lambda name: self.announce_sel_midiin(name))
 
         # Only for general errors
         event_bus.subscribe(EventType.ERR, lambda error: self.voice.speak(VoiceType.ERROR, error))

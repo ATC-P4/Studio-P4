@@ -69,6 +69,10 @@ def main() -> None:
                 print(f"[STARTUP] Found LoopBe MIDI port for startup menu: {found_port}")
                 break
     
+    if found_port:
+        voice_presenter.announce_sel_midiin(found_port)
+    else:
+        voice_presenter.announce_no_midiin()
     midi_port_name = found_port if found_port else "MPK mini Plus 0"
     startup_menu = StartupMenu(voice_presenter)
     
@@ -79,7 +83,16 @@ def main() -> None:
     # ==========================================
     # PHASE 3: Instantiate Core Business Logic
     # ==========================================
-    project = Project("My Live Session", bpm=120)
+
+    available_instruments = get_available_instruments()    
+    while not available_instruments :
+        voice_service.speak(VoiceType.WELCOME, "Pas d'instrument détecté. Veuiller placer des fichier soundfont dans le dossier S F 2. Appuyez sur entrée pour scanner à nouveau")
+        input()
+        available_instruments = get_available_instruments()
+
+
+
+    project = Project("My Live Session", bpm=120, default_instrument = get_default_instrument(available_instruments))
     
     if selected_folder_path is None:
         print("Creating new project...")
@@ -93,7 +106,10 @@ def main() -> None:
             sys.exit(1)
 
     engine = MasterClockEngine(project)
-    available_instruments = get_available_instruments()
+    
+
+
+
 
     # ==========================================
     # PHASE 4: Instantiate Views & Controllers

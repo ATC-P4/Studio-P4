@@ -3,12 +3,12 @@ import threading
 import time
 import fluidsynth
 import mido
-from core.utils import get_resource_path
+from core.utils import get_resource_path,get_sf2_dir, get_default_instrument
 from core.utils import MidiExporter
 import platform
 
 class Track:
-    def __init__(self, name: str, synth: fluidsynth.Synth, channel: int, sf2_path: str = "sf2/basic_piano.sf2"):
+    def __init__(self, name: str, synth: fluidsynth.Synth, channel: int, sf2_path: str):
         self.name = name
         self.is_muted = False
         self.is_armed = False
@@ -20,7 +20,8 @@ class Track:
         self.synth = synth
         synth.setting('synth.gain', 1)
         self.channel = channel
-        self.sf2_path = os.path.normpath(get_resource_path(sf2_path))
+        self.sf2_path = sf2_path
+
         self.sf_id = 0
         self.volume = 100 
 
@@ -51,7 +52,9 @@ class Track:
         if os.path.isabs(sf2_filename_or_path):
             self.sf2_path = os.path.normpath(sf2_filename_or_path)
         else:
-            self.sf2_path = os.path.normpath(get_resource_path(f"sf2/{sf2_filename_or_path}"))
+            self.sf2_path = os.path.normpath(os.path.join(get_sf2_dir(),sf2_filename_or_path))
+            if not os.path.exists(self.sf2_path):
+                self.sf2_path = get_default_instrument()
             
         self._update_synth_program()
 
@@ -136,7 +139,7 @@ class Metronome:
 
 
 class Project:
-    def __init__(self, pname: str, bpm: int = 120, time_signature: tuple = (4, 4)):
+    def __init__(self, pname: str, bpm: int = 120, time_signature: tuple = (4, 4), default_instrument = "basic_piano.sf2"):
         self.name = pname
         self.bpm = bpm
         self.time_signature = time_signature
@@ -145,6 +148,7 @@ class Project:
         self.beat_duration = 60.0 / self.bpm 
         self.master_loop_beats = 0
         self.master_track = None
+        self.default_instrument = default_instrument
 
         # Audio setup
         self.master_synth = fluidsynth.Synth()
@@ -189,7 +193,7 @@ class Project:
         if not self.available_channels: 
             return
         assigned_channel = self.available_channels.pop(0)
-        track = Track(name, synth=self.master_synth, channel=assigned_channel)
+        track = Track(name, synth=self.master_synth, channel=assigned_channel, sf2_path=self.default_instrument)
         track.initialize_synth()  
         track.is_armed = (len(self.tracks) == 0)  
         self.tracks.append(track)
