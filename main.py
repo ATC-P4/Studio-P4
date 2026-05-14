@@ -8,7 +8,7 @@ def find_and_register_fluidsynth():
     if getattr(sys, 'frozen', False):
         print("PyInstaller build")
         # Running as PyInstaller bundle — DLL/dylib/so is extracted to _MEIPASS
-        dll_dir = sys._MEIPASS
+        dll_dir = sys._MEIPASS # type: ignore
         os.environ["PATH"] += ";" + dll_dir
 
 find_and_register_fluidsynth()
@@ -57,7 +57,7 @@ def main() -> None:
     # find a port name that contains "MPK mini" (case-insensitive) but doesn't contain MIDIIN
     found_port = None
     compat_port = None
-    avail_ports = mido.get_input_names()
+    avail_ports = mido.get_input_names() # type: ignore
     for port in avail_ports:
         if "MPK mini" in port and "MIDIIN" not in port:
             found_port = port
