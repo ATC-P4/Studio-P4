@@ -224,4 +224,4 @@ class LooperAPI:
             
         except Exception as e:
             print(f"Failed to load project: {e}")
-            self.events.emit(EventType.ERR, error="Erreur de chargement")
+            self.events.emit(EventType.ERR, error="Erreur de chargement de projet.")

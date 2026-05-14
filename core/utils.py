@@ -149,8 +149,11 @@ class EventBus:
             self._subscribers[event_type] = []
         self._subscribers[event_type].append(callback)
 
-    def emit(self, event_type: EventType, *args: Any, **kwargs: Any) -> None:
+    def emit(self, event_type: EventType, *args: Any, **kwargs: Any) -> bool:
         """Triggers all callbacks listening to this event type."""
+        called = False
         if event_type in self._subscribers:
             for callback in self._subscribers[event_type]:
                 callback(*args, **kwargs)
+                called = True
+        return called

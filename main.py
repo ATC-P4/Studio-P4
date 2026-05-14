@@ -96,7 +96,7 @@ def main() -> None:
     # ==========================================
 
     available_instruments = get_available_instruments()    
-    while not available_instruments :
+    while not available_instruments:
         voice_presenter.announce_no_sf2()
         input()
         available_instruments = get_available_instruments()

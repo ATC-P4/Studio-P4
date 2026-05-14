@@ -363,7 +363,7 @@ class MidiInputRouter:
             self.event_bus.emit(EventType.PROJ_SAVED)
             self._pending_edge = None
         else:
-            self.event_bus.emit(EventType.GENERAL, message="Appuyez à nouveau vers le haut pour sauvegarder") # TODOß
+            self.event_bus.emit(EventType.GENERAL, message="Appuyez à nouveau vers le haut pour sauvegarder") # TODO: voice
             self._pending_edge = BoundaryState.TOP
         
         return 0  # Always keep index at 0 (the top)

@@ -183,14 +183,23 @@ class VoicePresenter:
         voice_service = VoiceService(PiperVoice.load(voice_path))
         self.voice = voice_service
         
-        # 1. Wire up the event subscriptions
-        event_bus.subscribe(EventType.TRACK_SELECT, lambda name: self.announce_armed_track(name))
+        # Wire up the event subscriptions
+
+        # Announces that a track has been selected
+        event_bus.subscribe(EventType.TRACK_SELECT, lambda name: self.announce_selected_track(name))
+        # Announces that project has been saved
         event_bus.subscribe(EventType.PROJ_SAVED, self.announce_saved)
-        event_bus.subscribe(EventType.METR_TOGGLE, self.announce_metronome)
-        event_bus.subscribe(EventType.BPM_MOD, self.announce_bpm)
+        # Announces new metronome status
+        event_bus.subscribe(EventType.METR_TOGGLE, lambda is_on: self.announce_metronome(is_on))
+        # Announces new BPM value
+        event_bus.subscribe(EventType.BPM_MOD, lambda new_bpm: self.announce_bpm(new_bpm))
+        # Announces that recording has stopped
         event_bus.subscribe(EventType.REC_STOP, self.announce_recording_stopped)
-        event_bus.subscribe(EventType.TRACK_MUTE, self.announce_track_muted)
-        event_bus.subscribe(EventType.STAT_REQ, self.announce_current_state)
+        # Announces mute state of track
+        event_bus.subscribe(EventType.TRACK_MUTE, lambda track_name, is_muted: self.announce_track_muted(track_name, is_muted))
+        # Announce current state (TODO: improve this)
+        event_bus.subscribe(EventType.STAT_REQ, lambda metronome_status, bpm: self.announce_current_state(metronome_status, bpm))
+        # Loading project with specific name
         event_bus.subscribe(EventType.PROJ_LOAD, lambda name: self.announce_loading_proj(name))
         # MIDI input updated
         event_bus.subscribe(EventType.MIDI_UPD, lambda name: self.announce_sel_midiin(name))
@@ -208,7 +217,7 @@ class VoicePresenter:
         self.voice.shutdown()
 
     # 2. Define the exact text and voice types for each event
-    def announce_armed_track(self, track_name: str) -> None:
+    def announce_selected_track(self, track_name: str) -> None:
         self.voice.speak(VoiceType.TRACK_NAME, f"{track_name} armé")
 
     def announce_saved(self) -> None:
@@ -228,10 +237,11 @@ class VoicePresenter:
         status = "muté" if is_muted else "démuté"
         self.voice.speak(VoiceType.TRACK_INFO, f"{track_name} {status}")
     
-    def announce_current_state(self, metronome_status: str, bpm: int) -> None:
+    def announce_current_state(self, metronome_status: bool, bpm: int) -> None:
         """announce current BPM and metronome status on demand"""
-        self.voice.speak(VoiceType.METR_INFO, f"Métronome actuellement {metronome_status}.")
-        self.voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}")
+        status = "activé" if metronome_status else "désactivé"
+        self.voice.speak(VoiceType.METR_INFO, f"Métronome actuellement {status}.")
+        self.voice.speak(VoiceType.BPM_INFO, f"B P M actuel: {bpm}.")
 
     def announce_loading_proj(self, name: str) -> None:
         if self.voice.currently_speaking():
