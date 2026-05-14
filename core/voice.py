@@ -70,12 +70,13 @@ class VoiceService:
     # voice interruptions
     CHUNK_SIZE: int = 256
 
-    def __init__(self, voice_engine: PiperVoice, cfg: SynthesisConfig | None = None):
+    def __init__(self, voice_engine: PiperVoice, enable: bool = True, cfg: SynthesisConfig | None = None):
         """
         voice_engine: Your text-to-speech synthesizer instance.
         voice_config: Configuration for the voice synthesizer.
         """
         self._voice = voice_engine
+        self._enable = enable
 
         if cfg:
             self._vol = cfg.volume if cfg.volume else self._vol
@@ -100,6 +101,10 @@ class VoiceService:
     # Returns current configuration
     def current_cfg(self) -> SynthesisConfig:
         return self._cfg
+    
+    def update_cfg(self, new_cfg: SynthesisConfig, enable: bool) -> None:
+        self._enable = enable
+        self._cfg = new_cfg
 
     def _voice_worker(self):
         """Single persistent thread that owns the audio engine exclusively."""
@@ -120,6 +125,9 @@ class VoiceService:
         while self._is_running:
             # This uses your BlockingMap's pop function
             voicetype, audio = self._voice_queue.pop() 
+
+            if not self._enable:
+                continue
             
             if voicetype == VoiceType.STOP:
                 return # clean up after ourselves
@@ -241,40 +249,31 @@ class VoicePresenter:
 
 
     # Update voice settings
-    def update_settings(self, enable=True, speech_rate: float | None = None, noise_scale: float | None = None, 
-                        noise_w_scale: float | None = None, volume: float | None = None, normalize_audio: bool | None = None) -> None:
-
-        # If voice currently disabled and call was to disable voice, ignore
-        if not self._enable and not enable:
-            return
+    def update_settings(self, cfg: dict) -> None:
+        """
+        Updates voice settings.
         
-        # If currently enabled, shutdown current voice
+        To see which values can be updated by the UI, 
+        check main_window.py: VoiceConfigDialog.get_values
+        """
+
+        self._enable = cfg.get("enabled", self._enable)
+
+        print(f"\n\nUpdating settings with dict: {cfg}")
+        
+        # Get current voice config
         voice_config = self._voice.current_cfg()
-        self._voice.shutdown()
 
-        # If new_cfg is None, we want to disable the voice
-        if not enable:
-            self._enable = False
-            return
-        
-        new_voice_engine = PiperVoice.load(self._vpath)
-        
-        # Else create new voice with new config
-        if speech_rate:
-            voice_config.length_scale = speech_rate
-        if noise_scale:
-            voice_config.noise_scale = noise_scale
-        if noise_w_scale:
-            voice_config.noise_w_scale = noise_w_scale
-        if volume:
+        # Update speech rate
+        if (rate := cfg.get("rate")) is not None:
+            voice_config.length_scale = 1/rate
+            
+        # Update volume
+        if (volume := cfg.get("volume")) is not None:
             voice_config.volume = volume
-        if normalize_audio is not None:
-            voice_config.normalize_audio = normalize_audio
 
         # Init new voice with updated settings
-        self._voice = VoiceService(new_voice_engine, voice_config)
-
-        # Already subscribed to EventBus events, no need to resubscribe => we're done
+        self._voice.update_cfg(voice_config, self._enable)
 
 
 

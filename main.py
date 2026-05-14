@@ -152,6 +152,7 @@ def main() -> None:
     window.track_armed.connect(api.arm_track)
     window.instrument_changed.connect(api.set_track_soundfont)
     window.add_track_requested.connect(lambda: api.add_track(f"Track {len(project.tracks)+1}"))
+    window.voice_settings_changed.connect(voice_presenter.update_settings)
 
     # ==========================================
     # PHASE 7: Graceful Shutdown
