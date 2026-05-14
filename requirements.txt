@@ -7,3 +7,5 @@ piper-tts==1.4.2
 keyboard==0.13.5
 sf2utils==1.0.0
 pyinstaller==6.20.0
+mkdocs-material
+mkdocstrings[python]

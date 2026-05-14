@@ -1,8 +1,3 @@
-Here is the complete MkDocs-ready Markdown file for your data flow documentation. Save this exactly as `docs/data_flow.md`.
-
-This document maps the exact lifecycle of data as it moves through your dual-thread, event-driven MVC architecture. 
-
-```markdown
 # Application Data Flow
 
 This document maps the lifecycle of data as it enters, mutates, and exits the Python Live Looper. Understanding these pipelines is critical for maintaining thread safety and adhering to the Single Responsibility Principle.
@@ -14,7 +9,7 @@ This pipeline handles how a physical button press alters the internal memory of 
 
 1. **Hardware Emission:** A physical MIDI controller sends a raw byte (e.g., `CC 119`).
 2. **Listener (`MidiIO`):** The `mido` background thread receives the byte.
-3. **Translation:** `MidiIO` checks `Project.midi_mapping` and translates `CC 119` into the string `"TOGGLE_RECORD"`.
+3. **Translation:** `MidiIO` checks the `DEFAULT_MIDI_MAPPING` and translates `CC 119` into the string `"TOGGLE_RECORD"`.
 4. **Routing (`MidiInputRouter`):** The string is passed to the router. The router looks up `"TOGGLE_RECORD"` in its `_action_map` and invokes `LooperAPI.toggle_record()`.
 5. **Business Logic (`LooperAPI`):** The API executes the command, changing `MasterClockEngine.current_state` to `"COUNT_IN"`.
 6. **UI Update:** The API triggers `self._ui_callback()`, passing a `get_state_dto()` dictionary to the View (`MainWindow`), which redraws the screen.
@@ -61,14 +56,13 @@ This pipeline handles how the core backend triggers auxiliary features (like Voi
 ## 4. The Export Flow (Memory to Disk)
 This pipeline handles how volatile RAM is permanently saved to the hard drive.
 
-1. **Trigger:** The user double-taps "Up" on the joystick. `MidiInputRouter` triggers `LooperAPI.save_project_to_disk()`.
-2. **Project Delegation:** The API calls `Project.save_project()`, which generates a timestamped directory (e.g., `Saves/project_20260425-112300/`).
-3. **Extraction:** The `Project` iterates through its `Tracks` and passes them to the `MidiExporter`.
+1. **Trigger:** The user double-taps "Up" on the joystick. `MidiInputRouter` triggers `LooperAPI.saveproject_to_disk()`.
+2. **Project Delegation:** The API calls `ProjectIO.save()`, which generates a timestamped directory (e.g., `Saves/project_le_12_Mai_a_14_heure_30/`).
+3. **Extraction:** The IO module iterates through the Project's `Tracks` and passes them to the `MidiExporter`.
 4. **Conversion (`MidiExporter`):** The exporter converts absolute Python timestamps (seconds) into relative MIDI delta-ticks based on the Project's BPM.
 5. **Padding:** The exporter calculates the difference between the last played note and the end of the `master_loop`, appending an `end_of_track` MetaMessage to ensure perfect looping in a DAW.
 6. **I/O:** The `mido.MidiFile.save()` method writes the `.mid` files to the hard drive.
 
 ```text
-[LooperAPI] -> [Project] -> (Track Objects) -> [MidiExporter] -> (Delta-Tick Math & Padding) -> [mido.MidiFile] -> [Hard Drive]
-```
+[LooperAPI] -> [ProjectIO] -> (Track Objects) -> [MidiExporter] -> (Delta-Tick Math & Padding) -> [mido.MidiFile] -> [Hard Drive]
 ```
