@@ -19,13 +19,16 @@ class VoiceType(Enum):
     PROJ_SAVE = 6
     METR_INFO = 7
     PROJ_INFO = 8
-    GENERAL_INFO = 9
+    NAME = 9
     TRACK_INFO = 10
     TRACK_NAME = 11
     ERROR = 12
     MIDI_IN = 13
     VSETT = 14
     VSETT_W = 15
+    GR_SEL = 16
+    INSTR_SEL = 17
+    HINT = 18
 
 K = TypeVar('K')
 V = TypeVar('V')
@@ -228,13 +231,13 @@ class VoicePresenter:
         # Wire up the event subscriptions
 
         # Announces that a track has been selected
-        event_bus.subscribe(EventType.TRACK_SELECT, lambda name: self.announce_selected_track(name))
+        event_bus.subscribe(EventType.TRACK_SELECT, lambda name: self.announce_name(name))
         # Announces that project has been saved
         event_bus.subscribe(EventType.PROJ_SAVED, self.announce_saved)
         # Announces new metronome status
         event_bus.subscribe(EventType.METR_TOGGLE, lambda is_on: self.announce_metronome(is_on))
         # Announces new BPM value
-        event_bus.subscribe(EventType.BPM_MOD, lambda new_bpm: self.announce_bpm(new_bpm))
+        event_bus.subscribe(EventType.BPM_MOD, lambda bpm: self.announce_bpm(bpm))
         # Announces that recording has stopped
         event_bus.subscribe(EventType.REC_STOP, self.announce_recording_stopped)
         # Announces mute state of track
@@ -247,12 +250,21 @@ class VoicePresenter:
         event_bus.subscribe(EventType.MIDI_UPD, lambda name: self.announce_sel_midiin(name))
         # MIDI input disconnected
         event_bus.subscribe(EventType.MIDI_DISC, lambda name: self.announce_disc_midiin(name))
+        # Instrument groups cycling mode
+        event_bus.subscribe(EventType.GR_SEL, lambda name: self.announce_group_sel(name))
+        # Instrument list cycling mode
+        event_bus.subscribe(EventType.INSTR_SEL, self.announce_instr_sel)
+        # Hint for adding new track
+        event_bus.subscribe(EventType.TR_HINT, self.hint_new_track)
+        # Hint for saving project
+        event_bus.subscribe(EventType.SAVE_HINT, self.hint_save_proj)
+        # New track announcement
+        event_bus.subscribe(EventType.TR_ADD, lambda name: self.announce_new_track(name))
+        # New group selected
+        event_bus.subscribe(EventType.GR_NAME, lambda name: self.announce_name(name))
 
         # Only for general errors
         event_bus.subscribe(EventType.ERR, lambda error: self._voice.speak(VoiceType.ERROR, error))
-
-        # Shouldn't be used
-        event_bus.subscribe(EventType.GENERAL, lambda message: self._voice.speak(VoiceType.GENERAL_INFO, message))
 
 
     # Update voice settings
@@ -295,10 +307,10 @@ class VoicePresenter:
     # ----------------------------------------
 
     # INTERRUPTS
-    def announce_selected_track(self, track_name: str) -> None:
+    def announce_new_track(self, name: str) -> None:
         if self._voice.currently_speaking():
             self._voice.interrupt()
-        self._voice.speak(VoiceType.TRACK_NAME, f"{track_name} armé")
+        self._voice.speak(VoiceType.TRACK_NAME, f"Nouveau track: {name}")
 
     def announce_saved(self) -> None:
         self._voice.speak(VoiceType.PROJ_SAVE, "Projet sauvegardé")
@@ -310,7 +322,28 @@ class VoicePresenter:
         msg = "Métronome activé" if is_on else "Métronome désactivé"
         self._voice.speak(VoiceType.METR_TOGGLE, msg)
 
+    # INTERRUPTS
+    def announce_group_sel(self, name: str) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        self._voice.speak(VoiceType.GR_SEL, f"Séléction de groupe: {name}.")
+
+    # INTERRUPTS
+    def announce_instr_sel(self) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
+        self._voice.speak(VoiceType.INSTR_SEL, "Séléction d'instruments.")
+
+    def hint_new_track(self) -> None:
+        self._voice.speak(VoiceType.HINT, "Appuyez à nouveau vers le bas pour rajouter une piste.")
+
+    def hint_save_proj(self) -> None:
+        self._voice.speak(VoiceType.HINT, "Appuyez à nouveau vers le haut pour sauvegarder le projet.")
+
+    # INTERRUPTS
     def announce_bpm(self, bpm: int) -> None:
+        if self._voice.currently_speaking():
+            self._voice.interrupt()
         self._voice.speak(VoiceType.BPM_MOD, f"B P M {bpm}")
         
     # INTERRUPTS
@@ -345,10 +378,10 @@ class VoicePresenter:
         self._voice.speak(VoiceType.PROJ_INFO, "Nouveau Projet")
 
     # INTERRUPTS
-    def announce_selected_proj(self, name: str) -> None:
-        if self._voice.currently_speaking():
+    def announce_name(self, name: str, interrupt: bool=True) -> None:
+        if self._voice.currently_speaking() and interrupt:
             self._voice.interrupt()
-        self._voice.speak(VoiceType.PROJ_INFO, name)
+        self._voice.speak(VoiceType.NAME, name)
 
     def announce_started(self) -> None:
         self._voice.speak(VoiceType.WELCOME, "Menu de démarrage. Nouveau projet.")

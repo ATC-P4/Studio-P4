@@ -3,8 +3,9 @@
 # ignore .sf2 files
 *.sf2
 
-#include only the basic_piano.sf2 file
-!Metronom.sf2
+#include only the metronome.sf2 and basic_piano.sf2 file
+!metronome.sf2
+!basic_piano.sf2
 
 # ignore venv
 venv

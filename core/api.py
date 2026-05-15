@@ -105,7 +105,6 @@ class LooperAPI:
             if track.is_armed and i != track_id:
                 track.flush_notes()  # Stop any currently playing notes immediately, handles the drone issue when switching armed tracks.
             track.is_armed = (i == track_id)
-        #print(f"[API] Track {track_id} is now exclusively armed.")
         self.events.emit(EventType.TRACK_SELECT, name=self.project.tracks[track_id].name)
         self._ui_callback()
 
@@ -183,12 +182,19 @@ class LooperAPI:
             delta (int): Ammount to change the bpm, can be positive or negative.
         """
         new_bpm = self.project.bpm + delta
-        if 10 <= new_bpm <= 400:
+        print("[API] Changing BPM")
+        if (8 <= new_bpm) and (new_bpm <= 400):
             self.project.bpm = new_bpm
             self.project.beat_duration = 60.0 / new_bpm
+
+            print("[API] inside BPM if")
             
             # If you added the voice service:
-            self.events.emit(EventType.BPM_MOD, bpm=new_bpm)
+            try:
+                called = self.events.emit(EventType.BPM_MOD, bpm=new_bpm)
+                print(f"[API] Called: {called}")
+            except Exception as e:
+                print(f"[API] emit crashed with: {e}")
             self._ui_callback()
     
     def change_volume(self, value: int) -> None:

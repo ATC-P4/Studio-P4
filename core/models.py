@@ -18,7 +18,7 @@ class Track:
         self.event_lock = threading.Lock()
         
         self.synth = synth
-        synth.setting('synth.gain', 1)
+        synth.setting('synth.gain', 1.0)
         self.channel = channel
         self.sf2_path = sf2_path
 
@@ -111,9 +111,9 @@ class Track:
 
 
 class Metronome:
-    def __init__(self, synth: fluidsynth.Synth, sf2_path: str = "sf2/Metronom.sf2", bank: int = 128, program: int = 48):
+    def __init__(self, synth: fluidsynth.Synth, sf2_path: str = "sf2/metronome.sf2", bank: int = 128, program: int = 48):
         self.synth = synth
-        self.channel = 9 
+        self.channel = 9
         self.active_notes = set() 
         
         absolute_sf2_path = get_resource_path(sf2_path)
@@ -153,7 +153,7 @@ class Project:
         # Audio setup
         self.master_synth = fluidsynth.Synth()
         self.gain = 0.4
-        self.master_synth.setting("synth.gain", self.gain)
+        self.master_synth.setting("synth.gain", self.gain) # TODO: doesn't seem to work
         self.master_synth.setting("audio.periods", 8)
         self.master_synth.setting("audio.period-size", 512)
         self.master_synth.setting("synth.sample-rate", 44100.0)

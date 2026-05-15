@@ -14,7 +14,7 @@ def get_resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
+        base_path = sys._MEIPASS # type: ignore
     except Exception:
         base_path = os.path.abspath(".")
 
@@ -22,10 +22,10 @@ def get_resource_path(relative_path):
 
 
 def get_sf2_filename(path):
-    return os.path.basename(sf2_path)
+    return os.path.basename(path)
 
 def get_sf2_display_name(path):
-    return get_sf2_filename.replace(".sf2", "").title().replace("_", " ")
+    return get_sf2_filename(path).replace(".sf2", "").title().replace("_", " ")
 
 def get_sf2_dir():
     return os.path.join(os.path.abspath("."),("sf2")) 
@@ -128,11 +128,16 @@ class EventType(Enum):
     REC_STOP = 4
     TRACK_MUTE = 5
     STAT_REQ = 6
-    GENERAL = 7
-    ERR = 8
-    PROJ_LOAD = 9
-    MIDI_DISC = 10
-    MIDI_UPD = 11
+    ERR = 7
+    PROJ_LOAD = 8
+    MIDI_DISC = 9
+    MIDI_UPD = 10
+    GR_SEL = 11 # Announces group mode + selected group name
+    INSTR_SEL = 12
+    SAVE_HINT = 13
+    TR_HINT = 14
+    TR_ADD = 15
+    GR_NAME = 16 # Announces just the selected group name
 
     
 
