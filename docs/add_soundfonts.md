@@ -18,6 +18,7 @@ Where you place your SoundFonts depends on how you are running the application:
 When a musician uses the joystick in **Group Mode**, they are actually navigating the subfolders inside the `sf2/` directory. The application automatically reads the folder names and creates categories!
 
 To organize your new instruments:
+
 1. Inside the `sf2/` directory, create a new folder (e.g., `Synths`, `Bass`, `Kits`).
 2. Place your downloaded `.sf2` files into these subfolders. 
 
@@ -39,5 +40,6 @@ When the app launches, the Voice Assistant will now read "Bass" and "Strings" as
 ## 3. Where to Find Free SoundFonts
 
 If you are looking to expand your library, here are excellent resources for open-source and free `.sf2` files:
+
 - [Zanderjaz Free Soundfont Downloads](https://www.zanderjaz.com/downloads/soundfonts/)
 - [Polyphone Soundfont Repository](https://www.polyphone.io/en/soundfonts)

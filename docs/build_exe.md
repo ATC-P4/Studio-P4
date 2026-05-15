@@ -36,6 +36,7 @@ Run the following command from the root of your project directory (formatted for
 ```
 
 ### Command Breakdown:
+
 * `--onefile`: Compresses everything into a single `main.exe`.
 * `--hidden-import mido.backends.rtmidi`: Forces PyInstaller to include the C++ MIDI drivers, which Mido loads dynamically.
 * `--collect-all`: Ensures that complex C-bindings for the UI and Voice synthesizer are not left behind.

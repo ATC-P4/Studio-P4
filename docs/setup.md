@@ -9,6 +9,7 @@ Because Studio P4 interacts directly with low-level audio drivers (FluidSynth) a
 ## 1. System Requirements
 
 Before touching Python, ensure your machine meets these basic requirements:
+
 * **Python:** Version 3.10 or higher.
 * **Git:** To clone the repository.
 * **MIDI Keyboard:** An AKAI MPK Mini Plus connected via USB (optional, but highly recommended for testing hardware routing).
@@ -34,9 +35,11 @@ sudo apt install libfluidsynth-dev
 
 ### Windows
 Windows is slightly more manual since it doesn't have a default package manager. 
+
 1. Download the latest compiled FluidSynth Windows binaries from their official GitHub releases.
 2. Extract the `.zip` file.
 3. You have two options:
+
     * **Option A (System-wide):** Add the folder containing `fluidsynth.dll` to your Windows System `PATH` environment variable.
     * **Option B (Local):** Copy `libfluidsynth.dll` directly into the root folder of your `studio-p4` project.
 
@@ -76,11 +79,13 @@ Studio P4 requires a few static files to boot successfully. These are not includ
 
 ### SoundFonts (`.sf2`)
 Create a folder named `sf2` in the root of your project. You must have at least these two files inside it:
+
 * `Metronom.sf2` (Used by the `MasterClockEngine` for the click track).
 * `basic_piano.sf2` (Or any default instrument, so the app has something to load upon boot).
 
 ### Piper Voice Model (`.onnx`)
 Download the French Text-to-Speech model. Place these two files directly in the root of your project:
+
 * `fr_FR-siwis-medium.onnx`
 * `fr_FR-siwis-medium.onnx.json`
 
@@ -95,6 +100,7 @@ python main.py
 ```
 
 **What to expect on a successful boot:**
+
 1. The terminal will print the audio initialization sequence.
 2. The PySide6 User Interface will appear.
 3. You will hear the Text-to-Speech engine announce: *"Menu de démarrage. Nouveau projet."*

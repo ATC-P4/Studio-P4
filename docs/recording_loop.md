@@ -8,8 +8,11 @@ When you launch the application, you will hear the voice assistant say: *"Bienve
 
 By default, the studio creates an empty Master track and arms it for you. 
 Before recording, you might want to adjust the tempo:
+
 1. Press the **Metronome button** on your keyboard to turn on the click track. The voice will announce *"Métronome activé"*.
-2. Turn the **BPM Knob** (or press the BPM Up/Down buttons) to adjust the speed. The voice will announce your new tempo (e.g., *"B P M 120"*).
+
+2. Press the BPM Up/Down buttons to adjust the speed. The voice will announce your new tempo (e.g., *"BPM 120"*).
+
 
 ## 2. Recording the Master Track
 

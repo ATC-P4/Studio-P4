@@ -15,6 +15,7 @@ nav:
       - Recording a Loop: recording_loop.md
       - Managing Tracks & Sounds: managing_tracks.md
       - Saving & Loading: saving_projects.md
+      - Configuring the Voice: voice_config.md
   - Developer's Guide:
       - System Setup: setup.md
       - Remapping MIDI Controls: remap_midi.md

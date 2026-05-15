@@ -7,6 +7,7 @@ To answer this, we had to rethink the modern Digital Audio Workstation (DAW).
 ## The Problem with Traditional DAWs
 
 Modern DAWs (like Ableton, Logic, or FL Studio) are incredibly powerful, but they are designed as visual labyrinths. They rely heavily on:
+
 1.  **Mouse-driven workflows:** Clicking tiny icons to arm tracks, open plugins, or adjust panning.
 2.  **Visual feedback:** Relying on screen colors to know if you are recording, or looking at a grid to align loops.
 3.  **Nested Menus:** Forcing screen-reader software to navigate through dozens of irrelevant UI elements just to change an instrument.
