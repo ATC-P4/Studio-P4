@@ -1,6 +1,6 @@
-# Welcome to Studio P4 🎹
+# Welcome to Studio P4
 
-**Studio P4** is an open-source, hardware-first, multi-track MIDI looper designed for pre-studio track creation and built specifically to empower visually impaired musicians. This project was proudly developed as part of the **Assistive Technology Challenge**.
+**Studio P4** is an open-source, hardware-first, multi-track MIDI looper designed for pre-studio track creation and built specifically to empower visually impaired musicians. This project was proudly developed as part of the **EPFL Assistive Technology Challenge**.
 
 Traditional Digital Audio Workstations (DAWs) rely heavily on complex visual interfaces and mouse-driven workflows. Studio P4 solves this by offering a completely "headless" experience. Controlled entirely via a MIDI keyboard and guided by an integrated Text-to-Speech (TTS) voice assistant, it allows musicians to focus purely on touch, hearing, and creativity.
 
