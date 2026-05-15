@@ -139,7 +139,7 @@ class StartupMenu(QDialog):
                 return
             proj_name = os.path.basename(proj_path)
             clean_name = proj_name.replace("_", " ")
-            self.voice.announce_selected_proj(clean_name)
+            self.voice.announce_name(clean_name)
 
     def run(self, port_name: str | None = None) -> str | None:
         self.voice.announce_started()

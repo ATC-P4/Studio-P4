@@ -11,6 +11,7 @@ import threading
 from core.engine import MasterClockEngine
 from core.models import Project
 from core.utils import EventBus, EventType
+from core.api import LooperAPI
 
 class MidiIO:
 
@@ -55,11 +56,11 @@ class MidiIO:
             port_name (str | None, optional): The name of the MIDI input port to open. Defaults to None.
         """
         try:
-            self.inport = mido.open_input(port_name, callback=self.on_midi_callback)
+            self.inport = mido.open_input(port_name, callback=self.on_midi_callback) # type: ignore
             print(f"MidiIO Connected: Listening to '{self.inport.name}'")
         except Exception as e:
             print(f"CRITICAL MidiIO Error: Could not open MIDI port. {e}")
-            print("Available ports are:", mido.get_input_names())
+            print("Available ports are:", mido.get_input_names()) # type: ignore
 
     def start_auto_connection(self):
         """Start the periodic verification thread (hot-plugging)."""
@@ -71,7 +72,7 @@ class MidiIO:
     def _monitor_loop(self):
         """A background thread that checks the ports every 2 seconds."""
         while self._is_monitoring:
-            available_ports: list[str] = mido.get_input_names()
+            available_ports: list[str] = mido.get_input_names() # type: ignore
             
             # 1. Handling a disconnection (if the cable is pulled out)
             if self.inport and self.inport.name not in available_ports:
@@ -213,12 +214,18 @@ class BoundaryState(Enum):
     BOTTOM = auto()
     NORMAL = auto()
 
+class NavType(Enum):
+    NAV_UP = "NAV_UP"
+    NAV_DOWN = "NAV_DOWN"
+    NAV_RIGHT = "NAV_RIGHT"
+    NAV_LEFT = "NAV_LEFT"
+
 class MidiInputRouter:
     """
     This class is responsible for routing incoming MIDI commands from the AudioIO to the appropriate API methods.
     It acts as a central dispatcher, translating raw MIDI input into high-level actions that the LooperAPI can execute.
     """
-    def __init__(self, api):
+    def __init__(self, api: LooperAPI):
         self.api = api
         self.project = api.project
         self.event_bus: EventBus = api.events
@@ -240,18 +247,18 @@ class MidiInputRouter:
                 "NAV_UP": lambda: self.cycle_armed_track(1),
                 "NAV_DOWN": lambda: self.cycle_armed_track(-1),
                 "NAV_LEFT": self.api._toggle_armed_track_mute,
-                "NAV_RIGHT": self._set_nav_mode(NavMode.GROUP, "Mode groupe"),
+                "NAV_RIGHT": self._set_nav_mode(NavMode.GROUP, NavType.NAV_RIGHT),
             },
             NavMode.GROUP: {
                 "NAV_UP": lambda: self.cycle_group(1),
                 "NAV_DOWN": lambda: self.cycle_group(-1),
-                "NAV_LEFT": self._set_nav_mode(NavMode.TRACK, "Mode piste"),
-                "NAV_RIGHT": self._set_nav_mode(NavMode.INSTRUMENT, "Mode instrument"),
-            },
+                "NAV_LEFT": self._set_nav_mode(NavMode.TRACK, NavType.NAV_LEFT),
+                "NAV_RIGHT": self._set_nav_mode(NavMode.INSTRUMENT, NavType.NAV_RIGHT),
+            }, 
             NavMode.INSTRUMENT: {
                 "NAV_UP": lambda: self.cycle_instrument(1),
                 "NAV_DOWN": lambda: self.cycle_instrument(-1),
-                "NAV_LEFT": self._set_nav_mode(NavMode.GROUP, "Mode groupe"),
+                "NAV_LEFT": self._set_nav_mode(NavMode.GROUP, NavType.NAV_LEFT),
                 "NAV_RIGHT": lambda: None, 
             }
         }
@@ -276,7 +283,7 @@ class MidiInputRouter:
         self.handle_midi_action(command)
 
     
-    def _set_nav_mode(self, mode: NavMode, voice_announcement: str) -> Callable[[], None]:
+    def _set_nav_mode(self, mode: NavMode, nav: NavType) -> Callable[[], None]:
         """
         Function that return a function that change the NavMode and announce it,
         used in the handle_midi_action
@@ -292,24 +299,21 @@ class MidiInputRouter:
             self._pending_edge = None # Clear any pending edge state when switching modes to prevent accidental triggers
             self.nav_mode = mode
             print(f"[API] Joystick Mode: {mode.name} CYCLE")
-            self.event_bus.emit(EventType.GENERAL, message=voice_announcement) # TODO: voice
-            if mode.name == "TRACK":
+            if mode == NavMode.TRACK:
                 armed_track = self.project.get_armed_track()
                 if armed_track:
-                    self.event_bus.emit(EventType.GENERAL, message=f"{armed_track.name}") # TODO: voice
-            if mode.name == "INSTRUMENT":
-                armed_track = self.project.get_armed_track()
-                if armed_track:
-                    current_instrument_name = os.path.basename(armed_track.sf2_path).replace(".sf2", "").replace("_", " ")
-                    self.event_bus.emit(EventType.GENERAL, message=f"{current_instrument_name}") # TODO: voice
-            if mode.name == "GROUP":
+                    self.event_bus.emit(EventType.TRACK_SELECT, name=armed_track.name)
+            if mode == NavMode.INSTRUMENT:
+                if nav == NavType.NAV_LEFT or nav == NavType.NAV_RIGHT:
+                    self.event_bus.emit(EventType.INSTR_SEL)
+            if mode == NavMode.GROUP:
                 armed_track = self.project.get_armed_track()
                 if armed_track:
                     current_sf2 = armed_track.sf2_path
                     instruments_dict = self.api._available_instruments
                     for group_name, sf2_list in instruments_dict.items():
                         if current_sf2 in sf2_list:
-                            self.event_bus.emit(EventType.GENERAL, message=f"{group_name}") # TODO: voice
+                            self.event_bus.emit(EventType.GR_SEL, name=group_name)
                             break
         return transition
     
@@ -363,7 +367,7 @@ class MidiInputRouter:
             self.event_bus.emit(EventType.PROJ_SAVED)
             self._pending_edge = None
         else:
-            self.event_bus.emit(EventType.GENERAL, message="Appuyez à nouveau vers le haut pour sauvegarder") # TODO: voice
+            self.event_bus.emit(EventType.SAVE_HINT, message="Appuyez à nouveau vers le haut pour sauvegarder") # TODO: voice
             self._pending_edge = BoundaryState.TOP
         
         return 0  # Always keep index at 0 (the top)
@@ -373,12 +377,12 @@ class MidiInputRouter:
         if self._pending_edge == BoundaryState.BOTTOM:
             new_track_num = len(tracks) + 1
             self.api.add_track(f"Track {new_track_num}")
-            self.event_bus.emit(EventType.GENERAL, message=f"Nouvelle piste ajoutée: Track {new_track_num}") # TODO: voice
+            self.event_bus.emit(EventType.TR_ADD, name=f"Track {new_track_num}")
             self._pending_edge = None
             # Return the new length - 1 so the newly created track is armed
             return len(self.project.tracks) - 1 
         else:
-            self.event_bus.emit(EventType.GENERAL, message="Appuyez vers le bas à nouveau pour ajouter une piste") # TODO: voice
+            self.event_bus.emit(EventType.TR_HINT)
             self._pending_edge = BoundaryState.BOTTOM
             
         return len(tracks) - 1 # Keep index at the bottom
@@ -428,7 +432,7 @@ class MidiInputRouter:
         next_instrument = instruments_dict[next_group][0]
         armed_track.set_soundfont(next_instrument)
         
-        self.event_bus.emit(EventType.GENERAL, message=f"{next_group}") # TODO: voice
+        self.event_bus.emit(EventType.GR_NAME, name=next_group)
         if self.api._ui_callback: self.api._ui_callback()
 
     def cycle_instrument(self, direction: int) -> None:
@@ -456,8 +460,8 @@ class MidiInputRouter:
         armed_track.set_soundfont(next_instrument)
         
         # Clean up the name for the voice (e.g., "basic_piano.sf2" -> "basic piano")
-        clean_name = os.path.basename(next_instrument).replace(".sf2", "").replace("_", " ")
-        self.event_bus.emit(EventType.GENERAL, message=f"Instrument: {clean_name}") # TODO: voice
+        # clean_name = os.path.basename(next_instrument).replace(".sf2", "").replace("_", " ")
+        # self.event_bus.emit(EventType.GENERAL, message=f"{clean_name}")
         
         if self.api._ui_callback: self.api._ui_callback()
 
