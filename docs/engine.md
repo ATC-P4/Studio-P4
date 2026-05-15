@@ -32,4 +32,6 @@ The engine relies on `set_state()` to handle complex transitions.
 
 ## API Reference
 
+*The documentation below is automatically generated from the Python source code docstrings.*
+
 ::: core.engine.MasterClockEngine

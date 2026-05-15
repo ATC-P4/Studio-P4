@@ -1,4 +1,4 @@
-site_name: Python Live Looper Docs
+site_name: Studio P4 Documentation
 theme:
   name: material
 
@@ -11,21 +11,21 @@ plugins:
 
 nav:
   - Home: index.md
-  - Getting Started: getting_started.md
-  - User Guide:
-      - fist draft: user_guide.md
-      - Creating a Project: creating_project.md
-      - Managing Tracks: managing_tracks.md
-      - Using the Metronome: metronome.md
-      - Exporting MIDI: exporting_midi.md
-  - Overview of the project:
-      - Architecture: architecture.md
-      - Data Flow: data_flow.md
+  - Musician's Guide: 
+      - Recording a Loop: recording_loop.md
+      - Managing Tracks & Sounds: managing_tracks.md
+      - Saving & Loading: saving_projects.md
+  - Developer's Guide:
+      - System Setup: setup.md
+      - Remapping MIDI Controls: remap_midi.md
+      - Adding SoundFonts: add_soundfonts.md
+      - Building the EXE: build_exe.md
+  - Architecture & Concepts: 
+      - Accessibility Philosophy: accessibility_philosophy.md
+      - System Architecture: architecture.md
+      - Data Flow Pipelines: data_flow.md
   - API Reference:
-      - Core API: api.md
-      - Audio IO: midi_io.md
-      - Engine: engine.md
-      - Models: models.md
-      - UI Components: ui.md
-      - Utils: utils.md
-      
+      - Controllers & MIDI: api.md
+      - Audio Engine: engine.md
+      - Data Models: models.md
+      - User Interface: ui.md

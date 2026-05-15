@@ -29,30 +29,9 @@ The brains of the operation. The Controller layer catches inputs from the outsid
 
 ---
 
-## High-Level Interactions (Data Flow)
-
-To understand the system, follow these two critical data flow paths:
-
-### Flow A: Hardware MIDI Input -> Data Update
-When a user presses a physical button on their MIDI controller:
-1. **`MidiIO`** receives a raw MIDI Control Change (e.g., `CC 119`).
-2. It looks up `CC 119` in the mapping dictionary and translates it to `"TOGGLE_RECORD"`.
-3. It passes `"TOGGLE_RECORD"` to the **`MidiInputRouter`** (living inside `api.py`).
-4. The Router looks up `"TOGGLE_RECORD"` in its Action Map and executes `LooperAPI.toggle_record()`.
-5. The **`LooperAPI`** tells the **`MasterClockEngine`** to change its state to `"COUNT_IN"`.
-
-### Flow B: Backend Update -> UI Redraw
-Once the `LooperAPI` finishes changing the backend state (from Flow A), it must update the screen:
-1. The API calls its internal `self._ui_callback()`.
-2. This callback triggers the `MainWindow.update_ui(dto)` method, passing in `api.get_state_dto()`.
-3. The `get_state_dto()` method packages the entire backend state (current BPM, Engine State, Track Mutes) into a simple dictionary.
-4. The **`MainWindow`** receives the dictionary and updates the physical colors of the buttons and text labels to match the new reality.
-
----
-
 ## Event-Driven Decoupling (The EventBus)
 
-To prevent the core `LooperAPI` from becoming a "God Object" that controls everything, auxiliary features are decoupled using an `EventBus` (`core/events.py`).
+To prevent the core `LooperAPI` from becoming a "God Object" that controls everything, auxiliary features are decoupled using an `EventBus` (`core/utils.py`).
 
 **Example: Text-to-Speech (Voice)**
 If a user arms a track, the API needs to announce it via Text-to-Speech. However, the API does not import the `VoiceService`.
@@ -61,24 +40,3 @@ If a user arms a track, the API needs to announce it via Text-to-Speech. However
 3. The Presenter decides to translate this into the French phrase *"Bass armé"* and sends it to the `VoiceService` to synthesize the audio.
 
 This guarantees that if the Voice Engine crashes, or if the user turns it off, the core Looper logic continues to function perfectly.
-
----
-
-## Directory Structure Overview
-
-```text
-root/
-├── main.py                     # Composition Root (wires everything together)
-├── docs/                       # MkDocs Markdown Documentation
-├── sf2/                        # SoundFont assets
-├── core/                       # Backend & Business Logic
-│   ├── api.py                  # Controllers (LooperAPI, InputRouter)
-│   ├── audio_io.py             # Hardware MIDI Listeners
-│   ├── engine.py               # Time & Thread Management
-│   ├── models.py               # Pure Data Structures (Project, Track)
-│   ├── midi_exporter.py        # Disk I/O service for saving
-│   ├── voice.py                # Infrastructure for TTS
-│   └── utils.py                # EventBus & Pathing helpers
-└── ui/                         # Frontend & Views
-    ├── main_window.py          # Master Qt Window
-    └── track_widget.py         # Qt Component for individual tracks
