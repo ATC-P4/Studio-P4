@@ -1,4 +1,4 @@
-# Studio P4: Accessible Python Live Looper
+# Studio P4: Accessible Python Looper for visually impaired musicians
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
@@ -48,7 +48,8 @@ studio-p4/
 ├── ui/                          # PySide6 graphical user interface
 │   ├── main_window.py           # Main application window
 │   ├── startup_dialog.py        # Mouse-driven startup interface
-│   └── track_widget.py          # Individual track UI component
+│   ├── track_widget.py          # Individual track UI component
+│   └── voice_settings.py        # Voice settings dialogue
 ├── .gitignore                   # Git ignore rules
 ├── Music Helper.spec            # PyInstaller build specification file
 ├── README.md                    # Project description and instructions
@@ -56,7 +57,7 @@ studio-p4/
 ├── fr_FR-siwis-medium.onnx.json # Piper TTS voice model configuration
 ├── main.py                      # Main application entry point
 ├── mkdocs.yml                   # MkDocs configuration file
-├── read.me                      # Legacy readme file
+├── README.md                    # That would be the current file :)
 ├── requirements.txt             # Core Python dependencies
 ├── requirements_loose.txt       # Unpinned Python dependencies
 ├── requirements_mkdocs.txt      # Dependencies for building the documentation

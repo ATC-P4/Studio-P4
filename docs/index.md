@@ -12,25 +12,41 @@ Whether you are a musician ready to record your first loop, or a developer looki
 
 ### Musician's Guide
 *Are you a user looking to make music? Start here.*
+
 * **[Recording a Loop](recording_loop.md):** Learn how to set the tempo, arm tracks, and lock in your master loop.
+
 * **[Managing Tracks & Sounds](managing_tracks.md):** Navigate the studio and swap instruments using the joystick.
+
 * **[Saving & Loading](saving_projects.md):** Learn how the studio automatically handles your files.
+
+* **[Text-to-speech voice config](voice_config.md):** Configuration of the text-to-speech voice.
+
 
 ### Developer's Guide
 *Are you looking to install, configure, or distribute the application?*
+
 * **[System Setup](setup.md):** A step-by-step guide to installing FluidSynth and Python dependencies.
+
 * **[Remapping MIDI Controls](remap_midi.md):** How to adjust the code if you are not using an AKAI MPK Mini Plus.
+
 * **[Adding SoundFonts](add_soundfonts.md):** How to expand the instrument library.
+
 * **[Building the EXE](build_exe.md):** Instructions for compiling the standalone Windows executable.
+
 
 ### Architecture & Concepts
 *Are you curious about how the system is designed?*
+
 * **[Accessibility Philosophy](accessibility_philosophy.md):** The core mission driving our headless, tactile workflow.
+
 * **[System Architecture](architecture.md):** A breakdown of our strict Model-View-Controller (MVC) design.
+
 * **[Data Flow Pipelines](data_flow.md):** Follow a MIDI signal from the physical button press to the speakers.
+
 
 ### API Reference
 *Auto-generated technical documentation for the Python codebase.*
+
 * **[Controllers & MIDI](api.md) | [Audio Engine](engine.md) | [Data Models](models.md) | [User Interface](ui.md)**
 
 ---
