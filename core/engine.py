@@ -1,3 +1,7 @@
+"""Real-time audio engine: manages play/record/stop state, 
+schedules MIDI playback via a lookahead queue, and drives 
+the metronome on two persistent background threads."""
+
 from core import models
 import time
 import threading

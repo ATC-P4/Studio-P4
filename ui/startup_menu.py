@@ -1,3 +1,7 @@
+"""MIDI-navigable startup dialog that lets the user 
+create a new project or select a saved one before 
+the main window opens."""
+
 import os
 import sys
 import mido
@@ -36,6 +40,11 @@ class StartupMenu(QDialog):
         self.project_confirmed.connect(self.accept, Qt.QueuedConnection)
         
     def _get_saved_projects(self) -> list[str]:
+        """Returns a list of absolute paths to saved project folders, sorted newest-first.
+
+        Returns:
+            list[str]: Absolute paths to saved project directories.
+        """
         # Shouldn't be using _get_resource_path since we want 'Saves/' outside the app bundle
         base_dir = os.path.abspath("./Saves")
         os.makedirs(base_dir, exist_ok=True)
@@ -45,7 +54,8 @@ class StartupMenu(QDialog):
         dirs.sort(key=os.path.getmtime, reverse=True)
         return dirs
 
-    def _setup_ui(self):
+    def _setup_ui(self) -> None:
+        """Builds and lays out all widgets for the startup dialog."""
         self.setWindowTitle("Studio P4 - Démarrage")
         self.setFixedSize(400, 350)
         layout = QVBoxLayout(self)
@@ -131,6 +141,7 @@ class StartupMenu(QDialog):
         super().accept() # Call the parent QDialog close routine
 
     def _announce(self) -> None:
+        """Announces the currently highlighted project via the voice presenter."""
         if self.current_idx == 0:
             self.voice.announceb_new_proj()
         else:
@@ -142,6 +153,14 @@ class StartupMenu(QDialog):
             self.voice.announce_name(clean_name)
 
     def run(self, port_name: str | None = None) -> str | None:
+        """Opens the dialog, optionally listening on a MIDI port, and blocks until the user confirms.
+
+        Args:
+            port_name (str | None): MIDI input port to listen on. Defaults to None (mouse/keyboard only).
+
+        Returns:
+            str | None: Absolute path to the selected project folder, or None if a new project was chosen.
+        """
         self.voice.announce_started()
         
         inport = None

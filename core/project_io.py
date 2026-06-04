@@ -1,20 +1,40 @@
+"""Disk persistence for projects: saves tracks to MIDI files,
+saves one JSON metadata file per project
+and loads existing projects."""
+
 import os
 import json
-import time
+import time, locale
 import mido
 from core.utils import MidiExporter
+from core.models import Project
 
 class ProjectIO:
     """Handles saving and loading of the Project state and MIDI files."""
 
     @staticmethod
-    def save(project, folder_name: str | None = None) -> None:
+    def save(project: Project, folder_name: str | None = None) -> None:
         """Exports tracks to MIDI and generates a project.json metadata file."""
         print("[PROJECT IO] Saving project...")
+
+        # ------- Benchmarking for traceability matrix --------
+        # avg_latency = 0
+        # min_latency = 1000000000.0
+        # max_latency = 0.0
+        # for lat in project.latencies:
+        #     if lat > max_latency:
+        #         max_latency = lat
+        #     elif lat < min_latency:
+        #         min_latency = lat
+        #     avg_latency += lat
+
+        # num = len(project.latencies) # num = number of "note on" events + number of "note off events"
+        # avg_latency /= num 
+
+        # print(f"[LATENCY] Average latency: {avg_latency} ms | min: {min_latency} ms | max: {max_latency} ms | {num/2} notes played ")
+        # project.latencies = []
+
         timestamp = time.strftime("%Y%m%d-%H%M%S")
-        
-        
-        import locale
        
         locale.setlocale(locale.LC_TIME, '')
         timestamp = time.strftime("le_%d_%B_a_%H_heure_%M")

@@ -1,8 +1,10 @@
+"""Public-facing API layer that routes UI and MIDI 
+commands to the engine and project model."""
+
 from core.project_io import ProjectIO
+from core.utils import EventType
 
 from typing import TYPE_CHECKING
-
-from core.utils import EventType
 
 # enable class type checking
 if TYPE_CHECKING:
@@ -198,6 +200,11 @@ class LooperAPI:
             self._ui_callback()
     
     def change_volume(self, value: int) -> None:
+        """Sets the volume of the currently armed track.
+
+        Args:
+            value (int): MIDI velocity value (0–127).
+        """
         armed_track = self.project.get_armed_track()
         if armed_track:
             # kwargs.get("value") holds the 0-127 midi value

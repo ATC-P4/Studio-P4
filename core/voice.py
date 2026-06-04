@@ -1,3 +1,7 @@
+"""Text-to-speech layer: VoiceService owns the audio 
+thread and voice synthesizer; VoicePresenter translates EventBus 
+events into spoken announcements."""
+
 import pyaudio as pa
 import threading
 from enum import Enum
@@ -34,36 +38,64 @@ K = TypeVar('K')
 V = TypeVar('V')
 # Your requested BlockingMap from Slack
 class BlockingMap(Generic[K, V], object):
+    """Thread-safe LIFO map: inserting with the same key overwrites the previous value, allowing newer events to supersede stale ones.
+
+    Consumers block on pop() until an item is available.
+    """
+
     def __init__(self):
         self._queue: dict[K, V] = {}
         self._cv = threading.Condition()
         self._last_popped: None | tuple[K, V] = None
 
     def put(self, key: K, value: V) -> None:
+        """Inserts or replaces the entry for key and wakes any waiting consumer.
+
+        Args:
+            key (K): Key to insert or overwrite.
+            value (V): Value to store.
+        """
         with self._cv:
             self._queue[key] = value
             self._cv.notify()
 
     def pop(self) -> tuple[K, V]:
+        """Blocks until an item is available, then removes and returns the most-recently inserted pair.
+
+        Returns:
+            tuple[K, V]: The (key, value) pair that was removed.
+        """
         with self._cv:
             while not self._queue:
                 self._cv.wait()
             # popitem() returns the most recently inserted key-value pair (LIFO)
             self._last_popped = self._queue.popitem()
             return self._last_popped
-        
+
     def get_last_popped(self) -> None | tuple[K, V]:
+        """Returns the last pair removed by pop(), or None if nothing has been popped yet.
+
+        Returns:
+            tuple[K, V] | None: The last popped (key, value) pair.
+        """
         return self._last_popped
-    
+
     def clear_last_popped(self) -> None:
+        """Clears the cached last-popped value."""
         self._last_popped = None
 
     def is_empty(self) -> bool:
+        """Returns True if the queue contains no pending items.
+
+        Returns:
+            bool: True if empty, False otherwise.
+        """
         if self._queue:
             return False
         return True
-    
+
     def clear(self) -> None:
+        """Removes all pending items from the queue without notifying consumers."""
         self._queue.clear()
 
 
@@ -107,11 +139,21 @@ class VoiceService:
         # Start the persistent audio worker
         threading.Thread(target=self._voice_worker, daemon=True).start()
 
-    # Returns current configuration
     def current_cfg(self) -> SynthesisConfig:
+        """Returns the active SynthesisConfig used for speech synthesis.
+
+        Returns:
+            SynthesisConfig: Current synthesis configuration.
+        """
         return self._cfg
-    
+
     def update_cfg(self, new_cfg: SynthesisConfig | None = None, enable: bool | None = None) -> None:
+        """Replaces the synthesis config and/or the enabled flag without restarting the worker thread.
+
+        Args:
+            new_cfg (SynthesisConfig | None): New configuration to apply. Unchanged if None.
+            enable (bool | None): New enabled state. Unchanged if None.
+        """
         self._enable = enable if enable is not None else self._enable
         self._cfg = new_cfg if new_cfg is not None else self._cfg
 
@@ -220,9 +262,15 @@ class VoiceService:
 
 class VoicePresenter:
     """Translates backend events into voice synthesizer commands."""
-    
-    def __init__(self, voice_path: str, event_bus: EventBus, enable: bool=True):
 
+    def __init__(self, voice_path: str, event_bus: EventBus, enable: bool = True):
+        """Loads the Piper voice model and wires all EventBus subscriptions to announcement methods.
+
+        Args:
+            voice_path (str): Path to the Piper voice model file.
+            event_bus (EventBus): Application-wide event bus to subscribe to.
+            enable (bool): Whether voice announcements are active on startup. Defaults to True.
+        """
         voice_service = VoiceService(PiperVoice.load(voice_path))
         self._vpath: str = voice_path
         self._voice: VoiceService = voice_service
@@ -294,8 +342,8 @@ class VoicePresenter:
 
 
 
-    # Shutdown voice
     def shutdown(self) -> None:
+        """Disables voice output and cleanly stops the audio worker thread."""
         if self._enable:
             self._enable = False
             self._voice.shutdown()
