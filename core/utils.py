@@ -1,3 +1,6 @@
+"""Shared utility definitions: resource-path resolution, SoundFont discovery, 
+MIDI file export and the application-wide EventBus."""
+
 import sys
 import os
 import mido
@@ -21,14 +24,35 @@ def get_resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-def get_sf2_filename(path):
+def get_sf2_filename(path: str) -> str:
+    """Returns the filename (with extension) from a SoundFont path.
+
+    Args:
+        path (str): Absolute or relative path to a .sf2 file.
+
+    Returns:
+        str: Filename including the .sf2 extension.
+    """
     return os.path.basename(path)
 
-def get_sf2_display_name(path):
+def get_sf2_display_name(path: str) -> str:
+    """Returns a human-readable display name derived from a SoundFont filename.
+
+    Args:
+        path (str): Absolute or relative path to a .sf2 file.
+
+    Returns:
+        str: Title-cased name with underscores replaced by spaces and the extension removed.
+    """
     return get_sf2_filename(path).replace(".sf2", "").title().replace("_", " ")
 
-def get_sf2_dir():
-    return os.path.join(os.path.abspath("."),("sf2")) 
+def get_sf2_dir() -> str:
+    """Returns the absolute path to the application's sf2 directory.
+
+    Returns:
+        str: Absolute path to the sf2 folder.
+    """
+    return os.path.join(os.path.abspath("."),("sf2"))
 
 
 
@@ -67,7 +91,15 @@ def get_available_instruments() -> dict:
             
     return instruments
 
-def get_default_instrument(available_instruments = get_available_instruments()): # return the first instrument in the dict. pretty much a random selection.
+def get_default_instrument(available_instruments: dict = get_available_instruments()) -> str:
+    """Returns the absolute path of the first available SoundFont as a fallback default.
+
+    Args:
+        available_instruments (dict): Grouped instrument dictionary from get_available_instruments().
+
+    Returns:
+        str: Absolute path to the first .sf2 file found.
+    """
     return next(iter(available_instruments.values()))[0]
 
 class MidiExporter:

@@ -1,3 +1,7 @@
+"""Core data models: Track, Metronome
+and Project, each owning their FluidSynth 
+resources and MIDI event history."""
+
 import os
 import threading
 import time
@@ -32,6 +36,7 @@ class Track:
             self.synth.program_select(self.channel, self.sf_id, 0, self.program_id)
 
     def initialize_synth(self) -> None:
+        """Loads the track's soundfont and selects the initial program on the synth channel."""
         self._update_synth_program()
 
     def set_instrument(self, program_id: int) -> None:
@@ -58,7 +63,7 @@ class Track:
             
         self._update_synth_program()
 
-    def play_note_on(self, note: int, velocity: int) -> None:
+    def play_note_on(self, note: int, velocity: int , rcv_time: int | None=None, latencies: list[float] | None=None) -> None:
         """Plays a MIDI note on this track, respecting mute status and managing active notes to prevent "stuck" notes.
         Args:
             note (int): MIDI note number to play.
@@ -68,16 +73,36 @@ class Track:
             if note in self.active_notes:
                 self.synth.noteoff(self.channel, note)
                 self.active_notes.discard(note)
+            # ------- Benchmarking code -------
+            # if rcv_time:
+            #     rt_time = time.perf_counter_ns()
+            #     if latencies is not None:
+            #         latencies.append((rt_time-rcv_time)/1000)
+            #     else:
+            #         print(f"Routed note on to fluidsynth after {(rt_time-rcv_time)/1000} ms")
             self.synth.noteon(self.channel, note, velocity)
+            # if rcv_time and latencies is None:
+            #     pl_time = time.perf_counter_ns()
+            #     print(f"Played note after {(pl_time-rcv_time)/1000} ms")
             self.active_notes.add(note)
                                   
-    def play_note_off(self, note: int) -> None:
+    def play_note_off(self, note: int , rcv_time: int | None=None, latencies: list[float] | None=None) -> None:
         """Stops a MIDI note on this track, ensuring it is removed from the active notes set.
         Args:
             note (int): MIDI note number to stop.
         """
         if self.synth:
+            # ------- Benchmarking code -------
+            # if rcv_time:
+            #     rt_time = time.perf_counter_ns()
+            #     if latencies is not None:
+            #         latencies.append((rt_time-rcv_time)/1000)
+            #     else:
+            #         print(f"Routed note off to fluidsynth after {(rt_time-rcv_time)/1000} ms")
             self.synth.noteoff(self.channel, note)
+            # if rcv_time and latencies is None:
+            #     off_time = time.perf_counter_ns()
+            #     print(f"Turned note off after {(off_time-rcv_time)/1000} ms")
             self.active_notes.discard(note)
 
     def flush_notes(self) -> None:
@@ -149,11 +174,13 @@ class Project:
         self.master_loop_beats = 0
         self.master_track = None
         self.default_instrument = default_instrument
+        # Benchmarking for traceability matrix (don't use unless benchmarking)
+        # self.latencies: list[float] = []
 
         # Audio setup
         self.master_synth = fluidsynth.Synth()
         self.gain = 0.4
-        self.master_synth.setting("synth.gain", self.gain) # TODO: doesn't seem to work
+        self.master_synth.setting("synth.gain", self.gain)
         self.master_synth.setting("audio.periods", 8)
         self.master_synth.setting("audio.period-size", 512)
         self.master_synth.setting("synth.sample-rate", 44100.0)

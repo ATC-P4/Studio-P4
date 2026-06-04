@@ -1,3 +1,7 @@
+"""Per-track row widget displaying mute, 
+group and instrument controls, synced to the 
+backend state."""
+
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QCheckBox, QRadioButton, QComboBox
 from PySide6.QtCore import Signal, Qt
 import os
@@ -8,7 +12,14 @@ class TrackWidget(QWidget):
     armed = Signal(int)              # track_id
     instrument_changed = Signal(int, str) # track_id, program_id
 
-    def __init__(self, track_id: int, name: str, available_instruments: dict): # Note: expects dict now!
+    def __init__(self, track_id: int, name: str, available_instruments: dict):
+        """Builds the track row with arm, mute, group, and instrument controls.
+
+        Args:
+            track_id (int): Numeric identifier used when emitting signals.
+            name (str): Display name for the track.
+            available_instruments (dict): Grouped instrument dictionary from get_available_instruments().
+        """
         super().__init__()
         self.track_id = track_id
         self.available_instruments = available_instruments
@@ -44,7 +55,12 @@ class TrackWidget(QWidget):
         self.arm_radio.clicked.connect(lambda: self.armed.emit(self.track_id))
         self.instrument_combo.currentIndexChanged.connect(self._on_instrument_changed)
 
-    def update_from_dto(self, track_dto: dict):
+    def update_from_dto(self, track_dto: dict) -> None:
+        """Syncs all widget controls to the values in the backend state dictionary, suppressing outgoing signals during the update.
+
+        Args:
+            track_dto (dict): Track state slice from LooperAPI.get_state_dto().
+        """
         self.blockSignals(True)
         self.mute_checkbox.blockSignals(True)
         self.arm_radio.blockSignals(True)
@@ -93,7 +109,12 @@ class TrackWidget(QWidget):
         self.blockSignals(False)
 
 
-    def _on_instrument_changed(self, index):
+    def _on_instrument_changed(self, index: int) -> None:
+        """Emits instrument_changed with the sf2 path stored in the combo box item data.
+
+        Args:
+            index (int): Currently selected index in the instrument combo box.
+        """
         sf2_path = self.instrument_combo.itemData(index)
         self.instrument_changed.emit(self.track_id, sf2_path)
 

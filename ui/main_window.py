@@ -1,3 +1,6 @@
+"""Main application window: renders tracks and general UI,
+ and exposes Qt signals that the backend wires to API calls."""
+
 # QtWidgets A-K imports
 from PySide6.QtWidgets import QApplication, QCheckBox, QDialog, QHBoxLayout
 # ... continued (L-Z)
@@ -27,6 +30,7 @@ class MainWindow(QMainWindow):
     voice_settings_changed = Signal(dict)
 
     def __init__(self):
+        """Builds the main window: creates transport buttons, the tracks container, and wires all signals."""
         super().__init__()
         self.setWindowTitle("Python Live Looper")
         self.setMinimumSize(450, 300)
@@ -142,13 +146,14 @@ class MainWindow(QMainWindow):
 
     # TODO: add MIDI mapping for opening/controlling the voice settings dialogue
     def keyPressEvent(self, event):
+        """Opens the voice config dialog on 'V', otherwise delegates to the parent handler."""
         if event.key() == Qt.Key.Key_V:
             self._open_voice_config()
         else:
             super().keyPressEvent(event)
 
     def _open_voice_config(self):
-
+        """Opens the voice settings dialog and emits the appropriate close signal depending on whether the user confirmed or cancelled."""
         # Signal that voice settings dialog has been opened
         self.voice_settings_opened.emit()
 

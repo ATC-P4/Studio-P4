@@ -1,3 +1,7 @@
+"""Voice configuration dialog: sliders for speech 
+rate and volume, and an enable toggle, currently navigable 
+only by keyboard."""
+
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QFormLayout, QHBoxLayout
 # ... continued (L-Z)
 from PySide6.QtWidgets import QLabel, QPushButton, QSlider
@@ -17,6 +21,12 @@ class VoiceConfigDialog(QDialog):
     voice_setting_value = Signal(str, float)
 
     def __init__(self, current: dict, parent=None):
+        """Builds the dialog with enable toggle, rate slider, and volume slider pre-populated from current settings.
+
+        Args:
+            current (dict): Current voice settings with keys "enabled", "rate", and "volume".
+            parent: Optional parent widget.
+        """
         super().__init__(parent)
         self.setWindowTitle("Configuration de la voix")
         self.setMinimumWidth(350)
@@ -87,20 +97,35 @@ class VoiceConfigDialog(QDialog):
             w.installEventFilter(self)
 
 
-    def eventFilter(self, watched, event):
+    def eventFilter(self, watched, event) -> bool:
+        """Intercepts key events on focusable widgets and forwards them to keyPressEvent.
+
+        Returns:
+            bool: True if the event was consumed, False to pass it through.
+        """
         if event.type() == event.Type.KeyPress:
             self.keyPressEvent(event)
             return True  # Consume the event so the widget doesn't also handle it
         return super().eventFilter(watched, event)
 
-    def _update_enable_label(self):
+    def _update_enable_label(self) -> None:
+        """Updates the enable button text to reflect its current checked state."""
         self.enable_btn.setText("Activée" if self.enable_btn.isChecked() else "Désactivée")
 
     def _rate_to_index(self, rate: float) -> int:
+        """Finds the RATE_STEPS index closest to the given rate value.
+
+        Args:
+            rate (float): Speech rate to look up.
+
+        Returns:
+            int: Index into RATE_STEPS.
+        """
         closest = min(range(len(RATE_STEPS)), key=lambda i: abs(RATE_STEPS[i] - rate))
         return closest
 
-    def keyPressEvent(self, event: QKeyEvent):
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        """Handles keyboard navigation: Up/Down moves focus, Left/Right adjusts the focused control, Enter confirms, Escape cancels."""
         key = event.key()
 
         if key == Qt.Key.Key_Up:
@@ -143,13 +168,19 @@ class VoiceConfigDialog(QDialog):
             super().keyPressEvent(event)
 
     def get_values(self) -> dict:
+        """Returns the current dialog values as a settings dictionary.
+
+        Returns:
+            dict: Keys "enabled" (bool), "rate" (float), "volume" (float 0–1).
+        """
         return {
             "enabled": self.enable_btn.isChecked(),
             "rate": RATE_STEPS[self.rate_slider.value()],
             "volume": self.vol_slider.value() / 100.0,
         }
     
-    def _update_focus_highlight(self):
+    def _update_focus_highlight(self) -> None:
+        """Applies a highlight border to the currently focused control and removes it from all others."""
         for i, w in enumerate(self._focusable):
             if i == self._focus_idx:
                 w.setStyleSheet("border: 2px solid palette(highlight);")
@@ -157,6 +188,11 @@ class VoiceConfigDialog(QDialog):
                 w.setStyleSheet("")
 
     def _current_value(self) -> float:
+        """Returns the current value of the focused control as a float.
+
+        Returns:
+            float: Rate step value, volume (0–1), or 1.0/-1.0 for the enable toggle.
+        """
         w = self._focusable[self._focus_idx]
         if w is self.rate_slider:
             return RATE_STEPS[self.rate_slider.value()]

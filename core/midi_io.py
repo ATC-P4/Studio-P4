@@ -1,6 +1,10 @@
+"""MIDI input layer: MidiIO listens on a hardware port 
+and routes note events to tracks and control messages 
+to the API; MidiInputRouter translates those commands 
+into API calls."""
+
 from enum import Enum, auto
 
-import os
 import mido
 import time
 from typing import Callable
@@ -110,7 +114,10 @@ class MidiIO:
         Args:
             msg (mido.Message): The incoming MIDI message.
         """
-        # print(f"[MidiIO] Received MIDI message: {msg}")
+        # ------ Benchmarking -------
+        rcv_time = time.perf_counter_ns()
+        # print(f"[MidiIO] Received MIDI message at time [{rcv_time} ns]:\n '{msg}'")
+
         if msg.type == 'control_change':
             action = self.DEFAULT_MIDI_MAPPING.get(msg.control)
             #print(f"Checking MIDI CC {msg.control} for mapped action: {action}")
@@ -126,9 +133,9 @@ class MidiIO:
         if armed_track:
             if msg.type == "note_on" and msg.velocity > 0:
                 # print(f"Playing note {msg.note} with velocity {msg.velocity} on track '{armed_track.name}'")
-                armed_track.play_note_on(msg.note, msg.velocity)
-            else:
-                armed_track.play_note_off(msg.note)
+                armed_track.play_note_on(msg.note, msg.velocity) #, rcv_time , self.project.latencies) 
+            else:                                   # commented code after play_note_on/play_note_off is for benchmarking
+                armed_track.play_note_off(msg.note, rcv_time) #, self.project.latencies)
 
             if self.engine.current_state == "RECORDING":
                 timestamp = time.perf_counter() - self.engine.start_time
@@ -367,7 +374,7 @@ class MidiInputRouter:
             self.event_bus.emit(EventType.PROJ_SAVED)
             self._pending_edge = None
         else:
-            self.event_bus.emit(EventType.SAVE_HINT, message="Appuyez à nouveau vers le haut pour sauvegarder") # TODO: voice
+            self.event_bus.emit(EventType.SAVE_HINT)
             self._pending_edge = BoundaryState.TOP
         
         return 0  # Always keep index at 0 (the top)

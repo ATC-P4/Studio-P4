@@ -1,6 +1,16 @@
+"""Main application entry point."""
+
 import os, sys
 
-def find_and_register_fluidsynth():
+def find_and_register_fluidsynth() -> None:
+
+    """
+    Sets the internal fluidsynth 'PATH' environment
+    variable. Currently only for the packaged Windows
+    appliaction. Doesn't do anything in other cases.
+    Must be run before importing any files that
+    import fluidsynth.
+    """
     
     # Windows version only
     print("Searching for fluidsynth library")
@@ -30,7 +40,7 @@ from core.midi_io import MidiIO, MidiInputRouter
 from core.voice import VoicePresenter
 from core.utils import EventBus, get_resource_path, get_available_instruments, get_default_instrument
 from core.project_io import ProjectIO
-from core.startup_menu import StartupMenu 
+from ui.startup_menu import StartupMenu 
 
 # UI View
 from ui.main_window import MainWindow
