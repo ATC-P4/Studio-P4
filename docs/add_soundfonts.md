@@ -11,7 +11,7 @@ Where you place your SoundFonts depends on how you are running the application:
 * **If you are running the Python source code:** Place your `.sf2` files inside the `sf2/` directory located at the root of the project folder.
 * **If you are using the Standalone Executable (`.exe`):** To make customizing easy, the instrument library is kept *outside* the application. Simply ensure there is a folder named `sf2/` in the exact same location as your executable file, and drop your new instruments inside it.
 
-*(Important: The application expects a `Metronom.sf2` for the click track and a default piano, like `basic_piano.sf2`, to exist in this folder to boot properly).*
+*Important: The application expects an existing `metronome.sf2` file for the click track and a default piano file, like `Default/basic_piano.sf2`, in order to boot properly.*
 
 ## 2. Grouping Instruments (Folders)
 
