@@ -62,12 +62,12 @@ def get_available_instruments() -> dict:
     """Scans the sf2 directory and returns a dictionary grouped by folder."""
 
     base_dir = get_sf2_dir()
-    print(base_dir)
+    print(f"[get_available_instruments] Fetching instruments from {base_dir}")
 
     instruments = {}
     
     if not os.path.exists(base_dir):
-        # print("[get_available_instruments] No instruments found")
+        print("[get_available_instruments] No instruments found")
         os.makedirs(base_dir)
         return instruments
 
@@ -83,11 +83,11 @@ def get_available_instruments() -> dict:
                 instruments[item] = sf2_files
                 
         elif item.endswith('.sf2'):
-            if "Général" not in instruments:
-                instruments["Général"] = []
-            instruments["Général"].append(item_path)
+            if "Default" not in instruments:
+                instruments["Default"] = []
+                instruments["Default"].append(item_path)
 
-    # print(f"[get_available_instruments] Found: {len(instruments)} instruments in: {base_dir}")
+    print(f"[get_available_instruments] Found {len(instruments)} types of instrument in: {base_dir}")
             
     return instruments
 
@@ -100,6 +100,15 @@ def get_default_instrument(available_instruments: dict = get_available_instrumen
     Returns:
         str: Absolute path to the first .sf2 file found.
     """
+
+    default_instr = get_sf2_dir() + "/Default/basic_piano.sf2"
+
+    print(f"Condition: {default_instr}\n\n{available_instruments.values()}\n\n")
+
+    if [default_instr] in available_instruments.values():
+        return default_instr
+
+    # Else return first available one
     return next(iter(available_instruments.values()))[0]
 
 class MidiExporter:

@@ -465,11 +465,6 @@ class MidiInputRouter:
         next_instrument = current_group_list[next_idx]
 
         armed_track.set_soundfont(next_instrument)
-        
-        # Clean up the name for the voice (e.g., "basic_piano.sf2" -> "basic piano")
-        # clean_name = os.path.basename(next_instrument).replace(".sf2", "").replace("_", " ")
-        # self.event_bus.emit(EventType.GENERAL, message=f"{clean_name}")
-        
         if self.api._ui_callback: self.api._ui_callback()
 
     def handle_midi_action(self, action: str, value: int|None=None) -> None:

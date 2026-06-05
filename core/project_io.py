@@ -17,7 +17,7 @@ class ProjectIO:
         """Exports tracks to MIDI and generates a project.json metadata file."""
         print("[PROJECT IO] Saving project...")
 
-        # ------- Benchmarking for traceability matrix --------
+        # ------- Benchmarking for [app receives MIDI input -> fluidsynth receives input] latency --------
         # avg_latency = 0
         # min_latency = 1000000000.0
         # max_latency = 0.0
