@@ -38,23 +38,18 @@ studio-p4/
 │   ├── midi_io.py               # Hardware MIDI abstraction layer
 │   ├── models.py                # Data structures (Project, Track)
 │   ├── project_io.py            # Logic for saving/loading project files
-│   ├── startup_menu.py          # Headless MIDI-controlled startup interface
 │   ├── utils.py                 # Helper functions, Pathing, and EventBus
 │   └── voice.py                 # Piper TTS integration and VoicePresenter
 ├── docs/                        # MkDocs markdown documentation files
 ├── sf2/                         # SoundFont assets (e.g., basic_piano.sf2)
-├── site/                        # Generated static HTML documentation (after build)
 ├── tests/                       # Project test suite
 ├── ui/                          # PySide6 graphical user interface
 │   ├── main_window.py           # Main application window
-│   ├── startup_dialog.py        # Mouse-driven startup interface
+│   ├── startup_menu.py          # Headless MIDI-controlled startup interface
 │   ├── track_widget.py          # Individual track UI component
 │   └── voice_settings.py        # Voice settings dialogue
 ├── .gitignore                   # Git ignore rules
-├── Music Helper.spec            # PyInstaller build specification file
 ├── README.md                    # Project description and instructions
-├── fr_FR-siwis-medium.onnx      # Piper TTS voice model
-├── fr_FR-siwis-medium.onnx.json # Piper TTS voice model configuration
 ├── main.py                      # Main application entry point
 ├── mkdocs.yml                   # MkDocs configuration file
 ├── README.md                    # That would be the current file :)
@@ -120,7 +115,7 @@ After creating and activating your virtual environment as shown above, run the f
     --collect-all PySide6 `
     --collect-all piper `
     --collect-all piper_phonemize `
-    --add-data "sf2;sf2" `
+    --add-data "sf2/metronome.sf2;sf2" `
     --add-data "fr_FR-siwis-medium.onnx;." `
     --add-data "fr_FR-siwis-medium.onnx.json;." `
     main.py
@@ -150,10 +145,10 @@ Looking for more instruments to add to your `sf2/` folder? Here are some great f
 ## Contributors 👥
 
 This project was built for the EPFL Assistive Technology Challenge by:
-* **[Filippo Tognina](https://github.com/FTognina)**
-* **[Daniel Polka](https://github.com/DanThePol)**
-* **[Romain Frossard](https://github.com/frossardr)**
 * **[Eloi Bressaud](https://github.com/eloibressaud)**
+* **[Romain Frossard](https://github.com/frossardr)**
+* **[Daniel Polka](https://github.com/DanThePol)**
+* **[Filippo Tognina](https://github.com/FTognina)**
 
 
 ## License 📄
