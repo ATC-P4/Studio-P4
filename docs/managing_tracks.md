@@ -1,8 +1,11 @@
 # Managing Tracks & Instruments
 
-Studio P4 uses a highly tactile, joystick-driven navigation system. You can control your entire studio using just the main joystick on your AKAI keyboard. 
+Studio P4 uses a highly tactile, joystick-driven navigation system. 
+
+You can control your entire studio using just the main joystick on your AKAI keyboard. 
 
 The joystick operates in three different "Modes", allowing you to navigate your studio in layers. 
+To switch from one mode to another, we use the left-right movement, while the up and down movement is used to interact with the mode. 
 
 ## 1. Track Mode (Navigating your project)
 

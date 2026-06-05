@@ -23,13 +23,13 @@ Once you are happy with the tempo, you are ready to record your first chords or 
 3. **Play:** After the 4th beat, the recording starts automatically. Play your musical phrase.
 4. **Lock the Loop:** When you have finished your phrase, press the **Play** or **Record** button to stop recording. 
 
-*What happens next?* The studio mathematically calculates the length of what you just played, rounds it to the nearest perfect musical bar, and instantly begins looping it back to you. Your Master Loop is now locked!
+*What happens next?* The studio computes the length of what you just played, rounds it to the nearest perfect musical bar, and instantly begins looping it back to you. Your Master Loop is now locked!
 
-## 3. Overdubbing (Adding Layers)
+## 3. Modifying a Track 
 
-You don't always need a new track to add more notes. If you want to add extra hi-hats to a drum track, or extra harmony to a piano track, you can simply **Overdub**.
+As of now, Studio P4 **does not** allow overdubbing or modifying a track once it is recorded.  
 
-1. While the loop is playing, ensure the track you want to add notes to is currently selected (Armed).
-2. Press the **Record** button. 
-3. Play your new notes over the existing loop. Because the Master Loop length is already locked, you don't need to worry about stopping exactly on the beat.
-4. Press **Record** again to stop overdubbing. Your new notes are seamlessly merged into the track!
+In order to change the content of a recorded track, simply record again while the track is armed. 
+
+**WARNING** Launching a recording on a track will **reset** it as soon as the recording is started, **deleting any previous record** present on the track.
+
