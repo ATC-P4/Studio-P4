@@ -34,7 +34,7 @@ Controls how fast the Voice Assistant speaks. Use the arrow keys to adjust the v
 * From **0.5 to 1.0**: adjusts in steps of **0.1**
 * From **1.0 to 3.0**: adjusts in steps of **0.25**
 
-A lower value means faster speech; a higher value means slower speech.
+A lower value means slower speech; a higher value means faster speech.
 
 ### 3. Speech Volume
 Controls the volume of the Voice Assistant independently of your system volume. Use the arrow keys to adjust the value from **0.0** (silent) to **1.0** (full volume) in steps of **0.01**.
