@@ -1,6 +1,6 @@
 import time
 import mido
-from core.models import Project, Track # Assuming you saved the classes exactly as discussed
+from core.models import Project, Track
 
 def run_test():
     print("=== Starting Core Models Test ===")

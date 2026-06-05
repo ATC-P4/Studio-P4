@@ -3,7 +3,7 @@ import time
 import sys
 
 # =====================================================================
-# 1. THE MAPPER (Copied from your intended core/audio_io.py)
+# 1. THE MAPPER (Copied from core/audio_io.py)
 # =====================================================================
 class JoystickMapper:
     """
