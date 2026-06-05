@@ -53,3 +53,10 @@ Whether you are a musician ready to record your first loop, or a developer looki
 
 ## Open Source
 Studio P4 is released under the MIT License. We welcome contributions from developers, musicians, and accessibility advocates to help us make music production a barrier-free experience for everyone.
+
+## Mapping the joystick on the AKAI MPK Mini Plus
+
+This is the keyboard that we used while developing our application. In order for them to work properly together, you will want to have the correct joystick configuration. In layman's terms, if not configured, the AKAI MPK Mini Plus' joystick sends the same signal for UP or DOWN, and the same signal for LEFT/RIGHT (e.g. the default is only saying if the joystick is going UP or DOWN and LEFT or RIGHT, which are 2 different signals when there are 4 different controls). For the app to work properly with the keyboard, there needs to be one unique signal for each message. We have hard-coded what those signals are, so our app expects very specific ones. To achieve this configuration, you need to do the following **on the keyboard**, e.g. the keys mentioned below concern the buttons on the keyboard:
+
+1. Press `shift` + `Prog select` buttons
+2. TODO
