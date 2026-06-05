@@ -1,6 +1,10 @@
 # Recording Your First Loop
 
-Welcome to Studio P4! This guide will walk you through recording your very first musical loop. In this studio, everything revolves around the **Master Track**. The first thing you record becomes the Master, and its length sets the looping duration for the rest of your project.
+Welcome to Studio P4! This guide will walk you through recording your very first musical loop. 
+
+In this studio, everything revolves around the **Master Track**. The first thing you record becomes the Master, and its length sets the looping duration for the rest of your project.
+
+Before starting this tutorial, first ensure you keyboard is properly mapped as explained at the bottom of the [index](index.md) page 
 
 ## 1. Setting Up the Studio
 

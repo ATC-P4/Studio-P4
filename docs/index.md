@@ -51,6 +51,11 @@ Whether you are a musician ready to record your first loop, or a developer looki
 
 ---
 
+### Safety Recommendations 
+*Our recommendations to ensure safe usage of Studio P4.*
+* [Safety Recommendations](security.md).
+
+
 ## Open Source
 Studio P4 is released under the MIT License. We welcome contributions from developers, musicians, and accessibility advocates to help us make music production a barrier-free experience for everyone.
 
