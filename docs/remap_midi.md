@@ -1,6 +1,6 @@
 # How to Remap MIDI Controls
 
-Studio P4 is hardcoded by default to work out-of-the-box with the **AKAI MPK Mini Plus**. However, because different MIDI controllers assign different Control Change (CC) numbers to their knobs and joysticks, you may need to remap these values if you are using a different keyboard.
+Studio P4 is hardcoded by default to work with the **AKAI MPK Mini Plus**, with the joystick configured in accordance. However, because different MIDI controllers assign different Control Change (CC) numbers to their knobs and joysticks, you may need to remap these values if you are using a different keyboard.
 
 This guide explains how to find your keyboard's CC values and update the application to recognize them.
 

@@ -11,7 +11,7 @@ Because Studio P4 interacts directly with low-level audio drivers (FluidSynth) a
 Before touching Python, ensure your machine meets these basic requirements:
 
 * **Python:** Version 3.10 or higher.
-* **Git:** To clone the repository.
+* **Git:** Useful if cloning the repo, otherwise the repo can be downloaded as a `.zip` archive straight from [github](https://github.com/DanThePol/Music-Helper-2026).
 * **MIDI Keyboard:** An AKAI MPK Mini Plus connected via USB (optional, but highly recommended for testing hardware routing).
 
 ---
@@ -40,7 +40,7 @@ Windows is slightly more manual since it doesn't have a default package manager.
 2. Extract the `.zip` file.
 3. You have two options:
 
-    * **Option A (System-wide):** Add the folder containing `fluidsynth.dll` to your Windows System `PATH` environment variable.
+    * **Option A (System-wide):** Add the path to the folder containing `fluidsynth.dll` to your Windows System `PATH` environment variable.
     * **Option B (Local):** Copy `libfluidsynth.dll` directly into the root folder of your `studio-p4` project.
 
 ---
@@ -80,7 +80,7 @@ Studio P4 requires a few static files to boot successfully. These are not includ
 ### SoundFonts (`.sf2`)
 Create a folder named `sf2` in the root of your project. You must have at least these two files inside it:
 
-* `Metronom.sf2` (Used by the `MasterClockEngine` for the click track).
+* `metronome.sf2` (Used by the `MasterClockEngine` for the click track).
 * `basic_piano.sf2` (Or any default instrument, so the app has something to load upon boot).
 
 ### Piper Voice Model (`.onnx`)
