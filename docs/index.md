@@ -56,7 +56,23 @@ Studio P4 is released under the MIT License. We welcome contributions from devel
 
 ## Mapping the joystick on the AKAI MPK Mini Plus
 
-This is the keyboard that we used while developing our application. In order for them to work properly together, you will want to have the correct joystick configuration. In layman's terms, if not configured, the AKAI MPK Mini Plus' joystick sends the same signal for UP or DOWN, and the same signal for LEFT/RIGHT (e.g. the default is only saying if the joystick is going UP or DOWN and LEFT or RIGHT, which are 2 different signals when there are 4 different controls). For the app to work properly with the keyboard, there needs to be one unique signal for each message. We have hard-coded what those signals are, so our app expects very specific ones. To achieve this configuration, you need to do the following **on the keyboard**, e.g. the keys mentioned below concern the buttons on the keyboard:
+This is the keyboard that we used while developing our application. In order for them to work properly together, the joystick needs to be configured properly as the default configuration does not allow proper control. 
+This configuration will only need to be done once, as it is saved even when the keyboard is shutdown. 
+Because configuration is performed on the keyboard's built-in display, we recommend assistance from someone with vision
 
-1. Press `shift` + `Prog select` buttons
-2. TODO
+ In layman's terms, if not configured, the AKAI MPK Mini Plus' joystick sends the same signal for UP or DOWN, and the same signal for LEFT/RIGHT (e.g. the default is only saying if the joystick is going UP or DOWN and LEFT or RIGHT, which are 2 different signals when there are 4 different controls). 
+ 
+ For the app to work properly with the keyboard, there needs to be one unique signal for each message. 
+ We have hard-coded what those signals are, so our app expects specific signals (CC#) values . 
+
+ To achieve this configuration, you need to do the following **on the keyboard**, e.g. the keys mentioned below concern the buttons on the keyboard:
+
+1. Press the `Shift` + `Prog select` buttons. This will switch the keyboard to **edit** mode
+2. Move the joystick. This will indicate that the control to be modified is the joystick. 
+3. The screen should now display the list of settings to be edited. You can navigate in it using the knob next to the screen. 
+4. There should be four lines showing **CC#** values. Find the two lines marked **CC# 2**  and the two marked **CC# 12**.
+5. Use the click of the knob to select those lines and modify them. The second **CC# 2**, UP should beome **CC# 3**. 
+6. Change the second **CC# 12**, RIGHT, to **CC# 13**.
+7. Press the `Shift` + `Home` buttons to save. The screen should ask for confirmation, which you can give by clicking on the knob.
+8. Feel free to repeat step 1-3 to check that the settings are properly applied. 
+
