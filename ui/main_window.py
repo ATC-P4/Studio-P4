@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         """Builds the main window: creates transport buttons, the tracks container, and wires all signals."""
         super().__init__()
-        self.setWindowTitle("Python Live Looper")
+        self.setWindowTitle("Studio P4")
         self.setMinimumSize(450, 300)
 
         # signal from the backend that something changed

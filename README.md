@@ -127,7 +127,7 @@ After creating and activating your virtual environment as shown above, run the f
 
 The complete documentation—including detailed user guides, architectural breakdowns, and developer API references—can be found here:
 
-👉 **[Project documentation](https://danthepol.github.io/Music-Helper-2026/)**
+👉 **[Project documentation](https://atc-p4.github.io/Studio-P4/)**
 
 *(For developers: You can also build and view the documentation locally by running `pip install -r requirements_mkdocs.txt` followed by `mkdocs serve`, then navigating to `http://127.0.0.1:8000`).*
 

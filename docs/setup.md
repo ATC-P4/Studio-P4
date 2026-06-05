@@ -4,11 +4,7 @@ Welcome to the Developer's Guide for Studio P4! This document will walk you thro
 
 Because Studio P4 interacts directly with low-level audio drivers (FluidSynth) and hardware MIDI controllers, the setup requires a few system-level dependencies before installing the Python packages.
 
-*Note:*
-
-1. *Because the GitHub repository was named **Music-Helper-2026**, this will be the name used to describe the root directory of the project, but we refer to the app itself as Studio P4.*
-
-2. *When describing the file structure, we use Unix-standard filepaths (e.g. `/path/to/file`), but when talking about bundling the app `.exe`, we of course switch to Windows-style filepath decriptions (e.g. `C:\path\to\file`).*
+*Note: when describing the file structure, we use Unix-standard filepaths (e.g. `/path/to/file`), but when talking about bundling the app `.exe`, we of course switch to Windows-style filepath decriptions (e.g. `C:\path\to\file`).*
 
 ---
 
@@ -17,7 +13,7 @@ Because Studio P4 interacts directly with low-level audio drivers (FluidSynth) a
 Before touching Python, ensure your machine meets these basic requirements:
 
 * **Python:** Version 3.10 or higher.
-* **Git:** Useful if cloning the repo, otherwise the repo can be downloaded as a `.zip` archive straight from [github](https://github.com/DanThePol/Music-Helper-2026).
+* **Git:** Useful if cloning the repo, otherwise the repo can be downloaded as a `.zip` archive straight from [github](https://github.com/ATC-P4/Studio-P4).
 * **MIDI Keyboard:** An AKAI MPK Mini Plus connected via USB (optional, but highly recommended for testing hardware routing).
 
 ---
@@ -57,8 +53,8 @@ Once FluidSynth is installed on your OS, you can set up the Python project. Open
 
 **1. Clone the repository:**
 ```bash
-git clone [https://github.com/DanThePol/Music-Helper-2026.git](https://github.com/DanThePol/Music-Helper-2026.git)
-cd Music-Helper-2026
+git clone [https://github.com/ATC-P4/Studio-P4.git](https://github.com/ATC-P4/Studio-P4.git)
+cd Studio-P4
 ```
 
 **2. Create and activate a virtual environment:**
