@@ -42,7 +42,6 @@ studio-p4/
 │   └── voice.py                 # Piper TTS integration and VoicePresenter
 ├── docs/                        # MkDocs markdown documentation files
 ├── sf2/                         # SoundFont assets (e.g., basic_piano.sf2)
-├── tests/                       # Project test suite
 ├── ui/                          # PySide6 graphical user interface
 │   ├── main_window.py           # Main application window
 │   ├── startup_menu.py          # Headless MIDI-controlled startup interface
