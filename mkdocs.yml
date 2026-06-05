@@ -8,6 +8,13 @@ plugins:
       handlers:
         python:
           paths: ["."] # Tells the parser to look in your root folder for 'core' and 'ui'
+          options:
+            heading_level: 2
+            show_root_heading: true
+            show_submodules: true
+
+extra_css:
+  - docstyle.css
 
 nav:
   - Home: index.md
@@ -15,7 +22,7 @@ nav:
       - Recording a Loop: recording_loop.md
       - Managing Tracks & Sounds: managing_tracks.md
       - Saving & Loading: saving_projects.md
-      - Configuring the Voice: voice_config.md
+      - TTS Voice: voice_config.md
   - Developer's Guide:
       - System Setup: setup.md
       - Remapping MIDI Controls: remap_midi.md
@@ -29,4 +36,5 @@ nav:
       - Controllers & MIDI: api.md
       - Audio Engine: engine.md
       - Data Models: models.md
+      - TTS Voice: voice_config.md
       - User Interface: ui.md

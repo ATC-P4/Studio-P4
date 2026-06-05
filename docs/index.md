@@ -47,7 +47,7 @@ Whether you are a musician ready to record your first loop, or a developer looki
 ### API Reference
 *Auto-generated technical documentation for the Python codebase.*
 
-* **[Controllers & MIDI](api.md) | [Audio Engine](engine.md) | [Data Models](models.md) | [User Interface](ui.md)**
+* **[Controllers & MIDI](api.md) | [Audio Engine](engine.md) | [TTS Voice](voice_config.md) | [Data Models](models.md) | [User Interface](ui.md)**
 
 ---
 

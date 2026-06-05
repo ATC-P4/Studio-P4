@@ -4,7 +4,7 @@ only by keyboard."""
 
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QFormLayout, QHBoxLayout
 # ... continued (L-Z)
-from PySide6.QtWidgets import QLabel, QPushButton, QSlider
+from PySide6.QtWidgets import QLabel, QMainWindow, QPushButton, QSlider
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QKeyEvent
 
@@ -20,12 +20,12 @@ class VoiceConfigDialog(QDialog):
     # For "enabled" (bool), float < 0 -> False, float >= 0 -> True    
     voice_setting_value = Signal(str, float)
 
-    def __init__(self, current: dict, parent=None):
+    def __init__(self, current: dict, parent: QMainWindow):
         """Builds the dialog with enable toggle, rate slider, and volume slider pre-populated from current settings.
 
         Args:
             current (dict): Current voice settings with keys "enabled", "rate", and "volume".
-            parent: Optional parent widget.
+            parent (QMainWindow): Parent widget.
         """
         super().__init__(parent)
         self.setWindowTitle("Configuration de la voix")
