@@ -32,6 +32,7 @@ class Track:
     def _update_synth_program(self) -> None:
         """Consolidated helper to apply soundfont and program changes to the synth."""
         if self.synth:
+            print(f"TRACK: Loading {self.sf2_path}")
             self.sf_id = self.synth.sfload(self.sf2_path)
             self.synth.program_select(self.channel, self.sf_id, 0, self.program_id)
 
@@ -164,7 +165,7 @@ class Metronome:
 
 
 class Project:
-    def __init__(self, pname: str, bpm: int = 120, time_signature: tuple = (4, 4), default_instrument = "basic_piano.sf2"):
+    def __init__(self, pname: str, bpm: int = 120, time_signature: tuple = (4, 4), default_instrument = "sf2/Default/basic_piano.sf2"):
         self.name = pname
         self.bpm = bpm
         self.time_signature = time_signature
@@ -174,7 +175,7 @@ class Project:
         self.master_loop_beats = 0
         self.master_track = None
         self.default_instrument = default_instrument
-        # Benchmarking for traceability matrix (don't use unless benchmarking)
+        # --------- Benchmarking code ----------
         # self.latencies: list[float] = []
 
         # Audio setup

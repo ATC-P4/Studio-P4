@@ -4,6 +4,8 @@ Welcome to the Developer's Guide for Studio P4! This document will walk you thro
 
 Because Studio P4 interacts directly with low-level audio drivers (FluidSynth) and hardware MIDI controllers, the setup requires a few system-level dependencies before installing the Python packages.
 
+**Note:** because the GitHub repository was named *Music-Helper-2026*, this will be the name used to describe the root directory of the project, but we refer to the app itself as Studio P4.
+
 ---
 
 ## 1. System Requirements
@@ -51,8 +53,8 @@ Once FluidSynth is installed on your OS, you can set up the Python project. Open
 
 **1. Clone the repository:**
 ```bash
-git clone [https://github.com/YOUR_USERNAME/studio-p4.git](https://github.com/YOUR_USERNAME/studio-p4.git)
-cd studio-p4
+git clone [https://github.com/DanThePol/Music-Helper-2026.git](https://github.com/DanThePol/Music-Helper-2026.git)
+cd Music-Helper-2026
 ```
 
 **2. Create and activate a virtual environment:**
@@ -78,13 +80,13 @@ pip install -r requirements.txt
 Studio P4 requires a few static files to boot successfully. These are not included in the raw Git repository to save space.
 
 ### SoundFonts (`.sf2`)
-Create a folder named `sf2` in the root of your project. You must have at least these two files inside it:
+Create a directory named `sf2` and another directory `Default` inside `sf2`, with `sf2` at the root of your project. You must have at least these two files inside it:
 
 * `metronome.sf2` (Used by the `MasterClockEngine` for the click track).
-* `basic_piano.sf2` (Or any default instrument, so the app has something to load upon boot).
+* `Default/basic_piano.sf2` (Or any default instrument, so the app has something to load upon boot).
 
 ### Piper Voice Model (`.onnx`)
-Download the French Text-to-Speech model. Place these two files directly in the root of your project:
+Download the files below from the [French Text-to-Speech model](https://huggingface.co/rhasspy/piper-voices/tree/main/fr/fr_FR/siwis/medium), and place them directly in the root of your project:
 
 * `fr_FR-siwis-medium.onnx`
 * `fr_FR-siwis-medium.onnx.json`
