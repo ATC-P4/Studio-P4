@@ -6,7 +6,7 @@ Studio P4 includes a built-in Voice Assistant that announces track names, BPM ch
 
 Press the **`V`** key at any time from the main window to open the Voice Settings dialogue box.
 
-*(Note: There is currently no MIDI keyboard mapping for the voice settings. The `V` key on your computer keyboard is the only way to access this menu.)*
+*Note: There is currently no MIDI keyboard mapping for the voice settings. The `V` key on your computer keyboard is the only way to access this menu.*
 
 ## 2. Navigating the Settings
 

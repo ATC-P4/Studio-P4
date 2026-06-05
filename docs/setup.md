@@ -4,7 +4,11 @@ Welcome to the Developer's Guide for Studio P4! This document will walk you thro
 
 Because Studio P4 interacts directly with low-level audio drivers (FluidSynth) and hardware MIDI controllers, the setup requires a few system-level dependencies before installing the Python packages.
 
-**Note:** because the GitHub repository was named *Music-Helper-2026*, this will be the name used to describe the root directory of the project, but we refer to the app itself as Studio P4.
+*Note:*
+
+1. *Because the GitHub repository was named **Music-Helper-2026**, this will be the name used to describe the root directory of the project, but we refer to the app itself as Studio P4.*
+
+2. *When describing the file structure, we use Unix-standard filepaths (e.g. `/path/to/file`), but when talking about bundling the app `.exe`, we of course switch to Windows-style filepath decriptions (e.g. `C:\path\to\file`).*
 
 ---
 
