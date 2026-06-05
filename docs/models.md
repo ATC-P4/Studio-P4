@@ -17,3 +17,8 @@ To help you navigate the data hierarchy:
 ::: core.models.Track
 
 ::: core.models.Metronome
+
+## General utilities
+::: core.utils
+
+:::core.utils.EventType

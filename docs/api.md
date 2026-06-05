@@ -19,6 +19,14 @@ While the conceptual explanation of how these modules interact can be found in t
 ## Input Routing
 ::: core.midi_io.MidiInputRouter
 
+::: core.midi_io.JoystickMapper
+
 ::: core.midi_io.NavMode
 
+::: core.midi_io.NavType
+
 ::: core.midi_io.BoundaryState
+
+## Project file IO
+
+::: core.project_io.ProjectIO

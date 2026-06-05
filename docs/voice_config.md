@@ -1,4 +1,4 @@
-# Configuring the Voice Assistant
+# Voice configuration and API reference
 
 Studio P4 includes a built-in Voice Assistant that announces track names, BPM changes, metronome state, and other important events as you work. The voice can be fully configured without leaving the application.
 
@@ -42,3 +42,17 @@ Controls the volume of the Voice Assistant independently of your system volume. 
 ## 4. A Note on Voice During Configuration
 
 The Voice Assistant remains **fully active inside the settings dialogue**, even if it is currently disabled. This ensures you can always hear spoken feedback while navigating and adjusting the settings, so you are never left without audio guidance during configuration.
+
+## 5. API Reference
+
+*Note: The detailed documentation below is automatically generated directly from the Python source code docstrings.*
+
+## Piper voice
+
+::: core.voice.VoicePresenter
+
+::: core.voice.VoiceService
+
+::: core.voice.VoiceType
+
+::: core.voice.BlockingMap

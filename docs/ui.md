@@ -15,5 +15,7 @@ To help you navigate the frontend components:
 
 ::: ui.startup_menu.StartupMenu
 
+::: ui.voice_settings.VoiceConfigDialog
+
 ## Components
 ::: ui.track_widget.TrackWidget
