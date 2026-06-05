@@ -35,7 +35,7 @@ Get-ChildItem -Path "C:\" -Recurse -Filter "libfluidsynth*.dll" -ErrorAction Sil
  Run the following command from the root of your project directory (formatted for **PowerShell** on Windows), and replace `C:\your\path\to\libfluidsynth-3.dll` by the actual path to the libfluidsynth library:
 
 ```powershell
-python -m PyInstaller --name "Music Helper" --onefile --hidden-import mido.backends.rtmidi --collect-all PySide6 --collect-all piper --collect-all piper_phonemize --collect-all rtmidi --add-data "sf2\metronome.sf2;sf2" --add-data "fr_FR-siwis-medium.onnx;."  --add-data "fr_FR-siwis-medium.onnx.json;." --add-binary "C:\your\path\to\libfluidsynth-3.dll;." main.py
+python -m PyInstaller --name "Studio P4" --onefile --hidden-import mido.backends.rtmidi --collect-all PySide6 --collect-all piper --collect-all piper_phonemize --collect-all rtmidi --add-data "sf2\metronome.sf2;sf2" --add-data "fr_FR-siwis-medium.onnx;."  --add-data "fr_FR-siwis-medium.onnx.json;." --add-binary "C:\your\path\to\libfluidsynth-3.dll;." main.py
 ```
 
 *Note:*
