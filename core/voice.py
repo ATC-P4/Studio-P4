@@ -14,6 +14,9 @@ from ui.voice_settings import SETTING_NAMES, RATE_STEPS
 
 
 class VoiceType(Enum):
+    """
+    The different types of possible voice messages.
+    """
     STOP = 0
     BPM_INFO = 1
     BPM_MOD = 2

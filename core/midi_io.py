@@ -222,6 +222,9 @@ class BoundaryState(Enum):
     NORMAL = auto()
 
 class NavType(Enum):
+    """
+    The 4 different joystick directions.
+    """
     NAV_UP = "NAV_UP"
     NAV_DOWN = "NAV_DOWN"
     NAV_RIGHT = "NAV_RIGHT"
