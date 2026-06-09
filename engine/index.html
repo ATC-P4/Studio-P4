@@ -1,0 +1,2232 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../api/">
+      
+      
+        <link rel="next" href="../models/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Audio Engine - Studio P4 Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../docstyle.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#audio-engine-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Studio P4 Documentation" class="md-header__button md-logo" aria-label="Studio P4 Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Studio P4 Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Audio Engine
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Studio P4 Documentation" class="md-nav__button md-logo" aria-label="Studio P4 Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Studio P4 Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Musician's Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Musician's Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recording_loop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recording a Loop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../managing_tracks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Managing Tracks & Sounds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../saving_projects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Saving & Loading
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../voice_config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TTS Voice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer's Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developer's Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../remap_midi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Remapping MIDI Controls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../add_soundfonts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Adding SoundFonts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build_exe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building the EXE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture & Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture & Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../accessibility_philosophy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accessibility Philosophy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data_flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Flow Pipelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controllers & MIDI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Audio Engine
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Audio Engine
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architectural-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architectural Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architectural Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-the-timeline-calculator-producer-thread" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The Timeline Calculator (Producer Thread)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-the-audio-dispatcher-consumer-thread" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The Audio Dispatcher (Consumer Thread)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-priority-tie-breaking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Priority Tie-Breaking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-machine-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Machine Workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.engine.MasterClockEngine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MasterClockEngine
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MasterClockEngine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core.engine.MasterClockEngine.get_metronome_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_metronome_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core.engine.MasterClockEngine.set_metronome_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_metronome_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core.engine.MasterClockEngine.set_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../voice_config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TTS Voice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Interface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architectural-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architectural Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architectural Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-the-timeline-calculator-producer-thread" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. The Timeline Calculator (Producer Thread)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-the-audio-dispatcher-consumer-thread" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. The Audio Dispatcher (Consumer Thread)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-priority-tie-breaking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Priority Tie-Breaking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-machine-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Machine Workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core.engine.MasterClockEngine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MasterClockEngine
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MasterClockEngine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core.engine.MasterClockEngine.get_metronome_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_metronome_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core.engine.MasterClockEngine.set_metronome_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_metronome_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core.engine.MasterClockEngine.set_state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_state
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="audio-engine-reference">Audio Engine Reference</h1>
+<p>The <code>MasterClockEngine</code> is the timing and execution heart of the live looper. It operates independently of the UI and hardware input layers, ensuring that audio playback and recording remain sample-accurate and immune to UI thread freezing.</p>
+<h2 id="architectural-workflow">Architectural Workflow</h2>
+<p>The engine utilizes a <strong>Dual-Thread Producer-Consumer Architecture</strong> to handle time synchronization and audio dispatching. </p>
+<h3 id="1-the-timeline-calculator-producer-thread">1. The Timeline Calculator (Producer Thread)</h3>
+<p>The <code>_clock_loop</code> thread runs continuously in the background. Its job is to look slightly ahead into the future (the "lookahead window," typically 50ms) and calculate what audio events <em>should</em> happen.</p>
+<ul>
+<li>It calculates the absolute playback time using modulo arithmetic based on the master loop duration.</li>
+<li>It iterates over all active tracks.</li>
+<li>If it finds MIDI notes that fall within the current lookahead window, it packages them into a tuple with an exact future timestamp and pushes them into the <code>audio_queue</code>.</li>
+</ul>
+<h3 id="2-the-audio-dispatcher-consumer-thread">2. The Audio Dispatcher (Consumer Thread)</h3>
+<p>The <code>_dispatcher_loop</code> thread runs as fast as possible (sleeping for only 1ms). It constantly checks the <code>audio_queue</code>.</p>
+<ul>
+<li>The queue is a Python <code>heapq</code> (Priority Queue) sorted by exact execution time.</li>
+<li>When the hardware clock (<code>time.perf_counter()</code>) matches or exceeds the timestamp of the first item in the queue, it pops the item and immediately executes the Fluidsynth audio trigger (<code>noteon</code>, <code>noteoff</code>, or metronome click).</li>
+</ul>
+<h3 id="3-priority-tie-breaking">3. Priority Tie-Breaking</h3>
+<p>To prevent "stuck notes" or audio glitches when multiple events happen at the exact same microsecond (e.g., a loop restarting), the engine enforces strict tie-breaking priorities when pushing to the queue:</p>
+<ol>
+<li><strong>Priority 0 (Highest):</strong> <code>NOTE_OFF</code> events. (Always stop old notes before playing new ones).</li>
+<li><strong>Priority 1:</strong> <code>METRO</code> clicks.</li>
+<li><strong>Priority 2:</strong> <code>NOTE_ON</code> events.</li>
+</ol>
+<h2 id="state-machine-workflow">State Machine Workflow</h2>
+<p>The engine relies on <code>set_state()</code> to handle complex transitions.</p>
+<ul>
+<li><strong>RECORDING -&gt; PLAYING:</strong> The engine locks the Master Loop length mathematically by rounding the elapsed time to the nearest downbeat based on the time signature. It also fires <code>_sanitize_open_notes()</code> to inject fake <code>note_off</code> events for any keys the user was holding down when they stopped recording.</li>
+<li><strong>COUNT_IN -&gt; RECORDING:</strong> This transition happens <em>automatically</em> inside the <code>_clock_loop</code> once the calculated count-in beats elapse. The timeline is mathematically shifted back to <code>0.0</code>, and the armed track is wiped clean exactly on the downbeat to prevent count-in bleed.</li>
+</ul>
+<hr />
+<h2 id="api-reference">API Reference</h2>
+<p><em>The documentation below is automatically generated from the Python source code docstrings.</em></p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="core.engine.MasterClockEngine" class="doc doc-heading">
+            <code>core.engine.MasterClockEngine</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>core/engine.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 12</span>
+<span class="normal"> 13</span>
+<span class="normal"> 14</span>
+<span class="normal"> 15</span>
+<span class="normal"> 16</span>
+<span class="normal"> 17</span>
+<span class="normal"> 18</span>
+<span class="normal"> 19</span>
+<span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MasterClockEngine</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="p">:</span> <span class="n">models</span><span class="o">.</span><span class="n">Project</span> <span class="o">=</span> <span class="n">project</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">=</span> <span class="s2">&quot;STOPPED&quot;</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metronome_on</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_state_change_cb</span> <span class="o">=</span> <span class="kc">None</span> 
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">audio_queue</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_counter</span> <span class="o">=</span> <span class="mi">0</span> 
+
+        <span class="c1"># --- NEW: Thread-Safe Reset Flag ---</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_clock_reset</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># START THREADS ONCE AND LEAVE THEM RUNNING</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine_alive</span> <span class="o">=</span> <span class="kc">True</span> 
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_clock_loop</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dispatcher_loop</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_state</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the state of the engine.&quot;&quot;&quot;</span>
+        <span class="n">armed_track</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">get_armed_track</span><span class="p">()</span>
+        <span class="n">is_master</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_track</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_track</span> <span class="o">==</span> <span class="n">armed_track</span><span class="p">)</span>
+
+        <span class="c1"># 1. Handle transitions FROM Recording</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;RECORDING&quot;</span> <span class="ow">and</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;PLAYING&quot;</span><span class="p">,</span> <span class="s2">&quot;STOPPED&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">is_master</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_master_loop</span><span class="p">(</span><span class="n">armed_track</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sanitize_open_notes</span><span class="p">(</span><span class="n">armed_track</span><span class="p">)</span>
+
+        <span class="c1"># 2. Handle specific state preparations</span>
+        <span class="k">if</span> <span class="n">new_state</span> <span class="o">==</span> <span class="s2">&quot;STOPPED&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">tracks</span><span class="p">:</span>
+                <span class="n">track</span><span class="o">.</span><span class="n">flush_notes</span><span class="p">()</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue_lock</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">audio_queue</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;COUNT_IN&quot;</span><span class="p">,</span> <span class="s2">&quot;RECORDING&quot;</span><span class="p">,</span> <span class="s2">&quot;PLAYING&quot;</span><span class="p">]:</span>
+            <span class="c1"># Wipe armed track if starting a new recording</span>
+            <span class="k">if</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;COUNT_IN&quot;</span><span class="p">,</span> <span class="s2">&quot;RECORDING&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">armed_track</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">!=</span> <span class="s2">&quot;RECORDING&quot;</span><span class="p">:</span>
+                    <span class="n">armed_track</span><span class="o">.</span><span class="n">clear_events</span><span class="p">()</span> 
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[ENGINE] Track &#39;</span><span class="si">{</span><span class="n">armed_track</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; wiped upon entering </span><span class="si">{</span><span class="n">new_state</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;STOPPED&quot;</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;PLAYING&quot;</span> <span class="ow">and</span> <span class="n">new_state</span> <span class="o">==</span> <span class="s2">&quot;COUNT_IN&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pending_clock_reset</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="c1"># If we are interrupting playback to start a count-in, we must kill ringing notes</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;PLAYING&quot;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">tracks</span><span class="p">:</span>
+                        <span class="n">track</span><span class="o">.</span><span class="n">flush_notes</span><span class="p">()</span>
+
+        <span class="c1"># 3. Apply State</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">=</span> <span class="n">new_state</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_state_change_cb</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_state_change_cb</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_master_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">armed_track</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates and locks the master loop length based on recorded beats.</span>
+<span class="sd">        This is called when stopping a recording session if the armed track is the master.</span>
+<span class="sd">        It uses the elapsed recording time to determine how many beats were recorded, then snaps to the nearest bar.</span>
+<span class="sd">         Args:</span>
+<span class="sd">             armed_track: The currently armed track which is being recorded. Used to determine if it&#39;s the master and to flush notes if needed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">elapsed_seconds</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span>
+        <span class="n">beats_recorded</span> <span class="o">=</span> <span class="n">elapsed_seconds</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">beat_duration</span>
+        <span class="n">time_sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">time_signature_numerator</span>
+
+        <span class="n">lower_bound_beats</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">beats_recorded</span> <span class="o">/</span> <span class="n">time_sig</span><span class="p">)</span> <span class="o">*</span> <span class="n">time_sig</span>
+        <span class="n">excess_beats</span> <span class="o">=</span> <span class="n">beats_recorded</span> <span class="o">-</span> <span class="n">lower_bound_beats</span>
+
+        <span class="n">calculated_beats</span> <span class="o">=</span> <span class="n">lower_bound_beats</span> <span class="o">+</span> <span class="n">time_sig</span> <span class="k">if</span> <span class="n">excess_beats</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="k">else</span> <span class="n">lower_bound_beats</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_loop_beats</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">time_sig</span><span class="p">,</span> <span class="n">calculated_beats</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_track</span> <span class="o">=</span> <span class="n">armed_track</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[ENGINE] Master Loop locked at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_loop_beats</span><span class="si">}</span><span class="s2"> beats.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sanitize_open_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">armed_track</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Closes any MIDI notes that were held down when recording stopped.</span>
+<span class="sd">        This prevents &quot;hanging&quot; notes that continue to play indefinitely after recording stops.</span>
+<span class="sd">         Args:</span>
+<span class="sd">             armed_track: The currently armed track which is being recorded.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">armed_track</span><span class="p">:</span> <span class="k">return</span>
+
+        <span class="n">open_notes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">elapsed_seconds</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span>
+
+        <span class="c1"># Access safely via a lock!</span>
+        <span class="k">with</span> <span class="n">armed_track</span><span class="o">.</span><span class="n">event_lock</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">msg</span><span class="p">,</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">armed_track</span><span class="o">.</span><span class="n">midi_events</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;note_on&#39;</span> <span class="ow">and</span> <span class="n">msg</span><span class="o">.</span><span class="n">velocity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">open_notes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">note</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">msg</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;note_off&#39;</span> <span class="ow">or</span> <span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;note_on&#39;</span> <span class="ow">and</span> <span class="n">msg</span><span class="o">.</span><span class="n">velocity</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">open_notes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">note</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">open_notes</span><span class="p">:</span>
+                <span class="n">fake_off</span> <span class="o">=</span> <span class="n">mido</span><span class="o">.</span><span class="n">Message</span><span class="p">(</span><span class="s1">&#39;note_off&#39;</span><span class="p">,</span> <span class="n">note</span><span class="o">=</span><span class="n">note</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">armed_track</span><span class="o">.</span><span class="n">midi_events</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">fake_off</span><span class="p">,</span> <span class="n">elapsed_seconds</span><span class="p">))</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_metronome_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a specific state for the metronome</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (bool): State, True=on, False=off</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metronome_on</span> <span class="o">=</span> <span class="n">state</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_metronome_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the current state of the metronome</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metronome_on</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clock_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is the heart of the engine, running in a dedicated thread.&quot;&quot;&quot;</span>
+        <span class="n">LOOKAHEAD_SEC</span> <span class="o">=</span> <span class="mf">0.05</span> 
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine_alive</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;STOPPED&quot;</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span> 
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_clock_reset</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reset_clock</span><span class="p">()</span>
+
+            <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span>
+            <span class="n">target_time</span> <span class="o">=</span> <span class="n">elapsed</span> <span class="o">+</span> <span class="n">LOOKAHEAD_SEC</span>
+
+            <span class="c1"># Only process if target_time has advanced past last_processed_time.</span>
+            <span class="k">if</span> <span class="n">target_time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;COUNT_IN&quot;</span><span class="p">:</span>
+                    <span class="n">count_in_duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">time_signature_numerator</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">beat_duration</span>
+
+                    <span class="k">if</span> <span class="n">target_time</span> <span class="o">&gt;=</span> <span class="n">count_in_duration</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_transition_to_recording</span><span class="p">(</span><span class="n">count_in_duration</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">,</span> <span class="n">LOOKAHEAD_SEC</span><span class="p">,</span> <span class="n">now</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_process_playback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span><span class="p">,</span> <span class="n">target_time</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span> <span class="o">=</span> <span class="n">target_time</span>
+
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;PLAYING&quot;</span><span class="p">,</span> <span class="s2">&quot;RECORDING&quot;</span><span class="p">]:</span>
+
+                    <span class="c1"># --- NEW: AUTO-STOP DUBBING FOR NON-MASTER TRACKS ---</span>
+                    <span class="n">armed_track</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">get_armed_track</span><span class="p">()</span>
+                    <span class="n">is_master</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_track</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_track</span> <span class="o">==</span> <span class="n">armed_track</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;RECORDING&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_master</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_loop_beats</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">loop_duration_sec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_loop_beats</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">beat_duration</span>
+
+                        <span class="c1"># If our lookahead window crosses the end of the loop boundary...</span>
+                        <span class="k">if</span> <span class="n">target_time</span> <span class="o">&gt;=</span> <span class="n">loop_duration_sec</span><span class="p">:</span>
+                            <span class="c1"># 1. Process exactly up to the end of the loop</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_process_playback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span><span class="p">,</span> <span class="n">loop_duration_sec</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">)</span>
+
+                            <span class="c1"># 2. Seamlessly flip to PLAYING state (This triggers UI redraw and sanitizes hanging notes)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="s2">&quot;PLAYING&quot;</span><span class="p">)</span>
+
+                            <span class="c1"># 3. Process the remainder of the lookahead window as standard playback</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_process_playback</span><span class="p">(</span><span class="n">loop_duration_sec</span><span class="p">,</span> <span class="n">target_time</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span> <span class="o">=</span> <span class="n">target_time</span>
+
+                            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">LOOKAHEAD_SEC</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+                            <span class="k">continue</span> <span class="c1"># Skip the normal processing block</span>
+
+                    <span class="c1"># Normal processing (if no boundary was crossed)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_process_playback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span><span class="p">,</span> <span class="n">target_time</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span> <span class="o">=</span> <span class="n">target_time</span>
+
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">LOOKAHEAD_SEC</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reset_clock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Safely resets the engine time variables to zero with a pre-roll buffer.&quot;&quot;&quot;</span>
+        <span class="c1"># CRITICAL FIX: Add a 100ms (0.1s) buffer. </span>
+        <span class="c1"># By setting the start_time slightly in the future, we give the clock loop </span>
+        <span class="c1"># time to calculate the 0.0 notes and push them to the dispatcher BEFORE they are due.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">audio_queue</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_clock_reset</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transition_to_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count_in_duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lookahead</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">now</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handles the complex timeline shift when switching from Count-In to live Recording.&quot;&quot;&quot;</span>
+        <span class="c1"># A. Process the exact remaining sliver of the Count-In</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_playback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span><span class="p">,</span> <span class="n">count_in_duration</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">)</span>
+
+        <span class="c1"># B. Shift the timeline back mathematically</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">+=</span> <span class="n">count_in_duration</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span>  
+        <span class="n">target_time</span> <span class="o">=</span> <span class="n">elapsed</span> <span class="o">+</span> <span class="n">lookahead</span> 
+
+        <span class="c1"># C. Change State seamlessly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">=</span> <span class="s2">&quot;RECORDING&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_state_change_cb</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_state_change_cb</span><span class="p">()</span>
+
+        <span class="c1"># D. Wipe the track to prevent count-in bleed</span>
+        <span class="n">armed_track</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">get_armed_track</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">armed_track</span><span class="p">:</span>
+            <span class="n">armed_track</span><span class="o">.</span><span class="n">clear_events</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[ENGINE] Track &#39;</span><span class="si">{</span><span class="n">armed_track</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; wiped perfectly at the downbeat.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># E. Process the beginning of the actual recording</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_playback</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">target_time</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_processed_time</span> <span class="o">=</span> <span class="n">target_time</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dispatcher_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Continuously checks the audio queue and executes any events that are due to play.&quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine_alive</span><span class="p">:</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue_lock</span><span class="p">:</span>
+                <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">audio_queue</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">audio_queue</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">now</span><span class="p">:</span>
+                    <span class="n">exec_time</span><span class="p">,</span> <span class="n">priority</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">note</span><span class="p">,</span> <span class="n">vel</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_queue</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;NOTE_ON&quot;</span><span class="p">:</span>
+                        <span class="n">obj</span><span class="o">.</span><span class="n">play_note_on</span><span class="p">(</span><span class="n">note</span><span class="p">,</span> <span class="n">vel</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;NOTE_OFF&quot;</span><span class="p">:</span>
+                        <span class="n">obj</span><span class="o">.</span><span class="n">play_note_off</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;METRO&quot;</span><span class="p">:</span>
+                        <span class="n">obj</span><span class="o">.</span><span class="n">play_click</span><span class="p">(</span><span class="n">note</span><span class="p">)</span> 
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schedule_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delay_sec</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">note</span><span class="p">,</span> <span class="n">vel</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Puts a note into the Priority Queue with strict tie-breaking.</span>
+<span class="sd">         Args:             </span>
+<span class="sd">            delay_sec: How many seconds in the future this event should play.</span>
+<span class="sd">            action: &quot;NOTE_ON&quot;, &quot;NOTE_OFF&quot;, or &quot;METRO&quot;</span>
+<span class="sd">            obj: The Track or Metronome object that should execute the action.</span>
+<span class="sd">            note: MIDI note number for the event (or downbeat flag for metronome)</span>
+<span class="sd">            vel: MIDI velocity for note_on events (default 0 for note_off or metronome)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">exec_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">+</span> <span class="n">delay_sec</span>
+        <span class="n">priority</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;NOTE_OFF&quot;</span><span class="p">:</span> <span class="n">priority</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;NOTE_ON&quot;</span><span class="p">:</span> <span class="n">priority</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue_lock</span><span class="p">:</span>
+            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_queue</span><span class="p">,</span> <span class="p">(</span><span class="n">exec_time</span><span class="p">,</span> <span class="n">priority</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_counter</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">note</span><span class="p">,</span> <span class="n">vel</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_playback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">end_window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">actual_elapsed</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Schedules all upcoming audio events within the current time window.</span>
+<span class="sd">         Args:</span>
+<span class="sd">             start_window: The start of the lookahead window in seconds.</span>
+<span class="sd">             end_window: The end of the lookahead window in seconds.</span>
+<span class="sd">             actual_elapsed: The actual elapsed time in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">loop_duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_loop_duration</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schedule_metronome</span><span class="p">(</span><span class="n">start_window</span><span class="p">,</span> <span class="n">end_window</span><span class="p">,</span> <span class="n">actual_elapsed</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;COUNT_IN&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="c1"># Don&#39;t play track notes during count-in</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schedule_tracks</span><span class="p">(</span><span class="n">start_window</span><span class="p">,</span> <span class="n">end_window</span><span class="p">,</span> <span class="n">actual_elapsed</span><span class="p">,</span> <span class="n">loop_duration</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_loop_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines the current loop length in seconds based on master track status.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">armed_track</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">get_armed_track</span><span class="p">()</span>
+        <span class="n">is_master</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_track</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_track</span> <span class="o">==</span> <span class="n">armed_track</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;RECORDING&quot;</span> <span class="ow">and</span> <span class="n">is_master</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span> <span class="c1"># Master is currently defining the loop length</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_loop_beats</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_loop_beats</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">beat_duration</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">time_signature_numerator</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">beat_duration</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schedule_metronome</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">end_window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">actual_elapsed</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Schedules metronome clicks if they fall within the current time window.</span>
+<span class="sd">         Args:</span>
+<span class="sd">             start_window: The start of the lookahead window in seconds.</span>
+<span class="sd">             end_window: The end of the lookahead window in seconds.</span>
+<span class="sd">             actual_elapsed: The actual elapsed time in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">should_click</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;COUNT_IN&quot;</span><span class="p">,</span> <span class="s2">&quot;RECORDING&quot;</span><span class="p">]</span> <span class="ow">or</span> \
+                      <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;PLAYING&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">metronome_on</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">should_click</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Start checking from the nearest beat</span>
+        <span class="n">first_beat</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">start_window</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">beat_duration</span><span class="p">)</span>
+        <span class="n">beat_time</span> <span class="o">=</span> <span class="n">first_beat</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">beat_duration</span>
+
+        <span class="k">while</span> <span class="n">beat_time</span> <span class="o">&lt;</span> <span class="n">end_window</span><span class="p">:</span>
+            <span class="n">delay_sec</span> <span class="o">=</span> <span class="n">beat_time</span> <span class="o">-</span> <span class="n">actual_elapsed</span>
+            <span class="n">is_downbeat</span> <span class="o">=</span> <span class="p">(</span><span class="n">first_beat</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">time_signature_numerator</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_schedule_event</span><span class="p">(</span><span class="n">delay_sec</span><span class="p">,</span> <span class="s2">&quot;METRO&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">metronome</span><span class="p">,</span> <span class="n">is_downbeat</span><span class="p">)</span>
+
+            <span class="n">first_beat</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">beat_time</span> <span class="o">=</span> <span class="n">first_beat</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">beat_duration</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_schedule_tracks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">end_window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">actual_elapsed</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">loop_duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iterates through all tracks and schedules their MIDI notes via modulo arithmetic.</span>
+<span class="sd">         Args:</span>
+<span class="sd">             start_window: The start of the lookahead window in seconds.</span>
+<span class="sd">             end_window: The end of the lookahead window in seconds.</span>
+<span class="sd">             actual_elapsed: The actual elapsed time in seconds.</span>
+<span class="sd">             loop_duration: The duration of the loop in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">tracks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">track</span><span class="o">.</span><span class="n">is_muted</span><span class="p">:</span> 
+                <span class="k">continue</span>
+
+            <span class="k">with</span> <span class="n">track</span><span class="o">.</span><span class="n">event_lock</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">msg</span><span class="p">,</span> <span class="n">timestamp</span> <span class="ow">in</span> <span class="n">track</span><span class="o">.</span><span class="n">midi_events</span><span class="p">:</span>
+
+                    <span class="c1"># 1. Calculate when this note should play in absolute time</span>
+                    <span class="k">if</span> <span class="n">loop_duration</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">):</span>
+                        <span class="n">play_time</span> <span class="o">=</span> <span class="n">timestamp</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ts_mod</span> <span class="o">=</span> <span class="n">timestamp</span> <span class="o">%</span> <span class="n">loop_duration</span>
+                        <span class="n">current_loop_start</span> <span class="o">=</span> <span class="p">(</span><span class="n">start_window</span> <span class="o">//</span> <span class="n">loop_duration</span><span class="p">)</span> <span class="o">*</span> <span class="n">loop_duration</span>
+                        <span class="n">play_time</span> <span class="o">=</span> <span class="n">current_loop_start</span> <span class="o">+</span> <span class="n">ts_mod</span>
+                        <span class="k">if</span> <span class="n">play_time</span> <span class="o">&lt;</span> <span class="n">start_window</span><span class="p">:</span>
+                            <span class="n">play_time</span> <span class="o">+=</span> <span class="n">loop_duration</span>
+
+                    <span class="c1"># 2. Schedule it if it falls in our current lookahead window</span>
+                    <span class="k">if</span> <span class="n">start_window</span> <span class="o">&lt;=</span> <span class="n">play_time</span> <span class="o">&lt;</span> <span class="n">end_window</span><span class="p">:</span>
+                        <span class="n">delay_sec</span> <span class="o">=</span> <span class="n">play_time</span> <span class="o">-</span> <span class="n">actual_elapsed</span>
+
+                        <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;note_on&#39;</span> <span class="ow">and</span> <span class="n">msg</span><span class="o">.</span><span class="n">velocity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_schedule_event</span><span class="p">(</span><span class="n">delay_sec</span><span class="p">,</span> <span class="s2">&quot;NOTE_ON&quot;</span><span class="p">,</span> <span class="n">track</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">note</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">velocity</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_schedule_event</span><span class="p">(</span><span class="n">delay_sec</span><span class="p">,</span> <span class="s2">&quot;NOTE_OFF&quot;</span><span class="p">,</span> <span class="n">track</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">note</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="core.engine.MasterClockEngine.get_metronome_state" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_metronome_state</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the current state of the metronome</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_metronome_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the current state of the metronome</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metronome_on</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="core.engine.MasterClockEngine.set_metronome_state" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_metronome_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Set a specific state for the metronome</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>state</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>State, True=on, False=off</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_metronome_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a specific state for the metronome</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        state (bool): State, True=on, False=off</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metronome_on</span> <span class="o">=</span> <span class="n">state</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="core.engine.MasterClockEngine.set_state" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">set_state</span><span class="p">(</span><span class="n">new_state</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Sets the state of the engine.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>core/engine.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_state</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the state of the engine.&quot;&quot;&quot;</span>
+    <span class="n">armed_track</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">get_armed_track</span><span class="p">()</span>
+    <span class="n">is_master</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_track</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">master_track</span> <span class="o">==</span> <span class="n">armed_track</span><span class="p">)</span>
+
+    <span class="c1"># 1. Handle transitions FROM Recording</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;RECORDING&quot;</span> <span class="ow">and</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;PLAYING&quot;</span><span class="p">,</span> <span class="s2">&quot;STOPPED&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">is_master</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_master_loop</span><span class="p">(</span><span class="n">armed_track</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sanitize_open_notes</span><span class="p">(</span><span class="n">armed_track</span><span class="p">)</span>
+
+    <span class="c1"># 2. Handle specific state preparations</span>
+    <span class="k">if</span> <span class="n">new_state</span> <span class="o">==</span> <span class="s2">&quot;STOPPED&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">tracks</span><span class="p">:</span>
+            <span class="n">track</span><span class="o">.</span><span class="n">flush_notes</span><span class="p">()</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">audio_queue</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;COUNT_IN&quot;</span><span class="p">,</span> <span class="s2">&quot;RECORDING&quot;</span><span class="p">,</span> <span class="s2">&quot;PLAYING&quot;</span><span class="p">]:</span>
+        <span class="c1"># Wipe armed track if starting a new recording</span>
+        <span class="k">if</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;COUNT_IN&quot;</span><span class="p">,</span> <span class="s2">&quot;RECORDING&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">armed_track</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">!=</span> <span class="s2">&quot;RECORDING&quot;</span><span class="p">:</span>
+                <span class="n">armed_track</span><span class="o">.</span><span class="n">clear_events</span><span class="p">()</span> 
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[ENGINE] Track &#39;</span><span class="si">{</span><span class="n">armed_track</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; wiped upon entering </span><span class="si">{</span><span class="n">new_state</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;STOPPED&quot;</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;PLAYING&quot;</span> <span class="ow">and</span> <span class="n">new_state</span> <span class="o">==</span> <span class="s2">&quot;COUNT_IN&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pending_clock_reset</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># If we are interrupting playback to start a count-in, we must kill ringing notes</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">==</span> <span class="s2">&quot;PLAYING&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">tracks</span><span class="p">:</span>
+                    <span class="n">track</span><span class="o">.</span><span class="n">flush_notes</span><span class="p">()</span>
+
+    <span class="c1"># 3. Apply State</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span> <span class="o">=</span> <span class="n">new_state</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_state_change_cb</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_state_change_cb</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
