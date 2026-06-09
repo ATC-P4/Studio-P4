@@ -4,6 +4,8 @@
 
 Traditional Digital Audio Workstations (DAWs) rely heavily on complex visual interfaces and mouse-driven workflows. Studio P4 solves this by offering a completely "headless" experience. Controlled entirely via a MIDI keyboard and guided by an integrated Text-to-Speech (TTS) voice assistant, it allows musicians to focus purely on touch, hearing, and creativity.
 
+*Note: opening the `.exe` may require the installation of the [Visual C++ Redistributable tools](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-supported-redistributable-version). Simply download from the link, open the installer and click install after agreeing to the terms and conditions. This may not be necessary though, as many apps use this so it may already be on your PC, so try just opening the app first.*
+
 ---
 
 ## How to Use This Documentation

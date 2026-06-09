@@ -4,5 +4,4 @@ python-rtmidi
 pyfluidsynth
 piper-tts
 keyboard
-sf2utils
 pyinstaller
