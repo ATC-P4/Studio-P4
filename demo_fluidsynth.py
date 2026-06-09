@@ -10,10 +10,10 @@ def basic_test(path: str = "sf2/Default/basic_piano.sf2", program: int = 0, bank
     sfid = fl.sfload(path)
     fl.program_select(0, sfid, bank, program)
 
-    time.sleep(1)  # Wait a moment for the synth to initialize
+    time.sleep(2)  # Wait a moment for the synth to initialize
     print("Playing a C4 note...")
     fl.noteon(0, note, velocity)  # Channel 0, note, velocity
-    time.sleep(2)  # Hold the note for 1 second
+    time.sleep(2)  # Hold the note
     fl.noteoff(0, note)
     print("Note released.")
     fl.delete()
@@ -95,7 +95,7 @@ def test_reverb_attack(path: str = "sf2/Default/basic_piano.sf2", program: int =
     fl.cc(0, 16, 127) 
     
     fl.noteon(0, 60, 100)
-    time.sleep(3) # Wait 3 full seconds. You will hear the piano slowly swell in!
+    time.sleep(3) # You should hear the piano slowly swell in
     fl.noteoff(0, 60)
     time.sleep(1)
     
@@ -109,7 +109,7 @@ def bulletproof_effects_test(path: str = "sf2/Default/basic_piano.sf2", program:
     print(f"=== Starting Bulletproof Effects Test with {path} ===")
     fl = fluidsynth.Synth()
     
-    # --- REVERB FIX: Force effect memory allocation BEFORE starting the driver ---
+    # --- REVERB: Force effect memory allocation BEFORE starting the driver ---
     fl.setting("synth.reverb.active", 1)
     
     fl.start(driver=AUDIO_DRIVER)
