@@ -50,7 +50,7 @@ studio-p4/
 │   ├── track_widget.py                 # Individual track UI component
 │   └── voice_settings.py               # Voice settings dialogue
 ├── .gitignore                          # Git ignore rules
-├── README.md                           # Project description and instructions
+├── demo_fluidsynth.py                  # Demonstration of how to use fluidsynth
 ├── main.py                             # Main application entry point
 ├── mkdocs.yml                          # MkDocs configuration file
 ├── README.md                           # That would be the current file :)
